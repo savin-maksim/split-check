@@ -129,6 +129,8 @@ function App() {
     return savedPayer ? JSON.parse(savedPayer) : null
   })
 
+  const [previousPayersState, setPreviousPayersState] = useState(null)
+
   // Update URL when data changes
   useEffect(() => {
     const updateURL = () => {
@@ -218,7 +220,7 @@ function App() {
         }
       }
 
-      // Если были дубликаты, показываем предупреждение
+      // Если были дубликаты, показываем предупреждени��
       if (duplicates.length > 0) {
         toast.error(`${duplicates.join(', ')} уже в списке`)
       }
@@ -266,24 +268,36 @@ function App() {
   }
 
   const handlePaymentModeChange = (mode) => {
+    if (mode === paymentMode) return
+
     if (mode === 'single') {
+      // Сохраняем текущее состояние плательщиков
       setPreviousPayersState(costs.map(cost => ({
         id: cost.id,
         paidBy: [...cost.paidBy]
       })))
-    } else {
-      if (previousPayersState) {
-        setCosts(costs.map(cost => {
-          const previousState = previousPayersState.find(p => p.id === cost.id)
-          return {
-            ...cost,
-            paidBy: previousState ? previousState.paidBy : []
-          }
-        }))
+
+      // Обновляем все расходы, устанавливая одного плательщика
+      if (singlePayer) {
+        setCosts(costs.map(cost => ({
+          ...cost,
+          paidBy: [singlePayer]
+        })))
       }
-      setSinglePayer(null)
+    } else if (mode === 'manual' && previousPayersState) {
+      // Восстанавливаем предыдущее состояние плательщиков
+      setCosts(costs.map(cost => {
+        const previousState = previousPayersState.find(prev => prev.id === cost.id)
+        return {
+          ...cost,
+          paidBy: previousState ? previousState.paidBy : cost.paidBy
+        }
+      }))
+      setPreviousPayersState(null)
     }
+
     setPaymentMode(mode)
+    setSinglePayer(null)
   }
 
   const handleSinglePayerSelect = (person) => {
