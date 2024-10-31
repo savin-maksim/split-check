@@ -75,42 +75,55 @@ const decompressData = (compressed, type = 'general') => {
 }
 
 function App() {
-  // Function to get initial data from URL or localStorage
-  const getInitialData = (storageKey, urlParam) => {
+  // Функция для получения начальных данных из URL или localStorage
+  const getInitialData = (storageKey, urlParam, type = 'general') => {
+    // Сначала проверяем URL параметры
     const urlParams = new URLSearchParams(window.location.search)
     const urlData = urlParams.get(urlParam)
     
     if (urlData) {
       const decompressed = decompressData(urlData)
       if (decompressed) {
-        if (urlParam === 'c') {
-          return decompressed.map(cost => ({
-            id: cost.id,
-            title: cost.title,
-            amount: cost.amount,
-            paidBy: cost.paidBy.map(id => people.find(p => p.id === id) || { id }),
-            splitBetween: cost.splitBetween.map(id => people.find(p => p.id === id) || { id })
-          }))
-        }
         return decompressed
       }
     }
     
+    // Если в URL нет данных, берем из localStorage
     const savedData = localStorage.getItem(storageKey)
     return savedData ? JSON.parse(savedData) : []
   }
 
+  // Сначала инициализируем people
   const [people, setPeople] = useState(() => getInitialData(STORAGE_KEYS.PEOPLE, 'p'))
-  const [costs, setCosts] = useState(() => getInitialData(STORAGE_KEYS.COSTS, 'c'))
+
+  // Затем инициализируем costs, используя уже загруженных people
+  const [costs, setCosts] = useState(() => {
+    const initialCosts = getInitialData(STORAGE_KEYS.COSTS, 'c')
+    return initialCosts.map(cost => ({
+      ...cost,
+      // Находим полные объекты людей по их ID
+      paidBy: cost.paidBy.map(p => 
+        people.find(person => person.id === p.id) || p
+      ),
+      splitBetween: cost.splitBetween.map(p => 
+        people.find(person => person.id === p.id) || p
+      )
+    }))
+  })
+
   const [paymentMode, setPaymentMode] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search)
     return urlParams.get('m') || localStorage.getItem(STORAGE_KEYS.PAYMENT_MODE) || 'manual'
   })
+
   const [singlePayer, setSinglePayer] = useState(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const urlData = urlParams.get('s')
     if (urlData) {
-      return decompressData(urlData)
+      const decompressed = decompressData(urlData)
+      if (decompressed && decompressed[0]) {
+        return people.find(p => p.id === decompressed[0]) || null
+      }
     }
     const savedPayer = localStorage.getItem(STORAGE_KEYS.SINGLE_PAYER)
     return savedPayer ? JSON.parse(savedPayer) : null
