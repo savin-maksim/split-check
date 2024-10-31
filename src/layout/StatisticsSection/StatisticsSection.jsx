@@ -39,6 +39,13 @@ function StatisticsSection({ people, costs, paymentMode }) {
 
   const stats = calculateStatistics()
 
+  const formatAmount = (amount) => {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount)
+  }
+
   return (
     <div className="statistics-section">
       <div className="statistics-section__cards">
@@ -53,21 +60,21 @@ function StatisticsSection({ people, costs, paymentMode }) {
               {paymentMode === 'single' ? (
                 <div className="statistics-card__info">
                   <span>Потратил:</span>
-                  <h4>{personStats.owned.toFixed(2)} ₽</h4>
+                  <h4 className=''>{formatAmount(personStats.owned)} ₽</h4>
                 </div>
               ) : (
                 <>
                   <div className="statistics-card__info">
                     <span>Потратил(а):</span>
-                    <h4 className=''>{personStats.spent.toFixed(2)} ₽</h4>
+                    <h4 className=''>{formatAmount(personStats.spent)} ₽</h4>
                   </div>
                   <div className="statistics-card__info">
                     <span>Должен(на) заплатить:</span>
-                    <h4 className=''>{personStats.owned.toFixed(2)} ₽</h4>
+                    <h4 className=''>{formatAmount(personStats.owned)} ₽</h4>
                   </div>
                   <div className="statistics-card__info">
                     <span>Баланс:</span>
-                    <h4 className=''>{balance.toFixed(2)} ₽</h4>
+                    <h4 className=''>{formatAmount(balance)} ₽</h4>
                   </div>
                 </>
               )}
@@ -80,7 +87,7 @@ function StatisticsSection({ people, costs, paymentMode }) {
                   {personStats.expenses.map((expense, index) => (
                     <div key={index} className="statistics-card__expense-item">
                       <span>{expense.description}</span>
-                      <h4 className=''>{expense.amount.toFixed(2)} ₽</h4>
+                      <h4 className=''>{formatAmount(expense.amount)} ₽</h4>
                     </div>
                   ))}
                 </div>
