@@ -1,0 +1,11 @@
+@use "/src/styles/mixins" as *;
+
+.header {
+  padding-block: 70px;
+  border-bottom: var(--border);
+
+  &__container {
+    @include flex-center();
+  }
+
+} 

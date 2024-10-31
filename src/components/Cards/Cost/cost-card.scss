@@ -1,0 +1,73 @@
+@use "/src/styles/mixins" as *;
+
+.cost-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  color: var(--color-light);
+  width: 100%;
+  max-width: var(--cards-width);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &__action-btn {
+    @include flex-center();
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    @include hover {
+      cursor: pointer;
+      opacity: 0.7;
+    }
+  }
+
+  &__section {
+    margin-bottom: 1rem;
+  }
+
+  &__label {
+    @include fluid-text(15, 11);
+    margin-bottom: 0.5rem;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__tag {
+    @include hover {
+      cursor: pointer;
+    }
+
+    &.active {
+      background-color: var(--color-light);
+      color: var(--color-dark);
+    }
+  }
+
+  &__footer {
+    padding-top: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  &__amount {
+    display: flex;
+    justify-content: end;
+    margin: 0;
+  }
+}
