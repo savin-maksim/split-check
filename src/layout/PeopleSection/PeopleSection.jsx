@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { UserPlus, X } from 'lucide-react'
-import { toast } from 'react-hot-toast'
 
 // Import components
 import ActionButton from '../../components/Button/ActionButton'
@@ -16,10 +15,8 @@ function PeopleSection({ people, onAddPerson, onRemovePerson }) {
 
   const handleAddPerson = () => {
     if (newPersonName.trim()) {
-      // Сначала получаем максимальный ID из существующих людей
       const maxId = Math.max(0, ...people.map(p => p.id))
       
-      // Затем создаем массив имен с инкрементными ID
       const names = newPersonName
         .split(',')
         .map(name => name.trim())
@@ -29,47 +26,15 @@ function PeopleSection({ people, onAddPerson, onRemovePerson }) {
           name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
         }))
 
-      // Фильтруем только уникальные имена и находим дубликаты
-      const duplicates = names.filter(newPerson => 
-        people.some(p => p.name.toLowerCase() === newPerson.name.toLowerCase())
-      ).map(p => p.name)
-
-      const uniqueNames = names.filter(newPerson => 
-        !people.some(p => p.name.toLowerCase() === newPerson.name.toLowerCase())
-      )
-
-      // Добавляем всех людей одним массивом
-      if (uniqueNames.length > 0) {
-        onAddPerson(uniqueNames)
-        
-        // Показываем уведомление об успешном добавлении
-        if (uniqueNames.length === 1) {
-          toast.success(`Участник ${uniqueNames[0].name} добавлен`)
-        } else {
-          toast.success(`Добавлено ${uniqueNames.length} участников`)
-        }
-      }
-
-      // Если были дубликаты, показываем предупреждение
-      if (duplicates.length > 0) {
-        toast.error(`${duplicates.join(', ')} уже в списке`)
-      }
+      onAddPerson(names)
       
       setNewPersonName('')
       setIsModalOpen(false)
     }
   }
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleAddPerson()
-    }
-  }
-
   return (
     <div className="people-section">
-      {/* <h2 className='margin--bottom'>Люди</h2> */}
       <ActionButton 
         icon={<UserPlus />}
         onClick={() => setIsModalOpen(true)}
@@ -100,7 +65,6 @@ function PeopleSection({ people, onAddPerson, onRemovePerson }) {
           type="text"
           value={newPersonName}
           onChange={(e) => setNewPersonName(e.target.value)}
-          onKeyDown={handleKeyDown}
           placeholder="Введите имена через запятую"
           className="modal__input"
           autoFocus
@@ -110,4 +74,4 @@ function PeopleSection({ people, onAddPerson, onRemovePerson }) {
   )
 }
 
-export default PeopleSection 
+export default PeopleSection
