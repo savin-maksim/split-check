@@ -21,6 +21,11 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
     }
   }
 
+  const formatTitle = (text) => {
+    if (!text) return ''
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+
   const handleSubmit = () => {
     if (!purchase.trim()) {
       setError('Введите название покупки')
@@ -39,11 +44,11 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
     }).format(calculatedPrice)
 
     onSubmit({ 
-      title: purchase.trim(), 
+      title: formatTitle(purchase.trim()), 
       amount: calculatedPrice
     })
 
-    toast.success(`Расход "${purchase.trim()}" - ${formattedPrice} добавлен`)
+    toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} добавлен`)
 
     setPurchase('')
     setPrice('')

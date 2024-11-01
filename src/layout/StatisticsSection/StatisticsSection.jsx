@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './statistics-section.scss'
+import Spinner from '../../components/Spinner/Spinner'
 
-function StatisticsSection({ people, costs, paymentMode }) {
+function StatisticsSection({ people, costs, paymentMode, transfers, isCalculating }) {
+  const [statistics, setStatistics] = useState({})
+
+  // Теперь расчет статистики зависит от transfers
+  useEffect(() => {
+    if (transfers.length > 0) {
+      const stats = calculateStatistics()
+      setStatistics(stats)
+    }
+  }, [transfers])
+
   const calculateStatistics = () => {
     const statistics = {}
     
@@ -46,55 +57,58 @@ function StatisticsSection({ people, costs, paymentMode }) {
     }).format(amount)
   }
 
+  // Если нет transfers, показываем пустой компонент
+  if (!transfers.length) {
+    return null
+  }
+
   return (
     <div className="statistics-section">
       <div className="statistics-section__cards">
-        {people.map(person => {
-          const personStats = stats[person.name]
-          const balance = personStats.spent - personStats.owned
-
-          return (
-            <div key={person.id} className="statistics-card">
-              <h3 className="statistics-card__name">{person.name}</h3>
-              
-              {paymentMode === 'single' ? (
-                <div className="statistics-card__info">
-                  <span>Потратил:</span>
-                  <h4 className=''>{formatAmount(personStats.owned)} ₽</h4>
-                </div>
-              ) : (
-                <>
-                  <div className="statistics-card__info">
-                    <span>Потратил(а):</span>
-                    <h4 className=''>{formatAmount(personStats.spent)} ₽</h4>
-                  </div>
-                  <div className="statistics-card__info">
-                    <span>Должен(на) заплатить:</span>
-                    <h4 className=''>{formatAmount(personStats.owned)} ₽</h4>
-                  </div>
-                  <div className="statistics-card__info">
-                    <span>Баланс:</span>
-                    <h4 className=''>{formatAmount(balance)} ₽</h4>
-                  </div>
-                </>
-              )}
-
-              {personStats.expenses.length > 0 && (
-                <div className="statistics-card__expenses">
-                  <h4 className="statistics-card__expenses-title">
-                    Детализация расходов:
-                  </h4>
-                  {personStats.expenses.map((expense, index) => (
-                    <div key={index} className="statistics-card__expense-item">
-                      <span>{expense.description}</span>
-                      <h4 className=''>{formatAmount(expense.amount)} ₽</h4>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {Object.entries(statistics).map(([name, stats]) => (
+          <div key={name} className="statistics-card">
+            <div className="statistics-card__header">
+              <h3 className="statistics-card__name">{name}</h3>
+              {isCalculating && <Spinner />}
             </div>
-          )
-        })}
+            
+            {paymentMode === 'single' ? (
+              <div className="statistics-card__info">
+                <span>Потратил:</span>
+                <h4 className=''>{formatAmount(stats.owned)} ₽</h4>
+              </div>
+            ) : (
+              <>
+                <div className="statistics-card__info">
+                  <span>Потратил(а):</span>
+                  <h4 className=''>{formatAmount(stats.spent)} ₽</h4>
+                </div>
+                <div className="statistics-card__info">
+                  <span>Должен(на) заплатить:</span>
+                  <h4 className=''>{formatAmount(stats.owned)} ₽</h4>
+                </div>
+                <div className="statistics-card__info">
+                  <span>Баланс:</span>
+                  <h4 className=''>{formatAmount(stats.spent - stats.owned)} ₽</h4>
+                </div>
+              </>
+            )}
+
+            {stats.expenses.length > 0 && (
+              <div className="statistics-card__expenses">
+                <h4 className="statistics-card__expenses-title">
+                  Детализация расходов:
+                </h4>
+                {stats.expenses.map((expense, index) => (
+                  <div key={index} className="statistics-card__expense-item">
+                    <span>{expense.description}</span>
+                    <h4 className=''>{formatAmount(expense.amount)} ₽</h4>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   )

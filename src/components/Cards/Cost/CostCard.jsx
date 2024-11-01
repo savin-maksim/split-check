@@ -13,6 +13,7 @@ function CostCard({
   splitBetween, 
   onDelete, 
   onUpdate, 
+  onCalculate,
   people,
   paymentMode
 }) {
@@ -57,6 +58,8 @@ function CostCard({
       paidBy,
       splitBetween: newSplitBetween
     });
+    
+    onCalculate?.();
   };
 
   return (
