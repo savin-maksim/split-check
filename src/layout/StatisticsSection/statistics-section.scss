@@ -23,7 +23,6 @@
   color: var(--color-light);
 
   &__name {
-    margin-bottom: 1rem;
     font-size: 1.25rem;
     color: var(--color-orange);
   }
@@ -52,4 +51,15 @@
     font-size: 0.875rem;
     margin-bottom: 0.25rem;
   }
-} 
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    .spinner {
+      margin-left: 1rem;
+    }
+  }
+}

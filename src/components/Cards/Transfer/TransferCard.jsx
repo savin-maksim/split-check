@@ -1,9 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import PersonButton from '../../Button/PersonButton';
+import Spinner from '../../Spinner/Spinner';
 
 import './transfer-card.scss';
 
-function TransferCard({ transfers }) {
+function TransferCard({ transfers, isLoading }) {
    const formatAmount = (amount) => {
       return new Intl.NumberFormat('ru-RU', {
          style: 'currency',
@@ -15,7 +16,10 @@ function TransferCard({ transfers }) {
 
    return (
       <div className="transfer-card">
-         <h3>Необходимые переводы</h3>
+         <div className="transfer-card__header">
+            <h3>Необходимые переводы</h3>
+            {isLoading && <Spinner />}
+         </div>
          
          <div className="transfer-card__transfers">
             {transfers.map((transfer, index) => (

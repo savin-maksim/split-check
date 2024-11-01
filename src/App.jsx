@@ -130,6 +130,9 @@ function App() {
   })
 
   const [previousPayersState, setPreviousPayersState] = useState(null)
+  const [recalculationTimer, setRecalculationTimer] = useState(null)
+  const [transfers, setTransfers] = useState([])
+  const [isCalculating, setIsCalculating] = useState(false)
 
   // Update URL when data changes
   useEffect(() => {
@@ -220,7 +223,7 @@ function App() {
         }
       }
 
-      // Если были дубликаты, показываем предупреждени��
+      // Если были дубликаты, показываем предупрежд��ние
       if (duplicates.length > 0) {
         toast.error(`${duplicates.join(', ')} уже в списке`)
       }
@@ -240,7 +243,7 @@ function App() {
       setCosts([])
       toast.success('Все данные очищены')
     } else {
-      // Иначе просто фильтруем расходы, убирая удаленного человека
+      // Иначе просто фильтруем расходы, убирая удаленного чеовека
       setCosts(costs.map(cost => ({
         ...cost,
         paidBy: cost.paidBy.filter(p => p.id !== personId),
@@ -316,6 +319,38 @@ function App() {
     ) && people.length > 0
   }, [costs, people])
 
+  // Очищаем таймер при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      if (recalculationTimer) {
+        clearTimeout(recalculationTimer)
+      }
+    }
+  }, [recalculationTimer])
+
+  const handleTransfersCalculated = (newTransfers) => {
+    setTransfers(newTransfers)
+  }
+
+  // Update the handler for transfers and statistics calculations
+  const handlePersonInteraction = () => {
+    setIsCalculating(true)
+    if (recalculationTimer) {
+      clearTimeout(recalculationTimer)
+    }
+    
+    const timer = setTimeout(() => {
+      setIsCalculating(false)
+    }, 2000)
+    
+    setRecalculationTimer(timer)
+  }
+
+  // Добавьте этот эффект для отслеживания изменений в costs
+  useEffect(() => {
+    handlePersonInteraction()
+  }, [costs])
+
   return (
     <>
       <Header 
@@ -352,6 +387,8 @@ function App() {
               <TransferSection 
                 people={people}
                 costs={costs}
+                isLoading={isCalculating}
+                onTransfersCalculated={handleTransfersCalculated}
               />
             </Section>
             <Section>
@@ -359,6 +396,8 @@ function App() {
                 people={people}
                 costs={costs}
                 paymentMode={paymentMode}
+                transfers={transfers}
+                isCalculating={isCalculating}
               />
             </Section>
           </>

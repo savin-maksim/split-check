@@ -28,6 +28,11 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
     }
   }
 
+  const formatTitle = (text) => {
+    if (!text) return ''
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+
   const handleSubmit = () => {
     if (!purchase.trim()) {
       setError('Введите название покупки')
@@ -47,11 +52,11 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
 
     onSubmit({ 
       ...initialData,
-      title: purchase.trim(), 
+      title: formatTitle(purchase.trim()), 
       amount: calculatedPrice
     })
 
-    toast.success(`Расход "${purchase.trim()}" - ${formattedPrice} обновлен`)
+    toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} обновлен`)
     onClose()
   }
 
