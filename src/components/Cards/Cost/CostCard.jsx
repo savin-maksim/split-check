@@ -80,20 +80,22 @@ function CostCard({
         </div>
       </div>
 
-      <div className="cost-card__section">
-        <p className="cost-card__label">Кто платил?</p>
-        <div className="cost-card__tags">
-          {people.map((person) => (
-            <PersonButton 
-              key={person.id} 
-              className={`cost-card__tag ${paidBy.some(p => p.id === person.id) ? 'button__person--active' : ''}`}
-              onClick={() => handlePaidByClick(person)}
-            >
-              {person.name}
-            </PersonButton>
-          ))}
+      {paymentMode === 'manual' && (
+        <div className="cost-card__section">
+          <p className="cost-card__label">Кто платил?</p>
+          <div className="cost-card__tags">
+            {people.map((person) => (
+              <PersonButton 
+                key={person.id} 
+                className={`cost-card__tag ${paidBy.some(p => p.id === person.id) ? 'button__person--active' : ''}`}
+                onClick={() => handlePaidByClick(person)}
+              >
+                {person.name}
+              </PersonButton>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="cost-card__section">
         <p className="cost-card__label">На кого разделить?</p>
