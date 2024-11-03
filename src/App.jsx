@@ -7,6 +7,7 @@ import TransferSection from './layout/TransferSection/TransferSection'
 import StatisticsSection from './layout/StatisticsSection/StatisticsSection'
 import Toast from './components/Toast/Toast'
 import { toast } from 'react-hot-toast'
+import SelectPayerModal from './components/Modal/SelectPayerModal'
 
 // Define storage keys
 const STORAGE_KEYS = {
@@ -134,6 +135,10 @@ function App() {
   const [transfers, setTransfers] = useState([])
   const [isCalculating, setIsCalculating] = useState(false)
 
+  // Add new state for payer selection modal
+  const [isPayerModalOpen, setIsPayerModalOpen] = useState(false)
+  const [pendingCosts, setPendingCosts] = useState(null)
+
   // Update URL when data changes
   useEffect(() => {
     const updateURL = () => {
@@ -223,7 +228,7 @@ function App() {
         }
       }
 
-      // Если были дубликаты, показываем предупрежд��ние
+      // Если были дубликаты, показываем предупреждение
       if (duplicates.length > 0) {
         toast.error(`${duplicates.join(', ')} уже в списке`)
       }
@@ -254,10 +259,43 @@ function App() {
   }
 
   const handleAddCost = (newCost) => {
-    if (paymentMode === 'single' && singlePayer) {
-      newCost.paidBy = [singlePayer]
+    // Если передан массив расходов (при импорте)
+    if (Array.isArray(newCost)) {
+      // Сохраняем расходы во временное состояние и показываем модальное окно
+      setPendingCosts(newCost)
+      setIsPayerModalOpen(true)
+    } else {
+      // Обычное добавление одного расхода
+      const costToAdd = {
+        ...newCost,
+        id: Math.random().toString(36).substr(2, 9),
+        paidBy: paymentMode === 'single' && singlePayer ? [singlePayer] : [],
+        splitBetween: []
+      }
+      setCosts(prevCosts => [...prevCosts, costToAdd])
     }
-    setCosts([...costs, newCost])
+  }
+
+  const handlePayerSelect = (selectedPayer) => {
+    if (pendingCosts) {
+      // Преобразуем каждый расход, добавляя выбранного плательщика
+      const costsToAdd = pendingCosts.map(cost => ({
+        id: Math.random().toString(36).substr(2, 9), // Добавляем уникальный ID
+        title: cost.title,
+        amount: parseFloat(cost.amount),
+        paidBy: [selectedPayer], // Устанавливаем выбранного плательщика
+        splitBetween: [] // Пустой массив для разделения
+      }))
+
+      if (paymentMode === 'single') {
+        setCosts(prevCosts => [...prevCosts, ...costsToAdd])
+        setPendingCosts(null)
+        
+        // Показываем уведомление об успешном импорте
+        toast.success(`Расходы добавлены, плательщик: ${selectedPayer.name}`)
+      }
+      setIsPayerModalOpen(false)
+    }
   }
 
   const handleUpdateCost = (costId, updatedCost) => {
@@ -404,6 +442,16 @@ function App() {
         )}
       </main>
       <Toast />
+      <SelectPayerModal
+        isOpen={isPayerModalOpen}
+        onClose={() => {
+          setIsPayerModalOpen(false)
+          setPendingCosts(null)
+        }}
+        onSubmit={handlePayerSelect}
+        people={people}
+        title="Выбор плательщика"
+      />
     </>
   )
 }
