@@ -7,7 +7,6 @@ import TransferSection from './layout/TransferSection/TransferSection'
 import StatisticsSection from './layout/StatisticsSection/StatisticsSection'
 import Toast from './components/Toast/Toast'
 import { toast } from 'react-hot-toast'
-import SelectPayerModal from './components/Modal/SelectPayerModal'
 
 // Define storage keys
 const STORAGE_KEYS = {
