@@ -1,22 +1,22 @@
 @use "/src/styles/mixins" as *;
 
 .button {
-  @include flex-center();
-  @include simple-button-animation;
-  @include hover {
-    cursor: pointer;
-  }
   background-color: var(--color-glass);
   color: var(--color-light);
   border: var(--border);
   border-radius: var(--border-radius-small);
   padding: 0.5rem 1rem;
+  @include flex-center();
+  @include simple-button-animation;
+  @include hover {
+    cursor: pointer;
+  }
 
   &__person {
-    @include button-animation;
     border-radius: var(--border-radius-person);
-    @include fluid-text(17, 13);
     font-weight: 500;
+    @include button-animation;
+    @include fluid-text(17, 13);
 
     &--active {
       background-color: var(--color-active);
@@ -36,7 +36,6 @@
       transform: scale(1.3);
       color: var(--color-text-active);
     }
-
   }
 
   &--icon-left {

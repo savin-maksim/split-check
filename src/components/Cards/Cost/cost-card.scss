@@ -39,8 +39,8 @@
   }
 
   &__label {
-    @include fluid-text(15, 11);
     margin-bottom: 0.5rem;
+    @include fluid-text(15, 11);
   }
 
   &__tags {
