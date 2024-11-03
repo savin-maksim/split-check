@@ -243,7 +243,7 @@ function App() {
       setCosts([])
       toast.success('Все данные очищены')
     } else {
-      // Иначе просто фильтруем расходы, убирая удаленного чеовека
+      // Иначе просто фильтруем расходы, убирая удаленного человека
       setCosts(costs.map(cost => ({
         ...cost,
         paidBy: cost.paidBy.filter(p => p.id !== personId),

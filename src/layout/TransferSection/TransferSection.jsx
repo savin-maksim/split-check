@@ -27,7 +27,6 @@ function TransferSection({ costs, people, onTransfersCalculated, isLoading }) {
   }, [costs, people]) // Зависимости useEffect
 
   const calculateTransfers = () => {
-    console.log('\nStarting transfer calculations...') // Для отладки
     let debts = {}
     
     // Initialize debts
@@ -68,7 +67,6 @@ function TransferSection({ costs, people, onTransfersCalculated, isLoading }) {
       })
     })
 
-    console.log('\nInitial balances:', balances)
 
     // Sort positive and negative balances
     const positiveBalances = Object.entries(balances)
@@ -79,8 +77,6 @@ function TransferSection({ costs, people, onTransfersCalculated, isLoading }) {
       .filter(([_, balance]) => balance < 0)
       .sort(([, a], [, b]) => a - b)
 
-    console.log('\nSorted positive balances:', positiveBalances)
-    console.log('Sorted negative balances:', negativeBalances)
 
     // Calculate optimized transfers
     const optimizedTransfers = []
@@ -110,7 +106,6 @@ function TransferSection({ costs, people, onTransfersCalculated, isLoading }) {
       }
     }
 
-    console.log('\nOptimized transfers:', optimizedTransfers)
     setTransfers(optimizedTransfers)
     onTransfersCalculated(optimizedTransfers)
   }

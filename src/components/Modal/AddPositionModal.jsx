@@ -84,7 +84,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
             value={purchase}
             onChange={(e) => setPurchase(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e, 'purchase')}
-            placeholder="Введите название покупки"
+            placeholder="Название покупки"
             className="modal__input"
             autoFocus
           />
@@ -101,7 +101,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
               setError('')
             }}
             onKeyDown={(e) => handleKeyDown(e, 'price')}
-            placeholder="Введите сумму (можно использовать математические выражения)"
+            placeholder="Сумма (вычисления доступны)"
             className="modal__input"
           />
         </div>
