@@ -9,14 +9,14 @@
   <title>Split Check - Удобный калькулятор для разделения счета</title>
   <meta name="title" content="Split Check - Удобный калькулятор для разделения счета">
   <meta name="description"
-    content="Простой и удобный способ разделить счет между друзьями. Рассчитайте, кто кому должен перевести деньги после совместных расходов.">
+    content="Простой и удобный способ разделить счет между друзьями. Рассчитайте, кто кому должен перевести деньги после совместных расходов. Бесплатный онлайн калькулятор для деления счета в ресторане, при совместных покупках или путешествиях.">
   <meta name="keywords"
-    content="разделить счет, калькулятор счета, split bill, разделить расходы между друзьями, совместные траты, калькулятор расходов">
+    content="разделить счет, калькулятор счета, split bill, разделить расходы между друзьями, совместные траты, калькулятор расходов, поделить счет, разделить чек, split check calculator, bill splitting app, restaurant bill calculator, shared expenses calculator, divide bill, split payment calculator, расчет общего счета, калькулятор для компании, деление счета, разделить платеж, совместный счет, групповые расходы, раздельный счет, справедливое разделение счета, умный калькулятор расходов, поделить расходы, расчет долей, калькулятор долей, распределение затрат, учет расходов группы, разделение расходов онлайн">
   <meta name="author" content="Maksim-Savin">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://your-domain.com/">
+  <meta property="og:url" content="https://split-checks.netlify.app/">
   <meta property="og:title" content="Split Check - Удобный калькулятор для разделения счета">
   <meta property="og:description"
     content="Простой и удобный способ разделить счет между друзьями. Рассчитайте, кто кому должен перевести деньги после совместных расходов.">
@@ -24,7 +24,7 @@
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://your-domain.com/">
+  <meta property="twitter:url" content="https://split-checks.netlify.app/">
   <meta property="twitter:title" content="Split Check - Удобный калькулятор для разделения счета">
   <meta property="twitter:description"
     content="Простой и удобный способ разделить счет между друзьями. Рассчитайте, кто кому должен перевести деньги после совместных расходов.">
@@ -57,11 +57,23 @@
   <!-- Verification -->
   <meta name="google-site-verification" content="cryhuqwbJUUO9_SwNgEwZrZjJPx90_9_xYrPVxysLpc" />
   <meta name="yandex-verification" content="32febfeb53f701f0" />
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="/src/main.jsx" as="script">
+  <link rel="preload" href="/src/styles/styles.scss" as="style">
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Resource hints -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 </head>
 
 <body>
   <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+  <script type="module" src="/src/main.jsx" async defer></script>
   <noscript>Для работы приложения необходимо включить JavaScript</noscript>
 </body>
 
