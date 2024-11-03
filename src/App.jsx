@@ -441,16 +441,6 @@ function App() {
         )}
       </main>
       <Toast />
-      <SelectPayerModal
-        isOpen={isPayerModalOpen}
-        onClose={() => {
-          setIsPayerModalOpen(false)
-          setPendingCosts(null)
-        }}
-        onSubmit={handlePayerSelect}
-        people={people}
-        title="Выбор плательщика"
-      />
     </>
   )
 }
