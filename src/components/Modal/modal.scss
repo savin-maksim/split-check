@@ -41,6 +41,10 @@
     }
   }
 
+  &__title {
+    
+  }
+
   &__inputs {
     display: flex;
     flex-direction: column;
@@ -67,6 +71,10 @@
       outline: none;
       border-color: rgba(255, 255, 255, 0.5);
     }
+
+    &--half {
+      width: calc(50% - 0.5rem);
+    }
   }
 
   &__buttons {
@@ -80,4 +88,39 @@
     margin-top: 0.5rem;
     font-size: 0.875rem;
   }
+
+  &__price-inputs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__import-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+
+    button {
+      width: 100%;
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 } 

@@ -43,7 +43,7 @@ function CostSection({
             >
                Добавить расход
             </ActionButton>
-            
+
             <div className="payment-mode__selector">
                <h3>Режим оплаты</h3>
                <div className="payment-mode__icons">
@@ -90,6 +90,8 @@ function CostSection({
                   id={cost.id}
                   title={cost.title}
                   amount={cost.amount}
+                  quantity={cost.quantity}
+                  pricePerUnit={cost.pricePerUnit}
                   paidBy={cost.paidBy}
                   splitBetween={cost.splitBetween}
                   people={people}
