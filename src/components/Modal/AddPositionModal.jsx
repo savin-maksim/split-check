@@ -140,68 +140,75 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-        <h2 className="modal__title">{title}</h2>
-        {error && <p className="modal__error">{error}</p>}
-        <div className="modal__inputs">
+      <h2 className="modal__title">{title}</h2>
+      {error && <p className="modal__error">{error}</p>}
+      <form 
+        className="modal__inputs" 
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <input
+          ref={purchaseInputRef}
+          type="text"
+          value={purchase}
+          onChange={(e) => setPurchase(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e, 'purchase')}
+          placeholder="Название покупки"
+          className="modal__input"
+          autoFocus
+        />
+        <div className="modal__price-inputs">
           <input
-            ref={purchaseInputRef}
             type="text"
-            value={purchase}
-            onChange={(e) => setPurchase(e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e, 'purchase')}
-            placeholder="Название покупки"
-            className="modal__input"
-            autoFocus
+            inputMode="numeric"
+            enterKeyHint="next"
+            pattern="[0-9]*"
+            value={quantity}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setQuantity(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+            placeholder="Количество"
+            className="modal__input modal__input--half"
           />
-          <div className="modal__price-inputs">
-            <input
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={quantity}
-              onChange={(e) => {
-                const value = e.target.value
-                  .replace(/,/g, '.')
-                  .replace(/\.+/g, '.')
-                setQuantity(value)
-                setError('')
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'quantity')}
-              placeholder="Количество"
-              className="modal__input modal__input--half"
-            />
-            <input
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              value={pricePerUnit}
-              onChange={(e) => {
-                const value = e.target.value
-                  .replace(/,/g, '.')
-                  .replace(/\.+/g, '.')
-                setPricePerUnit(value)
-                setError('')
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
-              placeholder="Цена за единицу"
-              className="modal__input modal__input--half"
-            />
-          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            enterKeyHint="done"
+            pattern="[0-9]*"
+            value={pricePerUnit}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setPricePerUnit(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+            placeholder="Цена за единицу"
+            className="modal__input modal__input--half"
+          />
         </div>
-        <div className="modal__buttons">
-          <IconButton
-            onClick={() => setIsImportModalOpen(true)}
-            icon={<Link size={20} />}
-          >
-          </IconButton>
-          <ActionButton onClick={handleSubmit}>
-            Добавить
-          </ActionButton>
-          <ActionButton onClick={onClose}>
-            Отмена
-          </ActionButton>
-        </div>
-
+        <button type="submit" style={{ display: 'none' }} />
+      </form>
+      <div className="modal__buttons">
+        <IconButton
+          onClick={() => setIsImportModalOpen(true)}
+          icon={<Link size={20} />}
+        />
+        <ActionButton onClick={handleSubmit}>
+          Добавить
+        </ActionButton>
+        <ActionButton onClick={onClose}>
+          Отмена
+        </ActionButton>
+      </div>
       <ImportModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
