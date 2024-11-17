@@ -5,19 +5,31 @@ import { Link } from 'lucide-react'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
 import IconButton from '../Button/IconButton'
+import ImportModal from './ImportModal'
+import Modal from './Modal'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
   const [purchase, setPurchase] = useState('')
-  const [price, setPrice] = useState('')
+  const [quantity, setQuantity] = useState('1')
+  const [pricePerUnit, setPricePerUnit] = useState('')
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
-  const priceInputRef = useRef(null)
   const math = create(all)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(true)
 
-  const validateAndCalculatePrice = (value) => {
+  const validateAndCalculatePrice = (qty, price) => {
     try {
-      const result = math.evaluate(value)
-      return result
+      const qtyValue = math.evaluate(qty)
+      const priceValue = math.evaluate(price)
+      if (qtyValue > 0 && priceValue > 0) {
+        return {
+          quantity: qtyValue,
+          pricePerUnit: priceValue,
+          total: qtyValue * priceValue
+        }
+      }
+      return null
     } catch {
       return null
     }
@@ -35,27 +47,36 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
         return
       }
 
-      const calculatedPrice = validateAndCalculatePrice(price)
-      if (calculatedPrice === null || calculatedPrice <= 0) {
-        setError('Введите корректную сумму')
+      const calculation = validateAndCalculatePrice(quantity, pricePerUnit)
+      if (!calculation) {
+        setError('Введите корректные значеия')
         return
       }
 
-      // Создаем уникальный ID для расхода
       const id = Date.now()
+      const formattedTitle = formatTitle(purchase.trim())
+      const formattedPrice = new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB'
+      }).format(calculation.total)
 
       onSubmit({
         id,
-        title: formatTitle(purchase.trim()),
-        amount: calculatedPrice,
-        paidBy: [], // Добавляем пустой массив paidBy
-        splitBetween: [] // Добавляем пустой массив splitBetween
+        title: formattedTitle,
+        amount: calculation.total,
+        quantity: calculation.quantity,
+        pricePerUnit: calculation.pricePerUnit,
+        paidBy: [],
+        splitBetween: []
       })
 
-      onClose()
       setPurchase('')
-      setPrice('')
+      setQuantity('1')
+      setPricePerUnit('')
       setError('')
+      purchaseInputRef.current?.focus()
+      
+      toast.success(`Позиция "${formattedTitle}" - ${formattedPrice} добавлена`)
     } catch (error) {
       console.error('Submit error:', error)
       setError('Произошла ошибка при добавлении')
@@ -65,13 +86,17 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
   const handleKeyDown = (e, inputType) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-
-      if (inputType === 'purchase') {
-        // Если Enter нажат в поле purchase - переходим к полю price
-        priceInputRef.current?.focus()
-      } else if (inputType === 'price') {
-        // Если Enter нажат в поле price - подтверждаем создание
-        handleSubmit()
+      
+      switch (inputType) {
+        case 'purchase':
+          document.querySelector('input[placeholder="Количество"]')?.focus()
+          break
+        case 'quantity':
+          document.querySelector('input[placeholder="Цена за единицу"]')?.focus()
+          break
+        case 'pricePerUnit':
+          handleSubmit()
+          break
       }
     }
   }
@@ -84,8 +109,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
       const costsParam = params.get('c')
 
       if (!costsParam) {
-        toast.error('В ссылке нет данных о расходах')
-        return
+        throw new Error('В ссылке нет данных о расходах')
       }
 
       // Декодируем данные из base64
@@ -93,35 +117,30 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
       const decodedData = decodeURIComponent(decodedString)
       const costs = JSON.parse(decodedData)
 
-
       // Импортируем каждый расход напрямую через onSubmit
       for (const cost of costs) {
         const newCost = {
           title: cost[1],
-          amount: String(cost[2])
+          amount: String(cost[2]),
+          quantity: cost[3] || 1,
+          pricePerUnit: cost[4] || cost[2],
+          paidBy: [],
+          splitBetween: []
         }
 
-        // Напрямую вызываем onSubmit для каждого расхода
         onSubmit(newCost)
-
-        // Небольшая задержка между добавлениями
         await new Promise(resolve => setTimeout(resolve, 300))
       }
-
-      toast.success(`Импортировано ${costs.length} расходов`)
-      onClose()
     } catch (error) {
-      console.error('Ошибка импорта:', error)
-      toast.error('Ошибка при импорте данных')
+      throw error // Пробрасываем ошибку выше для обработки в ImportModal
     }
   }
 
   if (!isOpen) return null
 
   return (
-    <div className="modal">
-      <div className="modal__content">
-        <h2>{title}</h2>
+    <Modal isOpen={isOpen} onClose={onClose}>
+        <h2 className="modal__title">{title}</h2>
         {error && <p className="modal__error">{error}</p>}
         <div className="modal__inputs">
           <input
@@ -134,26 +153,44 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
             className="modal__input"
             autoFocus
           />
-          <input
-            ref={priceInputRef}
-            type="text"
-            inputMode="text"
-            value={price}
-            onChange={(e) => {
-              const value = e.target.value
-                .replace(/,/g, '.')
-                .replace(/\.+/g, '.')
-              setPrice(value)
-              setError('')
-            }}
-            onKeyDown={(e) => handleKeyDown(e, 'price')}
-            placeholder="Сумма (вычисления доступны)"
-            className="modal__input"
-          />
+          <div className="modal__price-inputs">
+            <input
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={quantity}
+              onChange={(e) => {
+                const value = e.target.value
+                  .replace(/,/g, '.')
+                  .replace(/\.+/g, '.')
+                setQuantity(value)
+                setError('')
+              }}
+              onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+              placeholder="Количество"
+              className="modal__input modal__input--half"
+            />
+            <input
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={pricePerUnit}
+              onChange={(e) => {
+                const value = e.target.value
+                  .replace(/,/g, '.')
+                  .replace(/\.+/g, '.')
+                setPricePerUnit(value)
+                setError('')
+              }}
+              onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+              placeholder="Цена за единицу"
+              className="modal__input modal__input--half"
+            />
+          </div>
         </div>
         <div className="modal__buttons">
           <IconButton
-            onClick={handleImportFromURL}
+            onClick={() => setIsImportModalOpen(true)}
             icon={<Link size={20} />}
           >
           </IconButton>
@@ -164,8 +201,14 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
             Отмена
           </ActionButton>
         </div>
-      </div>
-    </div>
+
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImportFromURL={handleImportFromURL}
+        onSubmit={onSubmit}
+      />
+    </Modal>
   )
 }
 

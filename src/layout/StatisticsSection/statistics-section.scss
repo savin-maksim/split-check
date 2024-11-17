@@ -22,9 +22,19 @@
   padding: 1rem;
   color: var(--color-light);
 
+  &--summary {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+  }
+
   &__name {
     font-size: 1.25rem;
     color: var(--color-orange);
+  }
+
+  &__total {
+    text-align: center;
+    margin-bottom: 1rem;
   }
 
   &__info {
@@ -32,6 +42,10 @@
     justify-content: space-between;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
+  }
+
+  &__expense-amount {
+    text-align: end;
   }
 
   &__expenses {
@@ -43,13 +57,49 @@
   &__expenses-title {
     font-size: 1rem;
     margin-bottom: 0.5rem;
+
+    &--columns {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) 80px minmax(0, 1.5fr);
+      gap: 0.5rem;
+      align-items: center;
+    }
   }
 
   &__expense-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.875rem;
     margin-bottom: 0.25rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--detailed {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) 80px minmax(0, 1.5fr);
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+
+  &__expense-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__expense-quantity {
+    text-align: center;
+    opacity: 0.7;
+
+    &--white {
+      opacity: 1;
+    }
   }
 
   &__header {

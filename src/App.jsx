@@ -7,6 +7,7 @@ import TransferSection from './layout/TransferSection/TransferSection'
 import StatisticsSection from './layout/StatisticsSection/StatisticsSection'
 import Toast from './components/Toast/Toast'
 import { toast } from 'react-hot-toast'
+import ShareButton from './components/Button/ShareButton'
 
 // Define storage keys
 const STORAGE_KEYS = {
@@ -28,6 +29,8 @@ const compressData = (data) => {
               item.id,
               item.title,
               item.amount,
+              item.quantity || 1,
+              item.pricePerUnit || item.amount,
               item.paidBy.map(p => p.id),
               item.splitBetween.map(p => p.id)
             ]
@@ -54,13 +57,15 @@ const decompressData = (compressed, type = 'general') => {
         if (Array.isArray(item)) {
           if (item.length === 2) {
             return { id: item[0], name: item[1] }
-          } else if (item.length === 5) {
+          } else if (item.length === 7) {
             return {
               id: item[0],
               title: item[1],
               amount: item[2],
-              paidBy: item[3].map(id => ({ id })),
-              splitBetween: item[4].map(id => ({ id }))
+              quantity: item[3],
+              pricePerUnit: item[4],
+              paidBy: item[5].map(id => ({ id })),
+              splitBetween: item[6].map(id => ({ id }))
             }
           }
         }
@@ -153,6 +158,8 @@ function App() {
           cost.id,
           cost.title,
           cost.amount,
+          cost.quantity || 1,
+          cost.pricePerUnit || cost.amount,
           cost.paidBy.map(p => p.id),
           cost.splitBetween.map(p => p.id)
         ])
@@ -186,14 +193,6 @@ function App() {
     localStorage.setItem(STORAGE_KEYS.SINGLE_PAYER, JSON.stringify(singlePayer))
   }, [singlePayer])
 
-  // Add function to copy the link
-  const handleShareLink = () => {
-    const currentURL = window.location.href
-    navigator.clipboard.writeText(currentURL)
-      .then(() => toast.success('Link copied'))
-      .catch(() => toast.error('Failed to copy link'))
-  }
-
   // Show cost section when there's at least one person
   const showCostSection = people.length > 0
 
@@ -219,7 +218,7 @@ function App() {
       if (uniqueNames.length > 0) {
         setPeople([...people, ...uniqueNames])
         
-        // Показываем уведомление об успешном добавлении
+        // Показываем увеомление об успешном добавлении
         if (uniqueNames.length === 1) {
           toast.success(`Участник ${uniqueNames[0].name} добавлен`)
         } else {
@@ -260,7 +259,7 @@ function App() {
   const handleAddCost = (newCost) => {
     // Если передан массив расходов (при импорте)
     if (Array.isArray(newCost)) {
-      // Сохраняем расходы во временное состояние и показываем модальное окно
+      // Сохраняем расходы во временное состояние и показывае модальное окно
       setPendingCosts(newCost)
       setIsPayerModalOpen(true)
     } else {
@@ -298,55 +297,64 @@ function App() {
   }
 
   const handleUpdateCost = (costId, updatedCost) => {
-    setCosts(costs.map(cost => 
-      cost.id === costId ? updatedCost : cost
-    ))
-  }
+    if (updatedCost.id !== costId) {
+      // This is a duplicate operation
+      setCosts(prevCosts => {
+        const index = prevCosts.findIndex(cost => cost.id === costId);
+        const newCosts = [...prevCosts];
+        newCosts.splice(index + 1, 0, updatedCost);
+        return newCosts;
+      });
+      toast.success('Позиция успешно дублирована');
+    } else {
+      // This is a regular update operation
+      setCosts(costs.map(cost => 
+        cost.id === costId ? updatedCost : cost
+      ));
+    }
+  };
 
   const handleDeleteCost = (costId) => {
     setCosts(costs.filter(cost => cost.id !== costId))
   }
 
   const handlePaymentModeChange = (mode) => {
-    if (mode === paymentMode) return
+    if (mode === paymentMode) return;
 
     if (mode === 'single') {
-      // Сохраняем текущее состояние плательщиков
       setPreviousPayersState(costs.map(cost => ({
         id: cost.id,
         paidBy: [...cost.paidBy]
-      })))
+      })));
 
-      // Обновляем все расходы, устанавливая одного плательщика
       if (singlePayer) {
         setCosts(costs.map(cost => ({
-          ...cost,
+          ...cost,           // Сохраняем все существующие поля
           paidBy: [singlePayer]
-        })))
+        })));
       }
     } else if (mode === 'manual' && previousPayersState) {
-      // Восстанавливаем предыдущее состояние плательщиков
       setCosts(costs.map(cost => {
-        const previousState = previousPayersState.find(prev => prev.id === cost.id)
+        const previousState = previousPayersState.find(prev => prev.id === cost.id);
         return {
-          ...cost,
+          ...cost,           // Сохраняем все существующие поля
           paidBy: previousState ? previousState.paidBy : cost.paidBy
-        }
-      }))
-      setPreviousPayersState(null)
+        };
+      }));
+      setPreviousPayersState(null);
     }
 
-    setPaymentMode(mode)
-    setSinglePayer(null)
-  }
+    setPaymentMode(mode);
+    setSinglePayer(null);
+  };
 
   const handleSinglePayerSelect = (person) => {
-    setSinglePayer(person)
+    setSinglePayer(person);
     setCosts(costs.map(cost => ({
-      ...cost,
+      ...cost,           // Сохраняем все существующие поля
       paidBy: [person]
-    })))
-  }
+    })));
+  };
 
   // Определяем, когда показывать кнопку шеринга
   const showShareButton = useMemo(() => {
@@ -389,10 +397,8 @@ function App() {
   }, [costs])
 
   return (
-    <>
-      <Header 
-        onShare={showShareButton ? handleShareLink : null}
-      />
+    <div className="app">
+      <Header />
       <main className="content">
         <Section>
           <PeopleSection 
@@ -427,6 +433,7 @@ function App() {
                 isLoading={isCalculating}
                 onTransfersCalculated={handleTransfersCalculated}
               />
+              {showShareButton && <ShareButton costs={costs} people={people} />}
             </Section>
             <Section>
               <StatisticsSection 
@@ -441,7 +448,7 @@ function App() {
         )}
       </main>
       <Toast />
-    </>
+    </div>
   )
 }
 

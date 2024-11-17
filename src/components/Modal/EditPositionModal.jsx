@@ -6,23 +6,32 @@ import { toast } from 'react-hot-toast'
 
 function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
   const [purchase, setPurchase] = useState(initialData?.title || '')
-  const [price, setPrice] = useState(initialData?.amount?.toString() || '')
+  const [quantity, setQuantity] = useState(initialData?.quantity?.toString() || '1')
+  const [pricePerUnit, setPricePerUnit] = useState(initialData?.pricePerUnit?.toString() || '')
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
-  const priceInputRef = useRef(null)
   const math = create(all)
 
   React.useEffect(() => {
     if (isOpen && initialData) {
       setPurchase(initialData.title)
-      setPrice(initialData.amount.toString())
+      setQuantity(initialData.quantity?.toString() || '1')
+      setPricePerUnit(initialData.pricePerUnit?.toString() || '')
     }
   }, [isOpen, initialData])
 
-  const validateAndCalculatePrice = (value) => {
+  const validateAndCalculatePrice = (qty, price) => {
     try {
-      const result = math.evaluate(value)
-      return result
+      const qtyValue = math.evaluate(qty)
+      const priceValue = math.evaluate(price)
+      if (qtyValue > 0 && priceValue > 0) {
+        return {
+          quantity: qtyValue,
+          pricePerUnit: priceValue,
+          total: qtyValue * priceValue
+        }
+      }
+      return null
     } catch {
       return null
     }
@@ -39,21 +48,23 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       return
     }
 
-    const calculatedPrice = validateAndCalculatePrice(price)
-    if (calculatedPrice === null || calculatedPrice <= 0) {
-      setError('Введите корректную сумму')
+    const calculation = validateAndCalculatePrice(quantity, pricePerUnit)
+    if (!calculation) {
+      setError('Введите корректные значения')
       return
     }
 
     const formattedPrice = new Intl.NumberFormat('ru-RU', {
       style: 'currency',
       currency: 'RUB'
-    }).format(calculatedPrice)
+    }).format(calculation.total)
 
     onSubmit({ 
       ...initialData,
       title: formatTitle(purchase.trim()), 
-      amount: calculatedPrice
+      amount: calculation.total,
+      quantity: calculation.quantity,
+      pricePerUnit: calculation.pricePerUnit
     })
 
     toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} обновлен`)
@@ -64,8 +75,10 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
     if (e.key === 'Enter') {
       e.preventDefault()
       if (inputType === 'purchase') {
-        priceInputRef.current?.focus()
-      } else if (inputType === 'price') {
+        document.querySelector('input[placeholder="Количество"]')?.focus()
+      } else if (inputType === 'quantity') {
+        document.querySelector('input[placeholder="Цена за единицу"]')?.focus()
+      } else if (inputType === 'pricePerUnit') {
         handleSubmit()
       }
     }
@@ -86,22 +99,36 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
           className="modal__input"
           autoFocus
         />
-        <input
-          ref={priceInputRef}
-          type="text"
-          inputMode="text"
-          value={price}
-          onChange={(e) => {
-            const value = e.target.value
-              .replace(/,/g, '.')
-              .replace(/\.+/g, '.')
-            setPrice(value)
-            setError('')
-          }}
-          onKeyDown={(e) => handleKeyDown(e, 'price')}
-          placeholder="Введите сумму"
-          className="modal__input"
-        />
+        <div className="modal__price-inputs">
+          <input
+            type="text"
+            value={quantity}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setQuantity(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+            placeholder="Количество"
+            className="modal__input modal__input--half"
+          />
+          <input
+            type="text"
+            value={pricePerUnit}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setPricePerUnit(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+            placeholder="Цена за единицу"
+            className="modal__input modal__input--half"
+          />
+        </div>
       </div>
       <div className="modal__buttons">
         <ActionButton onClick={handleSubmit}>
