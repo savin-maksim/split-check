@@ -98,7 +98,7 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
       return quantity.toString();
     }
     // Если число дробное, округляем до 2 знаков после запятой
-    return quantity.toFixed(2);
+    return quantity.toFixed(2).replace('.',',');
   };
 
   if (!transfers.length) {
