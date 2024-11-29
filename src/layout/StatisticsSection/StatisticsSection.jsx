@@ -33,24 +33,32 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
       const personExpenses = costs.filter(cost =>
         cost.splitBetween.some(p => p.id === person.id)
       ).map(cost => {
-        const splitCount = cost.splitBetween.length
-        const personShare = cost.amount / splitCount
-        const personQuantity = (cost.quantity || 1) / splitCount
+        const splitCount = cost.splitBetween.length;
+        const personShare = cost.amount / splitCount;
+        const personQuantity = cost.quantity || 1;
 
         return {
           description: cost.title,
           amount: personShare,
           quantity: personQuantity,
+          splitCount: splitCount,
           pricePerUnit: cost.pricePerUnit || cost.amount
         }
       })
 
-      const totalAmount = personExpenses.reduce((sum, exp) => sum + exp.amount, 0)
+      const totalSpent = costs
+        .filter(cost => cost.paidBy.some(p => p.id === person.id))
+        .reduce((sum, cost) => sum + cost.amount, 0)
+
+      const totalOwed = personExpenses.reduce((sum, exp) => sum + exp.amount, 0)
+
+      const balance = totalSpent - totalOwed
 
       return {
         id: person.id,
         name: person.name,
-        totalAmount,
+        totalAmount: totalSpent,
+        balance: balance,
         expenses: personExpenses
       }
     })
@@ -91,14 +99,21 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
     }).format(amount)
   }
 
-  const formatQuantity = (quantity) => {
-    if (quantity === undefined || quantity === null) return '1';
-    // Проверяем, является ли число целым
-    if (Number.isInteger(quantity)) {
-      return quantity.toString();
+  const formatQuantity = (quantity, splitCount) => {
+    if (!quantity || !splitCount) return '1';
+    
+    // Если количество делится нацело на количество участников
+    if (quantity % splitCount === 0) {
+      return (quantity / splitCount).toString();
     }
-    // Если число дробное, округляем до 2 знаков после запятой
-    return quantity.toFixed(2).replace('.',',');
+    
+    // Иначе показываем дробь: количество/количество_участников
+    return `${quantity}/${splitCount}`;
+  };
+
+  const formatTotalQuantity = (quantity) => {
+    if (!quantity) return '1';
+    return quantity.toString();
   };
 
   if (!transfers.length) {
@@ -121,16 +136,10 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
                 <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
               </div>
             ) : (
-              <>
-                <div className="statistics-card__info">
-                  <span>Потратил(а):</span>
-                  <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
-                </div>
-                <div className="statistics-card__info">
-                  <span>Баланс:</span>
-                  <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
-                </div>
-              </>
+              <div className="statistics-card__info">
+                <span>Потратил(а):</span>
+                <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
+              </div>
             )}
 
             {person.expenses.length > 0 && (
@@ -144,11 +153,31 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
                       <span className="statistics-card__expense-title">{expense.description}</span>
                     </div>
                     <div className="statistics-card__expense-quantity">
-                      <span>{formatQuantity(expense.quantity)} шт</span>
+                      <span>{formatQuantity(expense.quantity, expense.splitCount)} шт</span>
                     </div>
                     <h4 className="statistics-card__expense-amount">{formatAmount(expense.amount)} ₽</h4>
                   </div>
                 ))}
+                <div className="statistics-card__expense-item statistics-card__expense-item--total">
+                  <div className="statistics-card__expense-info">
+                    <h4 className="statistics-card__expense-title">Итого</h4>
+                  </div>
+                  <div className="statistics-card__expense-quantity"></div>
+                  <h4 className="statistics-card__expense-amount">
+                    {formatAmount(person.expenses.reduce((sum, exp) => sum + exp.amount, 0))} ₽
+                  </h4>
+                </div>
+                {paymentMode === 'manual' && (
+                  <div className="statistics-card__expense-item statistics-card__expense-item--balance">
+                    <div className="statistics-card__expense-info">
+                      <h4 className="statistics-card__expense-title">Баланс</h4>
+                    </div>
+                    <div className="statistics-card__expense-quantity"></div>
+                    <h4 className="statistics-card__expense-amount">
+                      {formatAmount(person.balance)} ₽
+                    </h4>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -176,7 +205,7 @@ function StatisticsSection({ people, costs, paymentMode, transfers, isCalculatin
                   <span className="statistics-card__expense-title">{expense.title}</span>
                 </div>
                 <div className="statistics-card__expense-quantity">
-                  <span>{formatQuantity(expense.quantity)} шт</span>
+                  <span>{formatTotalQuantity(expense.quantity)} шт</span>
                 </div>
                 <h4 className="statistics-card__expense-amount">{formatAmount(expense.amount)} ₽</h4>
               </div>

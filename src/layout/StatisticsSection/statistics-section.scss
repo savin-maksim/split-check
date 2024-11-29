@@ -85,6 +85,18 @@
       gap: 0.5rem;
       align-items: center;
     }
+
+    &--total {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    &--balance {
+      margin-top: 0.25rem;
+      padding-top: 0.25rem;
+      font-weight: 500;
+    }
   }
 
   &__expense-info {
