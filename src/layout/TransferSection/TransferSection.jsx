@@ -1,113 +1,79 @@
 import { useState, useEffect, useRef } from 'react'
 import TransferCard from '../../components/Cards/Transfer/TransferCard'
+import { 
+  initializeDebtsMatrix, 
+  updateDebtsForCost, 
+  calculateBalances,
+  separateBalances,
+  generateOptimalTransfers
+} from '../../utils/calculations'
 
 import './transfer-section.scss'
 
-function TransferSection({ costs, people, onTransfersCalculated, isLoading }) {
-  const [transfers, setTransfers] = useState([])
+function TransferSection({ 
+  costs, 
+  people, 
+  isLoading, 
+  transfers: externalTransfers,
+  onTransfersCalculated 
+}) {
+  const [internalTransfers, setInternalTransfers] = useState([])
   const calculationTimerRef = useRef(null)
 
+  // Use external transfers if provided, otherwise use internal
+  const transfers = externalTransfers || internalTransfers
+
   useEffect(() => {
-    // Очищаем предыдущий таймер если он есть
-    if (calculationTimerRef.current) {
-      clearTimeout(calculationTimerRef.current)
-    }
-
-    // Устанавливаем новый таймер
-    calculationTimerRef.current = setTimeout(() => {
-      calculateTransfers()
-    }, 2000)
-
-    // Очистка при размонтировании или изменении зависимостей
-    return () => {
+    // Only calculate if we're using internal state
+    if (!externalTransfers) {
+      // Clear previous timer if exists
       if (calculationTimerRef.current) {
         clearTimeout(calculationTimerRef.current)
       }
+
+      // Set new timer
+      calculationTimerRef.current = setTimeout(() => {
+        calculateTransfers()
+      }, 2000)
+
+      // Cleanup on unmount or deps change
+      return () => {
+        if (calculationTimerRef.current) {
+          clearTimeout(calculationTimerRef.current)
+        }
+      }
     }
-  }, [costs, people]) // Зависимости useEffect
+  }, [costs, people, externalTransfers])
 
   const calculateTransfers = () => {
-    let debts = {}
-    
-    // Initialize debts
-    people.forEach(person1 => {
-      debts[person1.name] = {}
-      people.forEach(person2 => {
-        if (person1.id !== person2.id) {
-          debts[person1.name][person2.name] = 0
-        }
-      })
-    })
+    if (!people?.length || !costs?.length) {
+      const emptyTransfers = []
+      setInternalTransfers(emptyTransfers)
+      onTransfersCalculated?.(emptyTransfers)
+      return
+    }
 
+    // Initialize debts matrix
+    const debts = initializeDebtsMatrix(people)
+    
     // Calculate debts for each cost
     costs.forEach(cost => {
       if (cost.paidBy.length && cost.splitBetween.length) {
-        const amountPerPerson = cost.amount / cost.splitBetween.length
-        const payer = cost.paidBy[0].name
-
-        cost.splitBetween.forEach(person => {
-          if (person.name !== payer) {
-            debts[person.name][payer] += amountPerPerson
-          }
-        })
+        updateDebtsForCost(debts, cost)
       }
     })
 
-    // Calculate balances for each person
-    const balances = {}
-    people.forEach(person => {
-      balances[person.name] = 0
-      Object.keys(debts).forEach(debtor => {
-        if (debts[debtor][person.name]) {
-          balances[person.name] += debts[debtor][person.name]
-        }
-        if (debts[person.name][debtor]) {
-          balances[person.name] -= debts[person.name][debtor]
-        }
-      })
-    })
-
+    // Calculate balances
+    const balances = calculateBalances(debts, people)
 
     // Sort positive and negative balances
-    const positiveBalances = Object.entries(balances)
-      .filter(([_, balance]) => balance > 0)
-      .sort(([, a], [, b]) => b - a)
-    
-    const negativeBalances = Object.entries(balances)
-      .filter(([_, balance]) => balance < 0)
-      .sort(([, a], [, b]) => a - b)
-
+    const { positiveBalances, negativeBalances } = separateBalances(balances)
 
     // Calculate optimized transfers
-    const optimizedTransfers = []
-    let positiveIndex = 0
-    let negativeIndex = 0
+    const optimizedTransfers = generateOptimalTransfers(positiveBalances, negativeBalances)
 
-    while (positiveIndex < positiveBalances.length && negativeIndex < negativeBalances.length) {
-      const [creditorName, creditorBalance] = positiveBalances[positiveIndex]
-      const [debtorName, debtorBalance] = negativeBalances[negativeIndex]
-
-      const transferAmount = Math.min(creditorBalance, Math.abs(debtorBalance))
-      
-      if (transferAmount > 0) {
-        optimizedTransfers.push({
-          from: debtorName,
-          to: creditorName,
-          amount: Math.round(transferAmount * 100) / 100
-        })
-
-        // Update balances
-        positiveBalances[positiveIndex][1] -= transferAmount
-        negativeBalances[negativeIndex][1] += transferAmount
-
-        // Move to next person if balance is cleared
-        if (Math.abs(positiveBalances[positiveIndex][1]) < 0.01) positiveIndex++
-        if (Math.abs(negativeBalances[negativeIndex][1]) < 0.01) negativeIndex++
-      }
-    }
-
-    setTransfers(optimizedTransfers)
-    onTransfersCalculated(optimizedTransfers)
+    setInternalTransfers(optimizedTransfers)
+    onTransfersCalculated?.(optimizedTransfers)
   }
 
   return (
