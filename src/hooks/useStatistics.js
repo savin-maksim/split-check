@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { calculateStatistics } from '../utils/calculations'
 
 export function useStatistics(people, costs) {
@@ -9,8 +9,9 @@ export function useStatistics(people, costs) {
       expenses: []
     }
   })
+  const [isCalculating, setIsCalculating] = useState(false)
 
-  useEffect(() => {
+  const calculateStats = useCallback(() => {
     if (people?.length && costs?.length) {
       const stats = calculateStatistics(people, costs)
       setStatistics(stats)
@@ -23,7 +24,12 @@ export function useStatistics(people, costs) {
         }
       })
     }
+    setIsCalculating(false)
   }, [people, costs])
 
-  return statistics
+  useEffect(() => {
+    calculateStats()
+  }, [calculateStats])
+
+  return { statistics, isCalculating }
 } 

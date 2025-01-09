@@ -3,6 +3,44 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  min-height: calc(90vh - var(--navigation-height));
+
+  &__empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+    color: var(--color-text-secondary);
+    min-height: inherit;
+
+    svg {
+      color: var(--color-orange);
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    a {
+      color: var(--color-orange);
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 
   &__cards {
     display: grid;

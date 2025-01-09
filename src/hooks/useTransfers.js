@@ -14,6 +14,7 @@ export function useTransfers(people, costs) {
   const calculateTransfers = useCallback(() => {
     if (!people?.length || !costs?.length) {
       setTransfers([])
+      setIsCalculating(false)
       return
     }
 
@@ -33,15 +34,11 @@ export function useTransfers(people, costs) {
     const optimizedTransfers = generateOptimalTransfers(positiveBalances, negativeBalances)
 
     setTransfers(optimizedTransfers)
+    setIsCalculating(false)
   }, [people, costs])
 
   useEffect(() => {
-    setIsCalculating(true)
-    const timer = setTimeout(() => {
-      calculateTransfers()
-      setIsCalculating(false)
-    }, 2000)
-    return () => clearTimeout(timer)
+    calculateTransfers()
   }, [calculateTransfers])
 
   return { transfers, isCalculating }

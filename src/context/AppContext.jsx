@@ -10,10 +10,12 @@ export function AppProvider({ children }) {
   const [costs, setCosts] = useState(() => StorageService.getCosts())
   const [paymentMode, setPaymentMode] = useState(() => StorageService.getPaymentMode())
   const [singlePayer, setSinglePayer] = useState(() => StorageService.getSinglePayer())
+  const [manualModeCosts, setManualModeCosts] = useState([]) // Сохраняем состояние расходов для ручного режима
   const [transfers, setTransfers] = useState([])
   const [isCalculating, setIsCalculating] = useState(false)
   const [isPayerModalOpen, setIsPayerModalOpen] = useState(false)
   const [pendingCosts, setPendingCosts] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(null) // 'addPerson', 'addCost', null
 
   // Save to localStorage when data changes
   useEffect(() => {
@@ -146,18 +148,25 @@ export function AppProvider({ children }) {
     if (mode === paymentMode) return
 
     if (mode === 'single') {
+      // Сохраняем текущее состояние расходов для ручного режима
+      setManualModeCosts(costs)
+      
+      // Устанавливаем единого плательщика для всех расходов
       if (singlePayer) {
         setCosts(prev => prev.map(cost => ({
           ...cost,
           paidBy: [singlePayer]
         })))
       }
+    } else if (mode === 'manual') {
+      setSinglePayer(null)
+      // Восстанавливаем сохраненное состояние расходов для ручного режима
+      if (manualModeCosts.length > 0) {
+        setCosts(manualModeCosts)
+      }
     }
 
     setPaymentMode(mode)
-    if (mode === 'manual') {
-      setSinglePayer(null)
-    }
   }
 
   const selectSinglePayer = (person) => {
@@ -189,12 +198,14 @@ export function AppProvider({ children }) {
     pendingCosts,
     showCostSection,
     showTransferSection,
+    isModalOpen,
 
     // Setters
     setTransfers,
     setIsCalculating,
     setIsPayerModalOpen,
     setPendingCosts,
+    setIsModalOpen,
 
     // Methods
     addPerson,

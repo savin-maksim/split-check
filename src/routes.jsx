@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useApp } from './context/AppContext'
 
 // Pages
@@ -8,25 +8,12 @@ import CostsPage from './pages/CostsPage'
 import StatsPage from './pages/StatsPage'
 
 function AppRoutes() {
-  const { 
-    people, 
-    costs, 
-    showCostSection, 
-    showTransferSection 
-  } = useApp()
-
   return (
     <Routes>
-      <Route path="/" element={<PeoplePage />} />
+      <Route path="/" element={<Navigate to="/people" replace />} />
       <Route path="/people" element={<PeoplePage />} />
-      <Route 
-        path="/costs" 
-        element={showCostSection && <CostsPage />} 
-      />
-      <Route 
-        path="/stats" 
-        element={showTransferSection && <StatsPage />} 
-      />
+      <Route path="/costs" element={<CostsPage />} />
+      <Route path="/stats" element={<StatsPage />} />
     </Routes>
   )
 }

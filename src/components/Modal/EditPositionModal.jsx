@@ -116,6 +116,9 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
           />
           <input
             type="text"
+            inputMode="numeric"
+            enterKeyHint="done"
+            pattern="[0-9]*"
             value={pricePerUnit}
             onChange={(e) => {
               const value = e.target.value
@@ -126,7 +129,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
             }}
             onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
             placeholder="Цена за единицу"
-            className="modal__input modal__input--half"
+            className="modal__input"
           />
         </div>
       </div>
