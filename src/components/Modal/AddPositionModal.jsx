@@ -192,16 +192,16 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
             }}
             onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
             placeholder="Цена за единицу"
-            className="modal__input modal__input--half"
+            className="modal__input"
           />
         </div>
         <button type="submit" style={{ display: 'none' }} />
       </form>
       <div className="modal__buttons">
-        <IconButton
+        {/* <IconButton
           onClick={() => setIsImportModalOpen(true)}
           icon={<Link size={20} />}
-        />
+        /> */}
         <ActionButton onClick={handleSubmit}>
           Добавить
         </ActionButton>
