@@ -1,11 +1,11 @@
 {
-  "name": "ifavicon.com",
-  "short_name": "ifavicon.com",
-  "description": "",
-  "start_url": "/index.html",
+  "name": "Split Check - Удобный калькулятор для разделения счета",
+  "short_name": "Split Check",
+  "description": "Простой и удобный способ разделить счет между друзьями. Рассчитайте, кто кому должен перевести деньги после совместных расходов.",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#1f1f1f",
+  "theme_color": "#1f1f1f",
   "icons": [
     {
       "src": "/favicon-16x16.png",
