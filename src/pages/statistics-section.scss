@@ -84,6 +84,14 @@
 
   &__expense-amount {
     text-align: end;
+
+    &.positive {
+      color: var(--success-color);
+    }
+
+    &.negative {
+      color: var(--error-color);
+    }
   }
 
   &__expenses {
@@ -95,6 +103,7 @@
   &__expenses-title {
     font-size: 1rem;
     margin-bottom: 0.5rem;
+    
 
     &--columns {
       display: grid;
@@ -160,6 +169,28 @@
 
     .spinner {
       margin-left: 1rem;
+    }
+  }
+
+  &__summary {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+
+    &-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: none;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__expense-items {
+    .statistics-card__expense-item {
+      &:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
     }
   }
 }
