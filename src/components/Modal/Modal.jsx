@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import './modal.scss'
 
 function Modal({ isOpen, onClose, children }) {
   const dialogRef = useRef(null)
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -31,29 +30,13 @@ function Modal({ isOpen, onClose, children }) {
     }
   }
 
-  const handleFocus = () => {
-    // Проверяем, что это мобильное устройство
-    if (window.innerWidth <= 768) {
-      setIsKeyboardVisible(true)
-    }
-  }
-
-  const handleBlur = () => {
-    setIsKeyboardVisible(false)
-  }
-
   return (
     <dialog 
       ref={dialogRef}
-      className={`modal ${isKeyboardVisible ? 'keyboard-visible' : ''}`}
+      className="modal"
       onClick={handleClick}
     >
-      <div 
-        className="modal__content" 
-        onClick={e => e.stopPropagation()}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      >
+      <div className="modal__content" onClick={e => e.stopPropagation()}>
         {children}
       </div>
     </dialog>

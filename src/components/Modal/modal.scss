@@ -2,14 +2,9 @@
   border: none;
   padding: 0;
   background: none;
-  transition: transform 0.3s ease;
   
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  &.keyboard-visible {
-    transform: translateY(-30%);
   }
 
   &__content {
