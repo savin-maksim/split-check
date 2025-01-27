@@ -103,13 +103,7 @@ export function AppProvider({ children }) {
         setIsPayerModalOpen(true)
       } else {
         validateCost(newCost)
-        const costToAdd = {
-          ...newCost,
-          id: Math.random().toString(36).substr(2, 9),
-          paidBy: paymentMode === 'single' && singlePayer ? [singlePayer] : [],
-          splitBetween: []
-        }
-        setCosts(prev => [...prev, costToAdd])
+        setCosts(prev => [...prev, newCost])
       }
     } catch (error) {
       toast.error(error.message)

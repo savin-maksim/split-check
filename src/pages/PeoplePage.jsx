@@ -11,26 +11,21 @@ import './people-section.scss'
 
 function PeoplePage() {
   const { people, addPerson, removePerson, isModalOpen, setIsModalOpen } = useApp()
-  const [newPersonName, setNewPersonName] = useState('')
 
-  const handleAddPerson = () => {
-    if (newPersonName.trim()) {
-      const maxId = Math.max(0, ...people.map(p => p.id))
-      
-      const names = newPersonName
-        .split(',')
-        .map(name => name.trim())
-        .filter(name => name.length > 0)
-        .map((name, index) => ({
-          id: maxId + index + 1,
-          name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
-        }))
+  const handleAddPerson = (newPersonName) => {
+    const maxId = Math.max(0, ...people.map(p => p.id))
+    
+    const names = newPersonName
+      .split(',')
+      .map(name => name.trim())
+      .filter(name => name.length > 0)
+      .map((name, index) => ({
+        id: maxId + index + 1,
+        name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
+      }))
 
-      addPerson(names)
-      
-      setNewPersonName('')
-      setIsModalOpen(null)
-    }
+    addPerson(names)
+    setIsModalOpen(null)
   }
 
   return (
@@ -61,16 +56,7 @@ function PeoplePage() {
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPerson}
         title="Добавить человека"
-      >
-        <input
-          type="text"
-          value={newPersonName}
-          onChange={(e) => setNewPersonName(e.target.value)}
-          placeholder="Введите имена через запятую"
-          className="modal__input"
-          autoFocus
-        />
-      </AddPersonModal>
+      />
     </div>
   )
 }
