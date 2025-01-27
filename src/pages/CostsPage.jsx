@@ -1,17 +1,20 @@
-import { User, Users, Calculator } from 'lucide-react'
+import { User, Users, Calculator, Search } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 // Import components
 import IconButton from '../components/Button/IconButton'
 import PersonButton from '../components/Button/PersonButton'
 import CostCard from '../components/Cards/Cost/CostCard'
 import AddPositionModal from '../components/Modal/AddPositionModal'
+import Arrow from '../components/Arrow/Arrow'
 
 // Import styles
 import './cost-section.scss'
 
 function CostsPage() {
+  const [searchQuery, setSearchQuery] = useState('')
   const { 
     people,
     costs,
@@ -25,6 +28,17 @@ function CostsPage() {
     isModalOpen,
     setIsModalOpen
   } = useApp()
+
+  const filteredCosts = costs.filter(cost => {
+    const query = searchQuery.toLowerCase()
+    // Поиск по названию позиции
+    const titleMatch = cost.title.toLowerCase().includes(query)
+    // Поиск по именам плательщиков
+    const payerMatch = cost.paidBy.some(payer => 
+      people.find(p => p.id === payer.id)?.name.toLowerCase().includes(query)
+    )
+    return titleMatch || payerMatch
+  })
 
   const handleAddPosition = (position) => {
     addCost({
@@ -44,6 +58,7 @@ function CostsPage() {
           <Users size={48} />
           <h2>Добавьте участников</h2>
           <p>Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
+          <Arrow className="arrow--to-people" />
         </div>
         <AddPositionModal 
           isOpen={isModalOpen === 'addCost'}
@@ -64,6 +79,7 @@ function CostsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками</p>
+          {people.length > 0 && <Arrow />}
         </div>
         <AddPositionModal 
           isOpen={isModalOpen === 'addCost'}
@@ -101,6 +117,18 @@ function CostsPage() {
           </span>
         </div>
 
+        <div className="cost-section__search">
+        <div className="search-input">
+          <Search size={20} />
+          <input
+            type="text"
+            placeholder="Поиск наименование/имя"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
         {paymentMode === 'single' && (
           <div className="payment-mode__single-payer">
             <h3>Выберите плательщика</h3>
@@ -120,7 +148,7 @@ function CostsPage() {
       </div>
 
       <div className="cost-section__cards">
-        {costs.map(cost => (
+        {filteredCosts.map(cost => (
           <CostCard
             key={cost.id}
             id={cost.id}

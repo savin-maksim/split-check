@@ -7,6 +7,7 @@ import Spinner from '../components/Spinner/Spinner'
 import { formatAmount, formatQuantity, formatTotalQuantity } from '../utils/formatters.js'
 import { Link } from 'react-router-dom'
 import { Users, Calculator } from 'lucide-react'
+import Arrow from '../components/Arrow/Arrow'
 
 // Import styles
 import './statistics-section.scss'
@@ -24,6 +25,7 @@ function StatsPage() {
           <Users size={48} />
           <h2>Добавьте участников</h2>
           <p>Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
+          <Arrow className="arrow--to-people" />
         </div>
       </div>
     )
@@ -36,6 +38,7 @@ function StatsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Перейдите на <Link to="/costs">страницу расходов</Link> и добавьте расходы, которые нужно разделить между участниками</p>
+          <Arrow className="arrow--to-cost" />
         </div>
       </div>
     )
@@ -56,6 +59,8 @@ function StatsPage() {
       <div className="statistics-section">
         <div className="statistics-section__empty">
           <Spinner size={48} />
+          <h3>Проверьте позиции</h3>
+          <p>Вероятно в одной из них не выбран плательщик и/или участник</p>
         </div>
       </div>
     )

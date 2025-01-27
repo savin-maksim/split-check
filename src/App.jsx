@@ -3,6 +3,7 @@ import { AppProvider } from './context/AppContext'
 import Layout from './layout/Layout'
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 import Toast from './components/Toast/Toast'
+import ScrollTopButton from './components/Button/ScrollTopButton'
 import AppRoutes from './routes'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <AppRoutes />
           </Layout>
           <Toast />
+          <ScrollTopButton />
         </BrowserRouter>
       </AppProvider>
     </ErrorBoundary>

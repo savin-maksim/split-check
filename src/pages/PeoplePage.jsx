@@ -5,6 +5,7 @@ import { useApp } from '../context/AppContext'
 // Import components
 import PersonButton from '../components/Button/PersonButton'
 import AddPersonModal from '../components/Modal/AddPersonModal'
+import Arrow from '../components/Arrow/Arrow'
 
 // Import styles
 import './people-section.scss'
@@ -35,6 +36,7 @@ function PeoplePage() {
           <UserPlus size={48} />
           <h2>Добавьте участников</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы</p>
+          <Arrow />
         </div>
       ) : (
         <div className="people-section__people">
