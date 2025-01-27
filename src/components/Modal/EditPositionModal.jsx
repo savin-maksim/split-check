@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react'
-import { create, all } from 'mathjs'
 import ActionButton from '../Button/ActionButton'
 import Modal from './Modal'
 import { toast } from 'react-hot-toast'
@@ -10,7 +9,6 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
   const [pricePerUnit, setPricePerUnit] = useState(initialData?.pricePerUnit?.toString() || '')
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
-  const math = create(all)
 
   React.useEffect(() => {
     if (isOpen && initialData) {
@@ -19,23 +17,6 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       setPricePerUnit(initialData.pricePerUnit?.toString() || '')
     }
   }, [isOpen, initialData])
-
-  const validateAndCalculatePrice = (qty, price) => {
-    try {
-      const qtyValue = math.evaluate(qty)
-      const priceValue = math.evaluate(price)
-      if (qtyValue > 0 && priceValue > 0) {
-        return {
-          quantity: qtyValue,
-          pricePerUnit: priceValue,
-          total: qtyValue * priceValue
-        }
-      }
-      return null
-    } catch {
-      return null
-    }
-  }
 
   const formatTitle = (text) => {
     if (!text) return ''
@@ -48,23 +29,26 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       return
     }
 
-    const calculation = validateAndCalculatePrice(quantity, pricePerUnit)
-    if (!calculation) {
+    const qtyValue = parseFloat(quantity)
+    const priceValue = parseFloat(pricePerUnit)
+
+    if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
       setError('Введите корректные значения')
       return
     }
 
+    const total = qtyValue * priceValue
     const formattedPrice = new Intl.NumberFormat('ru-RU', {
       style: 'currency',
       currency: 'RUB'
-    }).format(calculation.total)
+    }).format(total)
 
     onSubmit({ 
       ...initialData,
       title: formatTitle(purchase.trim()), 
-      amount: calculation.total,
-      quantity: calculation.quantity,
-      pricePerUnit: calculation.pricePerUnit
+      amount: total,
+      quantity: qtyValue,
+      pricePerUnit: priceValue
     })
 
     toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} обновлен`)

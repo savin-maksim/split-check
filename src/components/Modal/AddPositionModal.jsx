@@ -1,43 +1,41 @@
-import React, { useState, useRef } from 'react'
-import { create, all } from 'mathjs'
+import React, { useState, useRef, useEffect } from 'react'
 import ActionButton from '../Button/ActionButton'
-import { Link } from 'lucide-react'
+import PersonButton from '../Button/PersonButton'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
-import IconButton from '../Button/IconButton'
-import ImportModal from './ImportModal'
 import Modal from './Modal'
 
-function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
+function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
   const [purchase, setPurchase] = useState('')
   const [quantity, setQuantity] = useState('1')
   const [pricePerUnit, setPricePerUnit] = useState('')
+  const [paidBy, setPaidBy] = useState([])
+  const [splitBetween, setSplitBetween] = useState([])
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
-  const math = create(all)
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(true)
 
-  const validateAndCalculatePrice = (qty, price) => {
-    try {
-      const qtyValue = math.evaluate(qty)
-      const priceValue = math.evaluate(price)
-      if (qtyValue > 0 && priceValue > 0) {
-        return {
-          quantity: qtyValue,
-          pricePerUnit: priceValue,
-          total: qtyValue * priceValue
-        }
-      }
-      return null
-    } catch {
-      return null
-    }
-  }
+  useEffect(() => {
+    setPaidBy([])
+    setSplitBetween([])
+  }, [paymentMode])
 
   const formatTitle = (text) => {
     if (!text) return ''
     return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+
+  const handlePaidByClick = (person) => {
+    if (paymentMode === 'manual') {
+      setPaidBy(prev => prev.some(p => p.id === person.id) ? [] : [person])
+    }
+  }
+
+  const handleSplitBetweenClick = (person) => {
+    setSplitBetween(prev => 
+      prev.some(p => p.id === person.id)
+        ? prev.filter(p => p.id !== person.id)
+        : [...prev, person]
+    )
   }
 
   const handleSubmit = () => {
@@ -47,32 +45,42 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
         return
       }
 
-      const calculation = validateAndCalculatePrice(quantity, pricePerUnit)
-      if (!calculation) {
-        setError('Введите корректные значеия')
+      const qtyValue = parseFloat(quantity)
+      const priceValue = parseFloat(pricePerUnit)
+
+      if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
+        setError('Введите корректные значения')
+        return
+      }
+
+      if (paymentMode === 'manual' && paidBy.length === 0) {
+        setError('Выберите плательщика')
         return
       }
 
       const id = Date.now()
       const formattedTitle = formatTitle(purchase.trim())
+      const total = qtyValue * priceValue
       const formattedPrice = new Intl.NumberFormat('ru-RU', {
         style: 'currency',
         currency: 'RUB'
-      }).format(calculation.total)
+      }).format(total)
 
       onSubmit({
         id,
         title: formattedTitle,
-        amount: calculation.total,
-        quantity: calculation.quantity,
-        pricePerUnit: calculation.pricePerUnit,
-        paidBy: [],
-        splitBetween: []
+        amount: total,
+        quantity: qtyValue,
+        pricePerUnit: priceValue,
+        paidBy: paidBy,
+        splitBetween: splitBetween
       })
 
       setPurchase('')
       setQuantity('1')
       setPricePerUnit('')
+      setPaidBy([])
+      setSplitBetween([])
       setError('')
       purchaseInputRef.current?.focus()
       
@@ -98,41 +106,6 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
           handleSubmit()
           break
       }
-    }
-  }
-
-  const handleImportFromURL = async () => {
-    try {
-      const clipboardText = await navigator.clipboard.readText()
-      const url = new URL(clipboardText)
-      const params = new URLSearchParams(url.search)
-      const costsParam = params.get('c')
-
-      if (!costsParam) {
-        throw new Error('В ссылке нет данных о расходах')
-      }
-
-      // Декодируем данные из base64
-      const decodedString = atob(costsParam)
-      const decodedData = decodeURIComponent(decodedString)
-      const costs = JSON.parse(decodedData)
-
-      // Импортируем каждый расход напрямую через onSubmit
-      for (const cost of costs) {
-        const newCost = {
-          title: cost[1],
-          amount: String(cost[2]),
-          quantity: cost[3] || 1,
-          pricePerUnit: cost[4] || cost[2],
-          paidBy: [],
-          splitBetween: []
-        }
-
-        onSubmit(newCost)
-        await new Promise(resolve => setTimeout(resolve, 300))
-      }
-    } catch (error) {
-      throw error // Пробрасываем ошибку выше для обработки в ImportModal
     }
   }
 
@@ -195,13 +168,42 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
             className="modal__input"
           />
         </div>
+
+        {paymentMode === 'manual' && (
+          <div className="modal__section">
+            <p className="modal__label">Кто платил?</p>
+            <div className="modal__tags">
+              {people?.map((person) => (
+                <PersonButton
+                  key={person.id}
+                  className={`modal__tag ${paidBy.some(p => p.id === person.id) ? 'button__person--active' : ''}`}
+                  onClick={() => handlePaidByClick(person)}
+                >
+                  {person.name}
+                </PersonButton>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="modal__section">
+          <p className="modal__label">На кого разделить?</p>
+          <div className="modal__tags">
+            {people?.map((person) => (
+              <PersonButton
+                key={person.id}
+                className={`modal__tag ${splitBetween.some(p => p.id === person.id) ? 'button__person--active' : ''}`}
+                onClick={() => handleSplitBetweenClick(person)}
+              >
+                {person.name}
+              </PersonButton>
+            ))}
+          </div>
+        </div>
+
         <button type="submit" style={{ display: 'none' }} />
       </form>
       <div className="modal__buttons">
-        {/* <IconButton
-          onClick={() => setIsImportModalOpen(true)}
-          icon={<Link size={20} />}
-        /> */}
         <ActionButton onClick={handleSubmit}>
           Добавить
         </ActionButton>
@@ -209,12 +211,6 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title }) {
           Отмена
         </ActionButton>
       </div>
-      <ImportModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onImportFromURL={handleImportFromURL}
-        onSubmit={onSubmit}
-      />
     </Modal>
   )
 }

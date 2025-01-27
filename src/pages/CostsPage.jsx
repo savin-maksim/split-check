@@ -30,8 +30,10 @@ function CostsPage() {
     addCost({
       ...position,
       id: Date.now(),
-      paidBy: paymentMode === 'single' && singlePayer ? [singlePayer] : [],
-      splitBetween: []
+      // В режиме single используем singlePayer, в режиме manual используем выбранного в модальном окне
+      paidBy: paymentMode === 'single' ? (singlePayer ? [singlePayer] : []) : position.paidBy,
+      // Всегда используем выбранных в модальном окне участников
+      splitBetween: position.splitBetween
     })
   }
 
@@ -48,6 +50,8 @@ function CostsPage() {
           onClose={() => setIsModalOpen(null)}
           onSubmit={handleAddPosition}
           title="Добавить расход"
+          people={people}
+          paymentMode={paymentMode}
         />
       </div>
     )
@@ -66,6 +70,8 @@ function CostsPage() {
           onClose={() => setIsModalOpen(null)}
           onSubmit={handleAddPosition}
           title="Добавить расход"
+          people={people}
+          paymentMode={paymentMode}
         />
       </div>
     )
@@ -137,6 +143,8 @@ function CostsPage() {
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPosition}
         title="Добавить расход"
+        people={people}
+        paymentMode={paymentMode}
       />
     </div>
   )
