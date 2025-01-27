@@ -9,6 +9,8 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
   const [pricePerUnit, setPricePerUnit] = useState(initialData?.pricePerUnit?.toString() || '')
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
+  const quantityInputRef = useRef(null)
+  const priceInputRef = useRef(null)
 
   React.useEffect(() => {
     if (isOpen && initialData) {
@@ -59,9 +61,9 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
     if (e.key === 'Enter') {
       e.preventDefault()
       if (inputType === 'purchase') {
-        document.querySelector('input[placeholder="Количество"]')?.focus()
+        quantityInputRef.current?.focus()
       } else if (inputType === 'quantity') {
-        document.querySelector('input[placeholder="Цена за единицу"]')?.focus()
+        priceInputRef.current?.focus()
       } else if (inputType === 'pricePerUnit') {
         handleSubmit()
       }
@@ -70,7 +72,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className=''>{title}</h2>
+      <h2 className='modal__title'>{title}</h2>
       {error && <p className="modal__error">{error}</p>}
       <div className="modal__inputs">
         <input
@@ -85,6 +87,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
         />
         <div className="modal__price-inputs">
           <input
+            ref={quantityInputRef}
             type="text"
             value={quantity}
             onChange={(e) => {
@@ -99,6 +102,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
             className="modal__input modal__input--half"
           />
           <input
+            ref={priceInputRef}
             type="text"
             inputMode="numeric"
             enterKeyHint="done"

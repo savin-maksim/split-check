@@ -13,6 +13,8 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   const [splitBetween, setSplitBetween] = useState([])
   const [error, setError] = useState('')
   const purchaseInputRef = useRef(null)
+  const quantityInputRef = useRef(null)
+  const priceInputRef = useRef(null)
 
   useEffect(() => {
     setPaidBy([])
@@ -50,11 +52,6 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
 
       if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
         setError('Введите корректные значения')
-        return
-      }
-
-      if (paymentMode === 'manual' && paidBy.length === 0) {
-        setError('Выберите плательщика')
         return
       }
 
@@ -97,10 +94,10 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       
       switch (inputType) {
         case 'purchase':
-          document.querySelector('input[placeholder="Количество"]')?.focus()
+          quantityInputRef.current?.focus()
           break
         case 'quantity':
-          document.querySelector('input[placeholder="Цена за единицу"]')?.focus()
+          priceInputRef.current?.focus()
           break
         case 'pricePerUnit':
           handleSubmit()
@@ -134,6 +131,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         />
         <div className="modal__price-inputs">
           <input
+            ref={quantityInputRef}
             type="text"
             inputMode="numeric"
             enterKeyHint="next"
@@ -151,6 +149,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
             className="modal__input modal__input--half"
           />
           <input
+            ref={priceInputRef}
             type="text"
             inputMode="numeric"
             enterKeyHint="done"
