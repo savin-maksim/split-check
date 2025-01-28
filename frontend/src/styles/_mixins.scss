@@ -1,0 +1,168 @@
+@mixin fluid-text($max: 48, $min: 16) {
+  & {
+    font-size: clamp(#{$min}px, #{calc($max / 1080) * 100}vw, #{$max}px);
+  }
+}
+
+@mixin flex-center($isInline: false) {
+  @if $isInline {
+    display: inline-flex;
+  } @else  {
+    display: flex;
+  }
+
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin hover {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+
+  @media (hover: none) {
+    &:active {
+      @content;
+    }
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  clip-path: inset(100%) !important;
+  clip: rect(0 0 0 0) !important;
+  overflow: hidden !important;
+}
+
+@mixin gradient-animation {
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}
+
+@mixin button-animation {
+  position: relative;
+  transition: all var(--transition-duration) ease;
+  
+  // Для устройств с мышью
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0 0 15px var(--color-glass);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:active {
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    // Для активных кнопок меняем цвет тени
+    &.button__person--active:hover {
+      box-shadow: 0 0 15px var(--color-active);
+    }
+  }
+
+  // Для тач-устройств
+  @media (hover: none) {
+    &:active {
+      animation: pulse 0.5s ease-in-out;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      background-color: var(--color-glass);
+    }
+    50% {
+      transform: scale(1.1);
+      background-color: var(--color-active);
+      box-shadow: 0 0 20px var(--color-active);
+    }
+    100% {
+      transform: scale(1);
+      background-color: var(--color-glass);
+    }
+  }
+
+  &--active {
+    box-shadow: 0 0 30px var(--color-active);
+    animation: activate 0.4s ease-in-out;
+  }
+
+  @keyframes activate {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 var(--color-active);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--color-active);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 15px var(--color-active);
+    }
+  }
+}
+
+// Добавляем новый миксин
+@mixin no-animation {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+
+  &:hover, &:active, &::before, &::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+// Добавляем новый миксин для простой анимации
+@mixin simple-button-animation {
+  position: relative;
+  transition: all var(--transition-duration) ease;
+  
+  // Для устройств с мышью
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0 0 30px var(--color-glass);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    // Для активных кнопок
+    &.button--icon-active:hover {
+      box-shadow: 0 0 30px var(--color-active);
+    }
+
+    &:active {
+      // box-shadow: 0 0 30px var(--color-glass);
+      transform: scale(0.95);
+    }
+  }
+
+  // Для тач-устройств
+  @media (hover: none) {
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}

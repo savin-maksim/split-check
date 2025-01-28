@@ -1,0 +1,136 @@
+import React, { useState, useRef } from 'react'
+import ActionButton from '../Button/ActionButton'
+import Modal from './Modal'
+import { toast } from 'react-hot-toast'
+
+function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
+  const [purchase, setPurchase] = useState(initialData?.title || '')
+  const [quantity, setQuantity] = useState(initialData?.quantity?.toString() || '1')
+  const [pricePerUnit, setPricePerUnit] = useState(initialData?.pricePerUnit?.toString() || '')
+  const [error, setError] = useState('')
+  const purchaseInputRef = useRef(null)
+  const quantityInputRef = useRef(null)
+  const priceInputRef = useRef(null)
+
+  React.useEffect(() => {
+    if (isOpen && initialData) {
+      setPurchase(initialData.title)
+      setQuantity(initialData.quantity?.toString() || '1')
+      setPricePerUnit(initialData.pricePerUnit?.toString() || '')
+    }
+  }, [isOpen, initialData])
+
+  const formatTitle = (text) => {
+    if (!text) return ''
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+
+  const handleSubmit = () => {
+    if (!purchase.trim()) {
+      setError('Введите название покупки')
+      return
+    }
+
+    const qtyValue = parseFloat(quantity)
+    const priceValue = parseFloat(pricePerUnit)
+
+    if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
+      setError('Введите корректные значения')
+      return
+    }
+
+    const total = qtyValue * priceValue
+    const formattedPrice = new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB'
+    }).format(total)
+
+    onSubmit({ 
+      ...initialData,
+      title: formatTitle(purchase.trim()), 
+      amount: total,
+      quantity: qtyValue,
+      pricePerUnit: priceValue
+    })
+
+    toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} обновлен`)
+    onClose()
+  }
+
+  const handleKeyDown = (e, inputType) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (inputType === 'purchase') {
+        quantityInputRef.current?.focus()
+      } else if (inputType === 'quantity') {
+        priceInputRef.current?.focus()
+      } else if (inputType === 'pricePerUnit') {
+        handleSubmit()
+      }
+    }
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <h2 className='modal__title'>{title}</h2>
+      {error && <p className="modal__error">{error}</p>}
+      <div className="modal__inputs">
+        <input
+          ref={purchaseInputRef}
+          type="text"
+          value={purchase}
+          onChange={(e) => setPurchase(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e, 'purchase')}
+          placeholder="Введите название покупки"
+          className="modal__input"
+          autoFocus
+        />
+        <div className="modal__price-inputs">
+          <input
+            ref={quantityInputRef}
+            type="text"
+            value={quantity}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setQuantity(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+            placeholder="Количество"
+            className="modal__input modal__input--half"
+          />
+          <input
+            ref={priceInputRef}
+            type="text"
+            inputMode="numeric"
+            enterKeyHint="done"
+            pattern="[0-9]*"
+            value={pricePerUnit}
+            onChange={(e) => {
+              const value = e.target.value
+                .replace(/,/g, '.')
+                .replace(/\.+/g, '.')
+              setPricePerUnit(value)
+              setError('')
+            }}
+            onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+            placeholder="Цена за единицу"
+            className="modal__input"
+          />
+        </div>
+      </div>
+      <div className="modal__buttons">
+        <ActionButton onClick={handleSubmit}>
+          Сохранить
+        </ActionButton>
+        <ActionButton onClick={onClose}>
+          Отмена
+        </ActionButton>
+      </div>
+    </Modal>
+  )
+}
+
+export default EditPositionModal

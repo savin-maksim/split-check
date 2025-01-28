@@ -1,0 +1,47 @@
+@use "/src/styles/mixins" as *;
+
+.transfer-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+  padding: 0 1rem 1rem 1rem;
+  color: var(--color-light);
+  width: 100%;
+  max-width: var(--cards-width);
+
+  &__transfers {
+    display: grid;
+    gap: 1rem;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    text-align: end;
+    gap: 0.7rem;
+  }
+
+  &__people {
+    display: grid;
+    grid-template-columns: 1fr 0.1fr 1fr;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__person {
+    @include no-animation;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .spinner {
+      margin-left: 1rem;
+    }
+  }
+}

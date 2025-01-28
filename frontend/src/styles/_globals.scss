@@ -1,0 +1,95 @@
+@use "mixins" as *;
+
+body {
+  @include fluid-text(18, 16);
+
+  & {
+    font-family: var(--font-family-base);
+    font-weight: 400;
+    line-height: 1.28;
+    color: var(--color-light);
+    background: var(--color-bg);
+    margin: 0;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    bottom: -50vh;
+    left: -50vw;
+    right: -50vw;
+    height: 100vh;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(192, 192, 192, 0.15) 0%,
+      rgba(192, 192, 192, 0) 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.container {
+  max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x);
+  padding-top: calc(5rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+.flex-center {
+  @include flex-center();
+
+  &__column {
+    flex-direction: column
+  }
+}
+
+.margin--bottom {
+  margin: 0 0 var(--section-padding-y) 0;
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+a,
+button,
+input,
+textarea,
+svg * {
+  transition-duration: var(--transition-duration);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 800;
+  font-style: italic;
+}
+
+h1, .h1 {
+  @include fluid-text(60, 43);
+}
+
+h2, .h2 {
+  @include fluid-text(40, 30);
+}
+
+h3, .h3 {
+  @include fluid-text(30, 24);
+}
+
+h4, .h4 {
+  @include fluid-text(20, 18);
+}
+
+span {
+  font-weight: 300;
+  @include fluid-text(16, 15);
+}
