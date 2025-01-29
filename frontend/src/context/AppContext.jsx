@@ -2,10 +2,12 @@ import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { StorageService } from '../services/storage'
 import { validatePerson, validateCost } from '../utils/validation'
 import { toast } from 'react-hot-toast'
+import authService from '../api/auth.service'
 
 const AppContext = createContext()
 
 export function AppProvider({ children }) {
+  const [user, setUser] = useState(() => authService.getCurrentUser())
   const [people, setPeople] = useState(() => StorageService.getPeople())
   const [costs, setCosts] = useState(() => StorageService.getCosts())
   const [paymentMode, setPaymentMode] = useState(() => StorageService.getPaymentMode())
@@ -182,6 +184,7 @@ export function AppProvider({ children }) {
 
   const value = {
     // State
+    user,
     people,
     costs,
     paymentMode,
@@ -195,6 +198,7 @@ export function AppProvider({ children }) {
     isModalOpen,
 
     // Setters
+    setUser,
     setTransfers,
     setIsCalculating,
     setIsPayerModalOpen,
@@ -208,7 +212,11 @@ export function AppProvider({ children }) {
     updateCost,
     deleteCost,
     changePaymentMode,
-    selectSinglePayer
+    selectSinglePayer,
+    logout: () => {
+      authService.logout()
+      setUser(null)
+    }
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

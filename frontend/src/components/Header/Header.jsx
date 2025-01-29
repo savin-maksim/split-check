@@ -36,7 +36,7 @@ function Header() {
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             >
               <User size={24} />
-              <span>{user?.email}</span>
+              <span>{user?.name || user?.email}</span>
             </button>
 
             {isUserMenuOpen && (

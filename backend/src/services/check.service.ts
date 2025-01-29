@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '.prisma/client';
 import { CreateCheckDTO, UpdateCheckDTO, CheckResponse } from '../types/check.types';
 
 const prisma = new PrismaClient();
