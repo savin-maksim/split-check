@@ -288,7 +288,7 @@ function CostsPage() {
         isOpen={isModalOpen === 'addCost'}
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPosition}
-        title="Добавить расход"
+        title="Добавить позицию"
         people={people}
         paymentMode={paymentMode}
         singlePayer={singlePayer}
