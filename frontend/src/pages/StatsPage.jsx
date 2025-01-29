@@ -188,7 +188,7 @@ function StatsPage() {
               </div>
 
               <div className="statistics-card__info">
-                <span>Потратил(а):</span>
+                <h4 className="">Потратил(а):</h4>
                 <h4 className=''>{formatAmount(person.totalPaid)} ₽</h4>
               </div>
 
