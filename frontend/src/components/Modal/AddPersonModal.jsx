@@ -48,7 +48,6 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="modal__title">{title}</h2>
-      <form onSubmit={handleSubmit} className="modal__content">
         <div className="modal__inputs">
           <textarea
             placeholder="Введите имена через запятую"
@@ -93,6 +92,7 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
           <ActionButton
             type="submit"
             disabled={!name.trim() && !selectedGroup}
+            onClick={handleSubmit}
           >
             Добавить
           </ActionButton>
@@ -107,7 +107,6 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
             Отмена
           </ActionButton>
         </div>
-      </form>
     </Modal>
   );
 }

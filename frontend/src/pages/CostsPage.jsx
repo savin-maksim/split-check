@@ -26,7 +26,7 @@ function CostsPage() {
   const [costs, setCosts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  const { 
+  const {
     paymentMode,
     singlePayer,
     changePaymentMode,
@@ -92,7 +92,7 @@ function CostsPage() {
     // Поиск по названию позиции
     const titleMatch = cost.title.toLowerCase().includes(query)
     // Поиск по именам плательщиков
-    const payerMatch = cost.paidBy.some(payer => 
+    const payerMatch = cost.paidBy.some(payer =>
       people.find(p => p.id === payer.id)?.name.toLowerCase().includes(query)
     )
     return titleMatch || payerMatch
@@ -111,12 +111,12 @@ function CostsPage() {
         title: position.title,
         quantity: position.quantity,
         pricePerUnit: position.pricePerUnit,
-        paidByIds: paymentMode === 'single' 
+        paidByIds: paymentMode === 'single'
           ? [singlePayer.id]
           : position.paidBy?.map(person => person.id) || [],
         splitBetweenIds: (position.splitBetween || []).map(person => person.id)
       }
-      
+
       const response = await costService.createCost(checkId, costData)
       setCosts(prevCosts => [...prevCosts, response])
       setIsModalOpen(null)
@@ -194,7 +194,7 @@ function CostsPage() {
           <Users size={48} />
           <h2>Добавьте участников</h2>
           <p>Перейдите на <Link to={`/checks/${checkId}/people`}>страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
-          <Arrow className="arrow--to-people" title={'Страница участников'}/>
+          <Arrow className="arrow--to-people" title={'Страница участников'} />
         </div>
       </div>
     )
@@ -203,7 +203,7 @@ function CostsPage() {
   return (
     <div className="cost-section">
       {check && <h2 className="cost-section__title">{check.title}</h2>}
-      
+
       <div className="payment-mode flex-center flex-center__column">
         <div className="payment-mode__selector">
           <h3>Режим оплаты</h3>
@@ -231,7 +231,7 @@ function CostsPage() {
             <Search size={20} />
             <input
               type="text"
-              placeholder="Поиск наименование/имя"
+              placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -261,7 +261,7 @@ function CostsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками</p>
-          {people.length > 0 && <Arrow title={'Тык'}/>}
+          {people.length > 0 && <Arrow title={'Тык'} />}
         </div>
       ) : (
         <div className="cost-section__cards">
@@ -284,7 +284,7 @@ function CostsPage() {
         </div>
       )}
 
-      <AddPositionModal 
+      <AddPositionModal
         isOpen={isModalOpen === 'addCost'}
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPosition}
