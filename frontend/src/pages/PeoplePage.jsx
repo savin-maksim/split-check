@@ -113,7 +113,7 @@ function PeoplePage() {
           <UserPlus size={48} />
           <h2>Добавьте участников</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы</p>
-          <Arrow />
+          <Arrow title={'Тык'}/>
         </div>
       ) : (
         <div className="people-section__people">

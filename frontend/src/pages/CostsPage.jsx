@@ -194,7 +194,7 @@ function CostsPage() {
           <Users size={48} />
           <h2>Добавьте участников</h2>
           <p>Перейдите на <Link to={`/checks/${checkId}/people`}>страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
-          <Arrow className="arrow--to-people" />
+          <Arrow className="arrow--to-people" title={'Страница участников'}/>
         </div>
       </div>
     )
@@ -261,7 +261,7 @@ function CostsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками</p>
-          {people.length > 0 && <Arrow />}
+          {people.length > 0 && <Arrow title={'Тык'}/>}
         </div>
       ) : (
         <div className="cost-section__cards">

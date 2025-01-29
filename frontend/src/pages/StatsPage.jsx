@@ -99,7 +99,7 @@ function StatsPage() {
           <Users size={48} />
           <h2>Добавьте участников</h2>
           <p>Перейдите на <Link to={`/checks/${checkId}/people`}>страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
-          <Arrow className="arrow--to-people" />
+          <Arrow className="arrow--to-people" title={'Страница участников'} />
         </div>
       </div>
     )
@@ -112,7 +112,7 @@ function StatsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Перейдите на <Link to={`/checks/${checkId}/costs`}>страницу расходов</Link> и добавьте расходы, которые нужно разделить между участниками</p>
-          <Arrow className="arrow--to-cost" />
+          <Arrow className="arrow--to-cost" title={'Страница расходов'} />
         </div>
       </div>
     )
