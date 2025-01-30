@@ -17,7 +17,7 @@ import './people-section.scss'
 function PeoplePage() {
   const { checkId } = useParams()
   const navigate = useNavigate()
-  const { isModalOpen, setIsModalOpen } = useApp()
+  const { isModalOpen, setIsModalOpen, setCurrentCheck } = useApp()
   const [check, setCheck] = useState(null)
   const [people, setPeople] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -36,6 +36,7 @@ function PeoplePage() {
         personService.getPeople(checkId)
       ])
       setCheck(checkResponse)
+      setCurrentCheck(checkResponse)
       setPeople(peopleResponse)
     } catch (err) {
       setError(err.message || 'Не удалось загрузить данные')

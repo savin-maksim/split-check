@@ -20,7 +20,7 @@ import './transfer-section.scss'
 function StatsPage() {
   const { checkId } = useParams()
   const navigate = useNavigate()
-  const { paymentMode } = useApp()
+  const { paymentMode, setCurrentCheck } = useApp()
   const [check, setCheck] = useState(null)
   const [people, setPeople] = useState([])
   const [costs, setCosts] = useState([])
@@ -54,6 +54,7 @@ function StatsPage() {
       ])
 
         setCheck(checkResponse)
+      setCurrentCheck(checkResponse)
       setPeople(peopleResponse)
       setCosts(costsResponse)
       setStatistics(statsResponse.totalStats)

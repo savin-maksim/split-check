@@ -32,7 +32,8 @@ function CostsPage() {
     changePaymentMode,
     selectSinglePayer,
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
+    setCurrentCheck
   } = useApp()
 
   // Загрузка чека, участников и расходов
@@ -75,6 +76,7 @@ function CostsPage() {
         costService.getCosts(checkId)
       ])
       setCheck(checkResponse)
+      setCurrentCheck(checkResponse)
       setPeople(peopleResponse)
       setCosts(costsResponse)
     } catch (err) {

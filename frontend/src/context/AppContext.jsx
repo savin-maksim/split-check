@@ -13,6 +13,7 @@ export function AppProvider({ children }) {
   const [paymentMode, setPaymentMode] = useState(() => StorageService.getPaymentMode())
   const [singlePayer, setSinglePayer] = useState(() => StorageService.getSinglePayer())
   const [isModalOpen, setIsModalOpen] = useState(null) // 'addPerson', 'addCost', null
+  const [currentCheck, setCurrentCheck] = useState(null)
 
   // Сохраняем настройки UI в localStorage
   useEffect(() => {
@@ -61,6 +62,8 @@ export function AppProvider({ children }) {
     singlePayer,
     isModalOpen,
     setIsModalOpen,
+    currentCheck,
+    setCurrentCheck,
 
     // UI методы
     changePaymentMode,

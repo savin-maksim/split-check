@@ -14,7 +14,7 @@ import ManageGroupsModal from '../components/Modal/ManageGroupsModal'
 
 function ChecksPage() {
   const navigate = useNavigate()
-  const { isModalOpen, setIsModalOpen } = useApp()
+  const { isModalOpen, setIsModalOpen, setCurrentCheck } = useApp()
   const [checks, setChecks] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -24,6 +24,7 @@ function ChecksPage() {
   // Загрузка списка чеков
   useEffect(() => {
     loadChecks()
+    setCurrentCheck(null)
   }, [])
 
   const loadChecks = async () => {
