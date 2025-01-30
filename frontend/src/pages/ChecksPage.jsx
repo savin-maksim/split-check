@@ -116,12 +116,12 @@ function ChecksPage() {
     <>
       <div className="checks-page">
         <div className="checks-page__content">
-          <div className="checks-page__header">
+          <div className="checks-page__search-container">
             <div className="search-input">
               <Search size={20} />
               <input
                 type="text"
-                placeholder="Поиск по названию"
+                placeholder="Поиск по чекам"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -133,12 +133,12 @@ function ChecksPage() {
                 className="button--icon-secondary"
                 title="Управление группами"
               />
-              <IconButton
+              {/* <IconButton
                 icon={<Plus size={24} />}
                 onClick={() => setIsModalOpen('addCheck')}
                 className="button--icon-primary"
                 title="Создать новый чек"
-              />
+              /> */}
             </div>
           </div>
 
@@ -153,10 +153,8 @@ function ChecksPage() {
               {filteredChecks.map(check => (
                 <div key={check.id} className="check-card">
                   <div className="check-card__content" onClick={() => handleNavigateToCheck(check.id)}>
-                    <h3>{check.title}</h3>
-                    <div className="check-card__info">
-                      <span>Создан: {new Date(check.createdAt).toLocaleDateString()}</span>
-                    </div>
+                    <h3 className=''>{check.title}</h3>
+                    <span>Создан: {new Date(check.createdAt).toLocaleDateString()}</span>
                   </div>
                   <div className="check-card__actions">
                     <IconButton
