@@ -18,37 +18,31 @@ function Header() {
   return (
     <header className="header">
       <div className="header__content">
-        <div className="header__left">
-          <h1>SplitCheck</h1>
-        </div>
+        <h1 className='header__title'>SplitCheck</h1>
 
-        <div className="header__right">
-          <IconButton
+        {/* <IconButton
             icon={<Users size={24} />}
             onClick={() => setIsModalOpen('manageGroups')}
             title="Управление группами"
             className="header"
-          />
-          
-          <div className="header__user">
-            <button 
-              className="header__user-button"
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            >
-              <User size={24} />
-              <span>{user?.name || user?.email}</span>
-            </button>
+          /> */}
 
-            {isUserMenuOpen && (
-              <div className="header__user-menu">
-                <button onClick={handleLogout} className="header__menu-item">
-                  <LogOut size={16} />
-                  <span>Выйти</span>
-                </button>
-              </div>
-            )}
+        <button
+          className="header__user-button"
+          onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+        >
+          <User size={24} />
+          <span>{user?.name || user?.email}</span>
+        </button>
+
+        {isUserMenuOpen && (
+          <div className="header__user-menu">
+            <button onClick={handleLogout} className="header__menu-item">
+              <LogOut size={16} />
+              <span>Выйти</span>
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </header>
   )

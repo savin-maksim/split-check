@@ -11,7 +11,6 @@ import IconButton from '../components/Button/IconButton'
 import Spinner from '../components/Spinner/Spinner'
 import AddCheckModal from '../components/Modal/AddCheckModal'
 import ManageGroupsModal from '../components/Modal/ManageGroupsModal'
-import Header from '../components/Header/Header'
 
 function ChecksPage() {
   const navigate = useNavigate()
@@ -89,7 +88,6 @@ function ChecksPage() {
   if (isLoading) {
     return (
       <>
-        <Header />
         <div className="checks-page">
           <div className="checks-page__message">
             <Spinner size={48} />
@@ -102,7 +100,6 @@ function ChecksPage() {
   if (error) {
     return (
       <>
-        <Header />
         <div className="checks-page">
           <div className="checks-page__message">
             <div className="error-message">{error}</div>
@@ -117,7 +114,6 @@ function ChecksPage() {
 
   return (
     <>
-      <Header />
       <div className="checks-page">
         <div className="checks-page__content">
           <div className="checks-page__header">
