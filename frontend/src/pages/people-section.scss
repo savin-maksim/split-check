@@ -3,9 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  min-height: calc(90vh - var(--navigation-height));
-  padding: 1rem;
+  min-height: calc(70vh - var(--navigation-height));
 
   &__title {
     font-size: 1.5rem;
@@ -67,14 +65,7 @@
   &__people {
     display: flex;
     justify-content: center;
-    flex-direction: row;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    max-width: 800px;
-  }
-
-  &__person {
-    flex: 1;
-    min-width: 150px;
+    gap: 1rem;
   }
 }

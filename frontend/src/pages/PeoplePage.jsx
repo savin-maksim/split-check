@@ -106,7 +106,7 @@ function PeoplePage() {
 
   return (
     <div className="people-section">
-      {check && <h2 className="people-section__title">{check.title}</h2>}
+      {/* {check && <h2 className="people-section__title">{check.title}</h2>} */}
       
       {people.length === 0 ? (
         <div className="people-section__empty">
