@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Modal from './Modal'
+import ActionButton from '../Button/ActionButton';
 import './modal.scss'
 
 function AddCheckModal({ isOpen, onClose, onSubmit, initialTitle = '', isEditing = false }) {
@@ -28,7 +29,7 @@ function AddCheckModal({ isOpen, onClose, onSubmit, initialTitle = '', isEditing
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className='modal__title'>{isEditing ? 'Редактировать чек' : 'Создать новый чек'}</h2>
-      <form 
+      <div
         className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault()
@@ -44,23 +45,24 @@ function AddCheckModal({ isOpen, onClose, onSubmit, initialTitle = '', isEditing
           className="modal__input"
           autoFocus
         />
-        <div className="modal__buttons">
-          <button 
-            type="submit" 
-            className="button button--primary"
-            disabled={!newCheckTitle.trim()}
-          >
-            {isEditing ? 'Сохранить' : 'Создать'}
-          </button>
-          <button 
-            type="button" 
-            onClick={onClose}
-            className="button"
-          >
-            Отмена
-          </button>
-        </div>
-      </form>
+      </div>
+      <div className="modal__buttons">
+        <ActionButton
+          type="submit"
+          className="button button--primary"
+          disabled={!newCheckTitle.trim()}
+          onClick={handleSubmit}
+        >
+          {isEditing ? 'Сохранить' : 'Создать'}
+        </ActionButton>
+        <ActionButton
+          type="button"
+          onClick={onClose}
+          className="button"
+        >
+          Отмена
+        </ActionButton>
+      </div>
     </Modal>
   )
 }

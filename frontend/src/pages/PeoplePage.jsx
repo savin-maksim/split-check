@@ -107,17 +107,17 @@ function PeoplePage() {
 
   return (
     <div className="people-section">
-      {/* {check && <h2 className="people-section__title">{check.title}</h2>} */}
-      
+
       {people.length === 0 ? (
         <div className="people-section__empty">
           <UserPlus size={48} />
           <h2>Добавьте участников</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы</p>
-          <Arrow title={'Тык'}/>
+          <Arrow title={'Тык'} />
         </div>
       ) : (
         <div className="people-section__people">
+          <h2 className="people-section__title">Активные участники</h2>
           {people.map((person) => (
             <PersonButton
               key={person.id}
@@ -131,7 +131,7 @@ function PeoplePage() {
         </div>
       )}
 
-      <AddPersonModal 
+      <AddPersonModal
         isOpen={isModalOpen === 'addPerson'}
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPerson}
