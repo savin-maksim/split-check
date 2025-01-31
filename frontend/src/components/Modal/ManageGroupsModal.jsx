@@ -122,7 +122,7 @@ function ManageGroupsModal({ isOpen, onClose }) {
       title="Управление группами"
       className="manage-groups-modal"
     >
-      <div className="manage-groups-modal__content">
+      {/* <div className="manage-groups-modal__content"> */}
         {error && <div className="error-message">{error}</div>}
 
         <div className="groups-header">
@@ -239,6 +239,7 @@ function ManageGroupsModal({ isOpen, onClose }) {
                     {Array.isArray(group.members) && group.members.map(member => member && (
                       <div key={member.id} className="member-item">
                         <PersonButton
+                        className={'button__person--active'}
                           icon={<X size={16} />}
                           onClick={() => handleRemoveMember(group.id, member.id)}
                           title="Удалить участника"
@@ -265,13 +266,13 @@ function ManageGroupsModal({ isOpen, onClose }) {
                     />
                   </div>
                 </div>
-                <hr className='groups-list__hr'/>
+                <hr className='groups-list__hr' />
               </>
             ))}
           </div>
         )}
-      </div>
-    </Modal >
+      {/* </div> */}
+    </Modal>
   );
 }
 
