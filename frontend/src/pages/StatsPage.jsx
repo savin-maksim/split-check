@@ -145,7 +145,6 @@ function StatsPage() {
   return (
     <>
       <div className="transfer-section">
-        {check && <h2 className="transfer-section__title">{check.title}</h2>}
         <div className="transfer-section__cards">
           <TransferCard transfers={transfers} isLoading={false} />
         </div>

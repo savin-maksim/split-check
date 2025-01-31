@@ -8,9 +8,16 @@ function Modal({ isOpen, onClose, children, className = '' }) {
     const dialog = dialogRef.current;
     if (isOpen) {
       dialog.showModal();
+      document.body.style.overflow = 'hidden';
     } else {
       dialog.close();
+      document.body.style.overflow = 'unset';
     }
+
+    // Cleanup function to ensure we restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   const handleBackdropClick = (e) => {

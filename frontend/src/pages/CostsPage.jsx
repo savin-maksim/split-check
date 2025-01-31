@@ -204,8 +204,6 @@ function CostsPage() {
 
   return (
     <div className="cost-section">
-      {check && <h2 className="cost-section__title">{check.title}</h2>}
-
       <div className="payment-mode flex-center flex-center__column">
         <div className="payment-mode__selector">
           <h3>Режим оплаты</h3>

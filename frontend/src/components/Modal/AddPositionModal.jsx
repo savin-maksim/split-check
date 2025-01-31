@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import ActionButton from '../Button/ActionButton'
 import PersonButton from '../Button/PersonButton'
-import './modal.scss'
 import { toast } from 'react-hot-toast'
 import Modal from './Modal'
+import './modal.scss'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual', singlePayer }) {
   const [purchase, setPurchase] = useState('')
@@ -39,7 +39,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   }
 
   const handleSplitBetweenClick = (person) => {
-    setSplitBetween(prev => 
+    setSplitBetween(prev =>
       prev.some(p => p.id === person.id)
         ? prev.filter(p => p.id !== person.id)
         : [...prev, person]
@@ -89,7 +89,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       setSplitBetween([])
       setError('')
       purchaseInputRef.current?.focus()
-      
+
       toast.success(`Позиция "${formattedTitle}" - ${formattedPrice} добавлена`)
     } catch (err) {
       setError(err.message || 'Произошла ошибка')
@@ -99,7 +99,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   const handleKeyDown = (e, inputType) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      
+
       switch (inputType) {
         case 'purchase':
           quantityInputRef.current?.focus()
@@ -120,8 +120,8 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="modal__title">{title}</h2>
       {error && <p className="modal__error">{error}</p>}
-      <form 
-        className="modal__inputs" 
+      <form
+        className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
