@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, UserPlus, UserMinus, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, UserPlus, X, Users } from 'lucide-react';
 import Modal from './Modal';
 import IconButton from '../Button/IconButton';
+import ActionButton from '../Button/ActionButton';
 import groupService from '../../api/group.service';
 import Spinner from '../Spinner/Spinner';
 import './manage-groups-modal.scss';
+import PersonButton from '../Button/PersonButton';
 
 function ManageGroupsModal({ isOpen, onClose }) {
   const [groups, setGroups] = useState(null);
@@ -122,13 +124,13 @@ function ManageGroupsModal({ isOpen, onClose }) {
     >
       <div className="manage-groups-modal__content">
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="groups-header">
-          <h3>Мои группы</h3>
+          <h2 className=''>Мои группы</h2>
           <IconButton
             icon={<Plus size={20} />}
             onClick={() => setIsAddingGroup(true)}
-            className="button--icon-primary"
+            className="button--icon-primary small"
             title="Создать новую группу"
           />
         </div>
@@ -141,29 +143,27 @@ function ManageGroupsModal({ isOpen, onClose }) {
               value={newGroupName}
               onChange={(e) => setNewGroupName(e.target.value)}
             />
-            <textarea
+            <input
               placeholder="Участники (через запятую)"
               value={newMembers}
               onChange={(e) => setNewMembers(e.target.value)}
             />
             <div className="form-actions">
-              <button
+              <ActionButton
                 onClick={handleCreateGroup}
                 disabled={!newGroupName.trim()}
-                className="button button--primary"
               >
                 Создать
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
                 onClick={() => {
                   setIsAddingGroup(false);
                   setNewGroupName('');
                   setNewMembers('');
                 }}
-                className="button"
               >
                 Отмена
-              </button>
+              </ActionButton>
             </div>
           </div>
         )}
@@ -193,82 +193,85 @@ function ManageGroupsModal({ isOpen, onClose }) {
         ) : (
           <div className="groups-list">
             {groups.map(group => group && (
-              <div key={group.id} className="group-item">
-                <div className="group-header">
-                  {selectedGroup === group.id ? (
+              <>
+                <div key={group.id} className="group-item">
+                  <div className="group-header">
+                    {selectedGroup === group.id ? (
+                      <input
+                        type="text"
+                        value={group.name || ''}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          setGroups(prevGroups => {
+                            if (!prevGroups) return [];
+                            return prevGroups.map(g =>
+                              g?.id === group.id ? { ...g, name: newValue } : g
+                            );
+                          });
+                        }}
+                        onBlur={() => {
+                          if (group.name?.trim()) {
+                            handleUpdateGroup(group.id, group.name);
+                          }
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <h4 className='group-header__title'>{group.name || 'Без названия'}</h4>
+                    )}
+                    <div className="group-actions">
+                      <IconButton
+                        icon={<Edit2 size={20} />}
+                        onClick={() => setSelectedGroup(group.id)}
+                        title="Редактировать название"
+                        className="small"
+                      />
+                      <IconButton
+                        icon={<Trash2 size={20} />}
+                        onClick={() => handleDeleteGroup(group.id)}
+                        title="Удалить группу"
+                        className="small"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="group-members">
+                    {Array.isArray(group.members) && group.members.map(member => member && (
+                      <div key={member.id} className="member-item">
+                        <PersonButton
+                          icon={<X size={16} />}
+                          onClick={() => handleRemoveMember(group.id, member.id)}
+                          title="Удалить участника"
+                        >
+                          {member.name || 'Без имени'}
+                        </PersonButton>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="add-members">
                     <input
                       type="text"
-                      value={group.name || ''}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setGroups(prevGroups => {
-                          if (!prevGroups) return [];
-                          return prevGroups.map(g =>
-                            g?.id === group.id ? { ...g, name: newValue } : g
-                          );
-                        });
-                      }}
-                      onBlur={() => {
-                        if (group.name?.trim()) {
-                          handleUpdateGroup(group.id, group.name);
-                        }
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    <h4>{group.name || 'Без названия'}</h4>
-                  )}
-                  <div className="group-actions">
-                    <IconButton
-                      icon={<Edit2 size={16} />}
-                      onClick={() => setSelectedGroup(group.id)}
-                      title="Редактировать название"
-                      className="group"
+                      placeholder="Добавить участников (через запятую)"
+                      value={newMembers}
+                      onChange={(e) => setNewMembers(e.target.value)}
                     />
                     <IconButton
-                      icon={<Trash2 size={16} />}
-                      onClick={() => handleDeleteGroup(group.id)}
-                      title="Удалить группу"
-                      className="group"
+                      icon={<UserPlus size={20} />}
+                      onClick={() => handleAddMembers(group.id)}
+                      title="Добавить участников"
+                      className="small"
+                      disabled={!newMembers.trim()}
                     />
                   </div>
                 </div>
-
-                <div className="group-members">
-                  {Array.isArray(group.members) && group.members.map(member => member && (
-                    <div key={member.id} className="member-item">
-                      <span>{member.name || 'Без имени'}</span>
-                      <IconButton
-                        icon={<UserMinus size={16} />}
-                        onClick={() => handleRemoveMember(group.id, member.id)}
-                        title="Удалить участника"
-                        className="group"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="add-members">
-                  <input
-                    type="text"
-                    placeholder="Добавить участников (через запятую)"
-                    value={newMembers}
-                    onChange={(e) => setNewMembers(e.target.value)}
-                  />
-                  <IconButton
-                    icon={<UserPlus size={20} />}
-                    onClick={() => handleAddMembers(group.id)}
-                    title="Добавить участников"
-                    className="group"
-                    disabled={!newMembers.trim()}
-                  />
-                </div>
-              </div>
+                <hr className='groups-list__hr'/>
+              </>
             ))}
           </div>
         )}
       </div>
-    </Modal>
+    </Modal >
   );
 }
 

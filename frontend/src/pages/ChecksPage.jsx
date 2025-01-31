@@ -165,7 +165,7 @@ function ChecksPage() {
                         handleStartEdit(check)
                       }}
                       title="Редактировать чек"
-                      className="checks"
+                      className="small"
                     />
                     <IconButton
                       icon={<Trash2 size={16} />}
@@ -174,7 +174,7 @@ function ChecksPage() {
                         handleDeleteCheck(check.id)
                       }}
                       title="Удалить чек"
-                      className="checks"
+                      className="small"
                     />
                   </div>
                 </div>

@@ -1,6 +1,5 @@
 .manage-groups-modal {
   &__content {
-    padding: 20px;
     max-height: 80vh;
     overflow-y: auto;
   }
@@ -19,23 +18,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px;
     text-align: center;
-    color: var(--color-text-secondary);
-
-    svg {
-      color: var(--color-text-secondary);
-      margin-bottom: 16px;
-    }
+    color: var(--color-light);
+    margin-top: 1rem;
 
     p {
       margin: 4px 0;
-      
+
       &:first-of-type {
         font-size: 1.1em;
         margin-bottom: 8px;
       }
-      
+
       &:last-of-type {
         font-size: 0.9em;
         opacity: 0.8;
@@ -47,99 +41,83 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-
-    h3 {
-      margin: 0;
-      font-size: 1.2em;
-    }
+    color: var(--color-light);
+    margin-bottom: 1rem;
   }
 
   .add-group-form {
-    background-color: var(--color-background-secondary);
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 
-    input, textarea {
+    input {
       width: 100%;
-      margin-bottom: 12px;
-      padding: 8px;
-      border: 1px solid var(--color-border);
-      border-radius: 4px;
-      background-color: var(--color-background);
-    }
+      padding: 0.75rem;
+      border: var(--border);
+      border-radius: var(--border-radius-small);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      background-color: var(--color-glass);
+      color: var(--color-text-active);
 
-    textarea {
-      min-height: 80px;
-      resize: vertical;
+      &::placeholder {
+        color: var(--color-light);
+      }
+
+      &:focus {
+        border-color: var(--color-orange);
+      }
     }
 
     .form-actions {
       display: flex;
       gap: 8px;
       justify-content: flex-end;
-
-      button {
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-
-        &.button--primary {
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-
-          &:hover {
-            background-color: var(--color-primary-dark);
-          }
-
-          &:disabled {
-            background-color: var(--color-disabled);
-            cursor: not-allowed;
-          }
-        }
-
-        &:not(.button--primary) {
-          background-color: transparent;
-          border: 1px solid var(--color-border);
-
-          &:hover {
-            background-color: var(--color-background-secondary);
-          }
-        }
-      }
     }
   }
 
   .groups-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+
+    &__hr {
+      width: 100%;
+      border: none; // Убираем стандартную границу
+      height: 1px; // Устанавливаем высоту линии
+      background-color: var(--color-orange); // Применяем цвет фона
+      margin: 0;
+    }
   }
 
   .group-item {
-    background-color: var(--color-background-secondary);
-    border-radius: 8px;
-    padding: 16px;
-
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
     .group-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      gap: 1rem;
+      margin-bottom: 1rem;
 
-      h4 {
-        margin: 0;
-        font-size: 1.1em;
+      &__title {
+        color: var(--color-light);
       }
 
       input {
-        font-size: 1.1em;
-        padding: 4px 8px;
-        border: 1px solid var(--color-border);
+        width: 100%;
+        padding: 0.5rem;
+        border: var(--border);
         border-radius: 4px;
-        background-color: var(--color-background);
+        background-color: var(--color-glass);
+        color: var(--color-light);
+        outline: none;
+
+        &:focus {
+          border-color: var(--color-orange);
+        }
       }
 
       .group-actions {
@@ -151,34 +129,36 @@
     .group-members {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
 
       .member-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 4px 8px;
-        background-color: var(--color-background);
-        border-radius: 4px;
-        border: 1px solid var(--color-border);
-
-        span {
-          font-size: 0.9em;
-        }
       }
     }
 
     .add-members {
       display: flex;
-      gap: 8px;
+      gap: 1rem;
 
       input {
-        flex-grow: 1;
-        padding: 8px;
-        border: 1px solid var(--color-border);
+        width: 100%;
+        padding: 0.5rem;
+        border: var(--border);
         border-radius: 4px;
-        background-color: var(--color-background);
+        background-color: var(--color-glass);
+        color: var(--color-light);
+        outline: none;
+
+        &:focus {
+          border-color: var(--color-orange);
+        }
+
+        &::placeholder {
+          font-size: 0.8rem;
+          color: var(--color-light);
+        }
       }
     }
   }
@@ -193,9 +173,9 @@
 
   .group.icon-button {
     padding: 4px;
-    
+
     &:hover {
       background-color: var(--color-background);
     }
   }
-} 
+}
