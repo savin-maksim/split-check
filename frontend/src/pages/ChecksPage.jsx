@@ -8,6 +8,7 @@ import './checks-page.scss'
 
 // Components
 import IconButton from '../components/Button/IconButton'
+import ActionButton from '../components/Button/ActionButton'
 import Spinner from '../components/Spinner/Spinner'
 import AddCheckModal from '../components/Modal/AddCheckModal'
 import ManageGroupsModal from '../components/Modal/ManageGroupsModal'
@@ -128,18 +129,14 @@ function ChecksPage() {
               />
             </div>
             <div className="header-buttons">
-              <IconButton
-                icon={<Users size={24} />}
+              <ActionButton
+                // icon={<Users size={24} />}
                 onClick={() => setIsModalOpen('manageGroups')}
-                className="button--icon-secondary"
+                className="button--large"
                 title="Управление группами"
-              />
-              {/* <IconButton
-                icon={<Plus size={24} />}
-                onClick={() => setIsModalOpen('addCheck')}
-                className="button--icon-primary"
-                title="Создать новый чек"
-              /> */}
+              >
+                Управление группами
+              </ActionButton>
             </div>
           </div>
 
@@ -168,7 +165,7 @@ function ChecksPage() {
                       className="small"
                     />
                     <IconButton
-                      icon={<Trash2 size={16} />}
+                      icon={<Trash2 size={16}/>}
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteCheck(check.id)

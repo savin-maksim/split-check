@@ -49,6 +49,12 @@
     display: inline-flex;
     align-items: center;
   }
+
+  &--large {
+    width: 100%;
+    background-color: var(--color-active);
+    border-color: var(--color-orange);
+  }
 }
 
 .share-button {
