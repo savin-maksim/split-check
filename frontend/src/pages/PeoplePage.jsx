@@ -116,19 +116,21 @@ function PeoplePage() {
           <Arrow title={'Тык'} />
         </div>
       ) : (
-        <div className="people-section__people">
+        <>
           <h2 className="people-section__title">Активные участники</h2>
-          {people.map((person) => (
-            <PersonButton
-              key={person.id}
-              className="people-section__person"
-              icon={<X size={16} />}
-              onClick={() => handleRemovePerson(person.id)}
-            >
-              {person.name}
-            </PersonButton>
-          ))}
-        </div>
+          <div className="people-section__people">
+            {people.map((person) => (
+              <PersonButton
+                key={person.id}
+                className="people-section__person"
+                icon={<X size={16} />}
+                onClick={() => handleRemovePerson(person.id)}
+              >
+                {person.name}
+              </PersonButton>
+            ))}
+          </div>
+        </>
       )}
 
       <AddPersonModal
