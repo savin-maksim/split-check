@@ -4,10 +4,14 @@ import PeoplePage from '../pages/PeoplePage'
 import CostsPage from '../pages/CostsPage'
 import StatsPage from '../pages/StatsPage'
 import SharedStatsPage from '../pages/SharedStatsPage'
+import LoginPage from '../pages/LoginPage'
 
 function AppRoutes() {
   return (
     <Routes>
+      {/* Маршрут для неавторизованных пользователей */}
+      <Route path="/login" element={<LoginPage />} />
+
       {/* Маршруты для авторизованных пользователей */}
       <Route path="/" element={<Navigate to="/checks" replace />} />
       <Route path="/checks" element={<ChecksPage />} />
