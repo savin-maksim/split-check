@@ -15,7 +15,7 @@ function CostCard({
   splitBetween,
   onDelete,
   onUpdate,
-  onCalculate,
+  onDuplicate,
   people,
   paymentMode
 }) {
@@ -69,8 +69,6 @@ function CostCard({
       paidBy,
       splitBetween: newSplitBetween
     });
-
-    onCalculate?.();
   };
 
   const handleSplitSelect = (person) => {
@@ -113,14 +111,10 @@ function CostCard({
           <IconButton
             icon={<Copy />}
             className="cost-card__action-btn"
-            onClick={() => onUpdate({
-              id: Date.now(),
+            onClick={() => onDuplicate({
               title,
-              amount,
               quantity,
-              pricePerUnit,
-              paidBy,
-              splitBetween: []
+              pricePerUnit
             })}
             title="Дублировать"
           />

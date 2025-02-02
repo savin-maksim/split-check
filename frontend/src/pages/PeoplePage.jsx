@@ -8,6 +8,7 @@ import checkService from '../api/check.service'
 // Import components
 import PersonButton from '../components/Button/PersonButton'
 import AddPersonModal from '../components/Modal/AddPersonModal'
+import DeleteConfirmModal from '../components/Modal/DeleteConfirmModal'
 import Arrow from '../components/Arrow/Arrow'
 import Spinner from '../components/Spinner/Spinner'
 
@@ -22,6 +23,7 @@ function PeoplePage() {
   const [people, setPeople] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [personToDelete, setPersonToDelete] = useState(null)
 
   // Загрузка чека и списка участников
   useEffect(() => {
@@ -75,11 +77,15 @@ function PeoplePage() {
   const handleRemovePerson = async (personId) => {
     try {
       await personService.deletePerson(checkId, personId)
-      // Обновляем локальное состояние
       setPeople(people.filter(p => p.id !== personId))
+      setPersonToDelete(null)
     } catch (err) {
       setError(err.message || 'Не удалось удалить участника')
     }
+  }
+
+  const handleStartDelete = (person) => {
+    setPersonToDelete(person)
   }
 
   if (isLoading) {
@@ -124,7 +130,7 @@ function PeoplePage() {
                 key={person.id}
                 className="people-section__person"
                 icon={<X size={16} />}
-                onClick={() => handleRemovePerson(person.id)}
+                onClick={() => handleStartDelete(person)}
               >
                 {person.name}
               </PersonButton>
@@ -139,6 +145,16 @@ function PeoplePage() {
         onSubmit={handleAddPerson}
         title="Добавить человека"
       />
+
+      {personToDelete && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setPersonToDelete(null)}
+          onConfirm={() => handleRemovePerson(personToDelete.id)}
+          title="Удаление участника"
+          message={`Вы уверены, что хотите удалить участника "${personToDelete.name}"?`}
+        />
+      )}
     </div>
   )
 }

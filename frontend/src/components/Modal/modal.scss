@@ -152,3 +152,16 @@
   white-space: nowrap;
   border: 0;
 }
+
+.delete-confirm-modal {
+  &__message {
+    color: var(--color-light);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+} 

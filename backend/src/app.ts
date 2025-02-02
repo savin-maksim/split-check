@@ -9,6 +9,7 @@ import costRoutes from './routes/cost.routes';
 import statsRoutes from './routes/stats.routes';
 import transferRoutes from './routes/transfer.routes';
 import groupRoutes from './routes/group.routes';
+import shareRoutes from './routes/share.routes';
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/checks', checkRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/share', shareRoutes);
 app.use('/api', personRoutes);
 app.use('/api', costRoutes);
 app.use('/api', statsRoutes);

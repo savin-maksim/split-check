@@ -12,6 +12,8 @@ import ActionButton from '../components/Button/ActionButton'
 import Spinner from '../components/Spinner/Spinner'
 import AddCheckModal from '../components/Modal/AddCheckModal'
 import ManageGroupsModal from '../components/Modal/ManageGroupsModal'
+import SearchInput from '../components/Input/SearchInput'
+import DeleteConfirmModal from '../components/Modal/DeleteConfirmModal'
 
 function ChecksPage() {
   const navigate = useNavigate()
@@ -21,6 +23,7 @@ function ChecksPage() {
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [editingCheck, setEditingCheck] = useState(null)
+  const [checkToDelete, setCheckToDelete] = useState(null)
 
   // Загрузка списка чеков
   useEffect(() => {
@@ -65,10 +68,10 @@ function ChecksPage() {
   }
 
   const handleDeleteCheck = async (checkId) => {
-    if (!window.confirm('Вы уверены, что хотите удалить этот чек?')) return
     try {
       await checkService.deleteCheck(checkId)
       setChecks(checks.filter(check => check.id !== checkId))
+      setCheckToDelete(null)
     } catch (err) {
       setError(err.message || 'Не удалось удалить чек')
     }
@@ -81,6 +84,10 @@ function ChecksPage() {
   const handleStartEdit = (check) => {
     setEditingCheck(check)
     setIsModalOpen('editCheck')
+  }
+
+  const handleStartDelete = (check) => {
+    setCheckToDelete(check)
   }
 
   const filteredChecks = checks.filter(check =>
@@ -119,15 +126,11 @@ function ChecksPage() {
       <div className="checks-page">
         <div className="checks-page__content">
           <div className="checks-page__search-container">
-            <div className="search-input">
-              <Search size={20} />
-              <input
-                type="text"
-                placeholder="Поиск по чекам"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+            <SearchInput
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Поиск по чекам"
+            />
             <div className="header-buttons">
               <ActionButton
                 // icon={<Users size={24} />}
@@ -165,10 +168,10 @@ function ChecksPage() {
                       className="small"
                     />
                     <IconButton
-                      icon={<Trash2 size={16}/>}
+                      icon={<Trash2 size={16} />}
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleDeleteCheck(check.id)
+                        handleStartDelete(check)
                       }}
                       title="Удалить чек"
                       className="small"
@@ -200,6 +203,16 @@ function ChecksPage() {
             isOpen={isModalOpen === 'manageGroups'}
             onClose={() => setIsModalOpen(null)}
           />
+
+          {checkToDelete && (
+            <DeleteConfirmModal
+              isOpen={true}
+              onClose={() => setCheckToDelete(null)}
+              onConfirm={() => handleDeleteCheck(checkToDelete.id)}
+              title="Удаление чека"
+              message={`Вы уверены, что хотите удалить чек "${checkToDelete.title}"?`}
+            />
+          )}
         </div>
       </div>
     </>

@@ -12,6 +12,16 @@
     cursor: pointer;
   }
 
+  &--danger {
+    background-color: var(--error-color);
+    color: var(--error-color-text);
+    border: 1px solid var(--error-color-text);
+    @include hover {
+      box-shadow: 0 0 15px var(--error-color-text);
+      border-color: var(--error-color-text);
+    }
+  }
+
   &__person {
     border-radius: var(--border-radius-person);
     font-weight: 500;

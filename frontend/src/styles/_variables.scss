@@ -35,7 +35,8 @@
   --background-color-rgb: 255, 255, 255;
   --text-color: #1f2937;
   --hover-color: rgba(0, 0, 0, 0.05);
-  --border-color: #e5e7eb;
-  --error-color: #ef4444;
+  --border-color: rgba(255, 255, 255, 0.3);
+  --error-color: rgb(239, 68, 68, 0.2);
+  --error-color-text: rgb(239, 68, 68);
   --success-color: #22c55e;
 }

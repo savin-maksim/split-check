@@ -1,4 +1,4 @@
-import { User, Users, Calculator, Search } from 'lucide-react'
+import { User, Users, Calculator } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -11,8 +11,10 @@ import IconButton from '../components/Button/IconButton'
 import PersonButton from '../components/Button/PersonButton'
 import CostCard from '../components/Cards/Cost/CostCard'
 import AddPositionModal from '../components/Modal/AddPositionModal'
+import DeleteConfirmModal from '../components/Modal/DeleteConfirmModal'
 import Arrow from '../components/Arrow/Arrow'
 import Spinner from '../components/Spinner/Spinner'
+import SearchInput from '../components/Input/SearchInput'
 
 // Import styles
 import './cost-section.scss'
@@ -35,6 +37,7 @@ function CostsPage() {
     setIsModalOpen,
     setCurrentCheck
   } = useApp()
+  const [costToDelete, setCostToDelete] = useState(null)
 
   // Загрузка чека, участников и расходов
   useEffect(() => {
@@ -161,10 +164,36 @@ function CostsPage() {
     try {
       await costService.deleteCost(checkId, costId)
       setCosts(costs.filter(cost => cost.id !== costId))
+      setCostToDelete(null)
     } catch (err) {
       setError(err.message || 'Не удалось удалить расход')
     }
   }
+
+  const handleStartDelete = (cost) => {
+    setCostToDelete(cost)
+  }
+
+  const handleDuplicateCost = async (costData, index) => {
+    try {
+      const response = await costService.createCost(checkId, {
+        title: costData.title,
+        quantity: costData.quantity || 1,
+        pricePerUnit: costData.pricePerUnit || 0,
+        paidByIds: paymentMode === 'single' && singlePayer ? [singlePayer.id] : [],
+        splitBetweenIds: []
+      });
+
+      // Вставляем новую позицию сразу после текущей
+      setCosts(prevCosts => {
+        const newCosts = [...prevCosts];
+        newCosts.splice(index + 1, 0, response);
+        return newCosts;
+      });
+    } catch (err) {
+      setError(err.message || 'Не удалось дублировать позицию');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -227,15 +256,11 @@ function CostsPage() {
         </div>
 
         <div className="cost-section__search">
-          <div className="search-input">
-            <Search size={20} />
-            <input
-              type="text"
-              placeholder="Поиск..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Поиск..."
+          />
         </div>
 
         {paymentMode === 'single' && (
@@ -265,7 +290,7 @@ function CostsPage() {
         </div>
       ) : (
         <div className="cost-section__cards">
-          {filteredCosts.map(cost => (
+          {filteredCosts.map((cost, index) => (
             <CostCard
               key={cost.id}
               id={cost.id}
@@ -277,8 +302,9 @@ function CostsPage() {
               splitBetween={cost.splitBetween}
               people={people}
               paymentMode={paymentMode}
-              onDelete={() => handleDeleteCost(cost.id)}
+              onDelete={() => handleStartDelete(cost)}
               onUpdate={(updatedCost) => handleUpdateCost(cost.id, updatedCost)}
+              onDuplicate={(costData) => handleDuplicateCost(costData, index)}
             />
           ))}
         </div>
@@ -293,6 +319,16 @@ function CostsPage() {
         paymentMode={paymentMode}
         singlePayer={singlePayer}
       />
+
+      {costToDelete && (
+        <DeleteConfirmModal
+          isOpen={true}
+          onClose={() => setCostToDelete(null)}
+          onConfirm={() => handleDeleteCost(costToDelete.id)}
+          title="Удаление позиции"
+          message={`Вы уверены, что хотите удалить позицию "${costToDelete.title}"?`}
+        />
+      )}
     </div>
   )
 }
