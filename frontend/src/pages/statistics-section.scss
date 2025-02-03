@@ -107,7 +107,7 @@
 
     &--columns {
       display: grid;
-      grid-template-columns: minmax(0, 2fr) 80px minmax(0, 1.5fr);
+      grid-template-columns: minmax(0, 1.7fr) 80px minmax(0, 1.5fr);
       gap: 0.5rem;
       align-items: center;
     }
@@ -128,7 +128,7 @@
 
     &--detailed {
       display: grid;
-      grid-template-columns: minmax(0, 2fr) 80px minmax(0, 1.5fr);
+      grid-template-columns: minmax(0, 1.7fr) 80px minmax(0, 1.5fr);
       gap: 0.5rem;
       align-items: center;
     }

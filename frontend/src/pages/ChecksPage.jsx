@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import authService from '../api/auth.service'
 import checkService from '../api/check.service'
+import { Share2 } from 'lucide-react'
+import { shareService } from '../api/share.service'
+import toast from 'react-hot-toast'
+import ShareModal from '../components/Modal/ShareModal'
+
 import './checks-page.scss'
 
 // Components
@@ -24,6 +29,7 @@ function ChecksPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [editingCheck, setEditingCheck] = useState(null)
   const [checkToDelete, setCheckToDelete] = useState(null)
+  const [shareUrl, setShareUrl] = useState('')
 
   // Загрузка списка чеков
   useEffect(() => {
@@ -88,6 +94,31 @@ function ChecksPage() {
 
   const handleStartDelete = (check) => {
     setCheckToDelete(check)
+  }
+
+  const handleShare = async (checkId, e) => {
+    e.stopPropagation() // Предотвращаем переход на страницу чека
+    try {
+      // Сохраняем предыдущую ссылку в localStorage
+      const prevShareUrl = localStorage.getItem(`shareUrl_${checkId}`)
+
+      const response = await shareService.createShareLink(checkId, 'readonly')
+      console.log('Share response:', response)
+      
+      const newShareUrl = `${window.location.origin}/share/${response.token}`
+      console.log('Generated shareUrl:', newShareUrl)
+
+      // Сохраняем новую ссылку, если она отличается
+      if (prevShareUrl !== newShareUrl) {
+        localStorage.setItem(`shareUrl_${checkId}`, newShareUrl)
+      }
+      
+      setShareUrl(newShareUrl)
+      setIsModalOpen('share')
+    } catch (error) {
+      console.error('Share error:', error)
+      toast.error('Не удалось создать ссылку для общего доступа')
+    }
   }
 
   const filteredChecks = checks.filter(check =>
@@ -159,6 +190,12 @@ function ChecksPage() {
                   </div>
                   <div className="check-card__actions">
                     <IconButton
+                      icon={<Share2 size={16} />}
+                      onClick={(e) => handleShare(check.id, e)}
+                      title="Поделиться чеком"
+                      className="small"
+                    />
+                    <IconButton
                       icon={<Edit2 size={16} />}
                       onClick={(e) => {
                         e.stopPropagation()
@@ -202,6 +239,15 @@ function ChecksPage() {
           <ManageGroupsModal
             isOpen={isModalOpen === 'manageGroups'}
             onClose={() => setIsModalOpen(null)}
+          />
+
+          <ShareModal
+            isOpen={isModalOpen === 'share'}
+            onClose={() => {
+              setIsModalOpen(null)
+              setShareUrl('')
+            }}
+            shareUrl={shareUrl}
           />
 
           {checkToDelete && (

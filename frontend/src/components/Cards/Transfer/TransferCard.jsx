@@ -25,13 +25,13 @@ function TransferCard({ transfers, isLoading }) {
             {transfers.map((transfer, index) => (
                <div key={index} className="transfer-card__item">
                   <div className="transfer-card__people">
-                     <PersonButton className="transfer-card__person">
+                     <span className="transfer-card__person">
                         {transfer.from.name}
-                     </PersonButton>
+                     </span>
                      <ArrowRight size={20} />
-                     <PersonButton className="transfer-card__person">
+                     <span className="transfer-card__person">
                         {transfer.to.name}
-                     </PersonButton>
+                     </span>
                   </div>
                   <h4 className="">{formatAmount(transfer.amount)}</h4>
                </div>

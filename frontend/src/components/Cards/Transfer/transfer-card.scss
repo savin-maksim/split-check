@@ -18,21 +18,20 @@
 
   &__item {
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 2fr 1fr;
     align-items: center;
     text-align: end;
     gap: 0.7rem;
   }
 
   &__people {
-    display: grid;
-    grid-template-columns: 1fr 0.1fr 1fr;
-    align-items: center;
-    gap: 0.5rem;
+    display: flex;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
   }
 
   &__person {
-    @include no-animation;
+    font-size: 1rem;
   }
 
   &__header {
