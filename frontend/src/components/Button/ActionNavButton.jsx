@@ -1,37 +1,10 @@
 import { useLocation } from 'react-router-dom'
 import { UserPlus, Plus, Share2 } from 'lucide-react'
-import { shareService } from '../../api/share.service'
 import { useApp } from '../../context/AppContext'
-import toast from 'react-hot-toast'
 import './action-nav-button.scss'
 
-function ActionNavButton({ onPeopleAction, onCostAction, onAddCheck, isChecksPage }) {
+function ActionNavButton({ onPeopleAction, onCostAction, onShareAction, onAddCheck, isChecksPage }) {
   const location = useLocation()
-  
-  const handleShare = async () => {
-    try {
-      const checkId = location.pathname.split('/')[2]
-      
-      // Сохраняем предыдущую ссылку в localStorage
-      const prevShareUrl = localStorage.getItem(`shareUrl_${checkId}`)
-      
-      const response = await shareService.createShareLink(checkId, 'readonly')
-      const shareUrl = `${window.location.origin}/share/${response.token}`
-      
-      await navigator.clipboard.writeText(shareUrl)
-      
-      // Если ссылка уже существовала и она та же самая
-      if (prevShareUrl === shareUrl) {
-        toast.success('Существующая ссылка скопирована в буфер обмена')
-      } else {
-        // Сохраняем новую ссылку
-        localStorage.setItem(`shareUrl_${checkId}`, shareUrl)
-        toast.success('Ссылка скопирована в буфер обмена')
-      }
-    } catch (err) {
-      toast.error('Не удалось создать ссылку')
-    }
-  }
 
   const getButtonConfig = () => {
     const pathname = location.pathname
@@ -69,7 +42,7 @@ function ActionNavButton({ onPeopleAction, onCostAction, onAddCheck, isChecksPag
     if (pathname.endsWith('/stats')) {
       return {
         icon: <Share2 size={24} />,
-        onClick: handleShare,
+        onClick: onShareAction,
         title: 'Поделиться'
       }
     }
@@ -91,4 +64,4 @@ function ActionNavButton({ onPeopleAction, onCostAction, onAddCheck, isChecksPag
   )
 }
 
-export default ActionNavButton 
+export default ActionNavButton
