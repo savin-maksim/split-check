@@ -1,12 +1,14 @@
 import { BrowserRouter } from 'react-router-dom'
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 import { AppProvider } from './context/AppContext'
-import { useLocation } from 'react-router-dom'
+import Layout from './layout/Layout'
+
+import AppRoutes from './routes/AppRoutes'
 import AuthLayout from './layout/AuthLayout'
 import SharedLayout from './layout/SharedLayout'
 import Toast from './components/Toast/Toast'
 import ScrollTopButton from './components/Button/ScrollTopButton'
-import AppRoutes from './routes/AppRoutes'
+import { useLocation } from 'react-router-dom'
 
 function AppContent() {
   const location = useLocation()
@@ -34,7 +36,11 @@ function App() {
     <ErrorBoundary>
       <AppProvider>
         <BrowserRouter>
-          <AppContent />
+          <Layout>
+            <AppRoutes />
+          </Layout>
+          <Toast />
+          <ScrollTopButton />
         </BrowserRouter>
       </AppProvider>
     </ErrorBoundary>

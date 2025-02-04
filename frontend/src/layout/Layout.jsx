@@ -6,6 +6,7 @@ import Header from '../components/Header/Header'
 function Layout({ children }) {
   const location = useLocation()
   const isLoginPage = location.pathname === '/login'
+  const isSharedPage = location.pathname.startsWith('/share/')
 
   return (
     <div className="layout">
@@ -13,7 +14,7 @@ function Layout({ children }) {
       <main className="layout__content">
         {children}
       </main>
-      {!isLoginPage && <Navigation />}
+      {!isLoginPage && !isSharedPage && <Navigation />}
     </div>
   )
 }
