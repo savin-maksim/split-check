@@ -28,12 +28,7 @@ export function AppProvider({ children }) {
   const changePaymentMode = (mode) => {
     if (mode === paymentMode) return
 
-    if (mode === 'single') {
-      if (!singlePayer) {
-        toast.error('Выберите единого плательщика')
-        return
-      }
-    } else if (mode === 'manual') {
+    if (mode === 'manual') {
       setSinglePayer(null)
     }
 
