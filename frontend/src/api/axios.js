@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Создаем экземпляр axios с базовой конфигурацией
 const api = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'http://splitcheck.ru/api',
   headers: {
     'Content-Type': 'application/json'
   }
