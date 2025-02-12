@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Создаем экземпляр axios с базовой конфигурацией
 const api = axios.create({
-  baseURL: 'http://splitcheck.ru/api',
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
