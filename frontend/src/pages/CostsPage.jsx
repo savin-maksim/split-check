@@ -73,22 +73,32 @@ function CostsPage() {
   const loadCheckData = async () => {
     try {
       setIsLoading(true)
+      setError(null)
+      
+      // Проверяем авторизацию
+      const token = localStorage.getItem('token')
+      if (!token) {
+        navigate('/login')
+        return
+      }
+
       const [checkResponse, peopleResponse, costsResponse] = await Promise.all([
         checkService.getCheckById(checkId),
         personService.getPeople(checkId),
         costService.getCosts(checkId)
       ])
-      console.log('API Responses:', {
-        check: checkResponse,
-        people: peopleResponse,
-        costs: costsResponse
-      })
+
+      // Проверяем, что все ответы являются массивами где нужно
       setCheck(checkResponse)
       setCurrentCheck(checkResponse)
-      setPeople(peopleResponse)
-      setCosts(costsResponse)
+      setPeople(Array.isArray(peopleResponse) ? peopleResponse : [])
+      setCosts(Array.isArray(costsResponse) ? costsResponse : [])
     } catch (err) {
       console.error('Load data error:', err)
+      if (err.response?.status === 401) {
+        navigate('/login')
+        return
+      }
       setError(err.message || 'Не удалось загрузить данные')
       if (err.message === 'Check not found') {
         navigate('/')
