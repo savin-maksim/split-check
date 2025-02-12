@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Создаем экземпляр axios с базовой конфигурацией
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: 'http://localhost:3001/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -15,50 +15,21 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log('API Request:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      data: config.data
-    });
     return config;
   },
   (error) => {
-    console.error('Request interceptor error:', {
-      error: error,
-      message: error.message,
-      stack: error.stack
-    });
     return Promise.reject(error);
   }
 );
 
 // Перехватчик для обработки ответов
 api.interceptors.response.use(
-  (response) => {
-    console.log('API Response:', {
-      url: response.config.url,
-      status: response.status,
-      data: response.data
-    });
-    return response.data;
-  },
+  (response) => response.data,
   (error) => {
-    console.error('Response interceptor error:', {
-      error: error,
-      config: error.config,
-      response: error.response ? {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers
-      } : null,
-      message: error.message,
-      stack: error.stack
-    });
-
     if (error.response) {
+      // Если сервер вернул ошибку с статусом
       if (error.response.status === 401) {
-        console.error('Unauthorized access detected, clearing token');
+        // Если токен истек или недействителен, очищаем локальное хранилище
         localStorage.removeItem('token');
         window.location.href = '/login';
       }

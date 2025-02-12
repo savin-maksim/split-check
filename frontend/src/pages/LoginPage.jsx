@@ -15,7 +15,6 @@ function LoginPage() {
     name: ''
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -44,7 +43,6 @@ function LoginPage() {
       navigate('/checks')
     } catch (error) {
       toast.error(error.message || `Ошибка при ${isLoginMode ? 'входе' : 'регистрации'}`)
-      setError(error)
     } finally {
       setIsLoading(false)
     }
@@ -57,16 +55,6 @@ function LoginPage() {
       password: '',
       name: ''
     })
-  }
-
-  if (isLoading) {
-    console.log('Login page is loading...')
-    return null
-  }
-
-  if (error) {
-    console.error('Login page error:', error)
-    return null
   }
 
   return (

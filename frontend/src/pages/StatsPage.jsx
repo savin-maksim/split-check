@@ -71,14 +71,27 @@ function StatsPage() {
     }
 
   if (isLoading) {
-    console.log('Stats page is loading...')
-    return null
-  }
+    return (
+      <div className="statistics-section">
+        <div className="statistics-section__empty">
+          <Spinner size={48} />
+        </div>
+      </div>
+    )
+    }
 
   if (error) {
-    console.error('Stats page error:', error)
-    return null
-  }
+    return (
+      <div className="statistics-section">
+        <div className="statistics-section__empty">
+          <div className="error-message">{error}</div>
+          <button onClick={loadCheckData} className="retry-button">
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    )
+    }
 
   if (!people.length) {
     return (

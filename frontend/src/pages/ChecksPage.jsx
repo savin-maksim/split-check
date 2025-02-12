@@ -126,13 +126,30 @@ function ChecksPage() {
   )
 
   if (isLoading) {
-    console.log('Checks page is loading...')
-    return null
+    return (
+      <>
+        <div className="checks-page">
+          <div className="checks-page__message">
+            <Spinner size={48} />
+          </div>
+        </div>
+      </>
+    )
   }
 
   if (error) {
-    console.error('Checks page error:', error)
-    return null
+    return (
+      <>
+        <div className="checks-page">
+          <div className="checks-page__message">
+            <div className="error-message">{error}</div>
+            <button onClick={loadChecks} className="retry-button">
+              Попробовать снова
+            </button>
+          </div>
+        </div>
+      </>
+    )
   }
 
   return (

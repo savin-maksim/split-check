@@ -8,26 +8,17 @@ import PrivateRoute from './components/PrivateRoute'
 import authService from './api/auth.service'
 
 function AppRoutes() {
-  console.log('Current auth status:', {
-    isAuthenticated: authService.isAuthenticated(),
-    token: localStorage.getItem('token'),
-    user: localStorage.getItem('user')
-  })
-
   return (
     <Routes>
       <Route 
         path="/" 
         element={
-          <Navigate to={authService.isAuthenticated() ? "/checks" : "/login"} replace />
+          authService.isAuthenticated() 
+            ? <Navigate to="/checks" replace /> 
+            : <Navigate to="/login" replace />
         } 
       />
-      <Route 
-        path="/login" 
-        element={
-          authService.isAuthenticated() ? <Navigate to="/checks" replace /> : <LoginPage />
-        } 
-      />
+      <Route path="/login" element={<LoginPage />} />
       <Route 
         path="/checks" 
         element={

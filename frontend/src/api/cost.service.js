@@ -4,7 +4,7 @@ class CostService {
   async getCosts(checkId) {
     try {
       const response = await api.get(`/checks/${checkId}/costs`);
-      return Array.isArray(response) ? response : [];
+      return response;
     } catch (error) {
       console.error('Error getting costs:', error.response || error);
       throw error;

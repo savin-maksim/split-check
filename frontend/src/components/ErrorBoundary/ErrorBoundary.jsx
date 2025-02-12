@@ -1,4 +1,5 @@
 import React from 'react'
+import './error-boundary.scss'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -11,19 +12,25 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error details:', {
-      error: error,
-      message: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack
-    })
+    console.error('Error caught by ErrorBoundary:', error, errorInfo)
   }
 
   render() {
     if (this.state.hasError) {
-      // Вместо показа разметки с ошибкой, просто возвращаем null
-      console.error('React error boundary caught an error:', this.state.error)
-      return null
+      return (
+        <div className="error-boundary">
+          <h2>Что-то пошло не так</h2>
+          <p>{this.state.error.message}</p>
+          <button 
+            onClick={() => {
+              this.setState({ hasError: false, error: null })
+              window.location.reload()
+            }}
+          >
+            Перезагрузить страницу
+          </button>
+        </div>
+      )
     }
 
     return this.props.children

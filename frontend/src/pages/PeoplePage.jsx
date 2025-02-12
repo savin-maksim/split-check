@@ -89,13 +89,26 @@ function PeoplePage() {
   }
 
   if (isLoading) {
-    console.log('People page is loading...')
-    return null
+    return (
+      <div className="people-section">
+        <div className="people-section__empty">
+          <Spinner size={48} />
+        </div>
+      </div>
+    )
   }
 
   if (error) {
-    console.error('People page error:', error)
-    return null
+    return (
+      <div className="people-section">
+        <div className="people-section__empty">
+          <div className="error-message">{error}</div>
+          <button onClick={loadCheckAndPeople} className="retry-button">
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
