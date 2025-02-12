@@ -36,23 +36,13 @@ function SharedStatsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <Spinner size={48} />
-        </div>
-      </div>
-    )
+    console.log('Shared stats page is loading...')
+    return null
   }
 
   if (error) {
-    return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <div className="error-message">{error}</div>
-        </div>
-      </div>
-    )
+    console.error('Shared stats page error:', error)
+    return null
   }
 
   if (!statistics || !transfers) {

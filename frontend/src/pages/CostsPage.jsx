@@ -78,27 +78,53 @@ function CostsPage() {
       // Проверяем авторизацию
       const token = localStorage.getItem('token')
       if (!token) {
+        console.error('Authentication token not found')
         navigate('/login')
         return
       }
 
+      console.log('Loading check data...')
       const [checkResponse, peopleResponse, costsResponse] = await Promise.all([
         checkService.getCheckById(checkId),
         personService.getPeople(checkId),
         costService.getCosts(checkId)
       ])
 
+      console.log('API Responses:', {
+        check: checkResponse,
+        people: peopleResponse,
+        costs: costsResponse
+      })
+
       // Проверяем, что все ответы являются массивами где нужно
+      if (!checkResponse) {
+        console.error('Check response is empty')
+      }
+      if (!Array.isArray(peopleResponse)) {
+        console.error('People response is not an array:', peopleResponse)
+      }
+      if (!Array.isArray(costsResponse)) {
+        console.error('Costs response is not an array:', costsResponse)
+      }
+
       setCheck(checkResponse)
       setCurrentCheck(checkResponse)
       setPeople(Array.isArray(peopleResponse) ? peopleResponse : [])
       setCosts(Array.isArray(costsResponse) ? costsResponse : [])
     } catch (err) {
-      console.error('Load data error:', err)
+      console.error('Load data error:', {
+        error: err,
+        response: err.response,
+        message: err.message,
+        stack: err.stack
+      })
+      
       if (err.response?.status === 401) {
+        console.error('Unauthorized access, redirecting to login')
         navigate('/login')
         return
       }
+      
       setError(err.message || 'Не удалось загрузить данные')
       if (err.message === 'Check not found') {
         navigate('/')
@@ -211,40 +237,19 @@ function CostsPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="cost-section">
-        <div className="cost-section__empty">
-          <Spinner size={48} />
-        </div>
-      </div>
-    )
+  if (error) {
+    console.error('Rendering error:', error)
+    return null
   }
 
-  if (error) {
-    return (
-      <div className="cost-section">
-        <div className="cost-section__empty">
-          <div className="error-message">{error}</div>
-          <button onClick={loadCheckData} className="retry-button">
-            Попробовать снова
-          </button>
-        </div>
-      </div>
-    )
+  if (isLoading) {
+    console.log('Page is loading...')
+    return null
   }
 
   if (!people.length) {
-    return (
-      <div className="cost-section">
-        <div className="cost-section__empty">
-          <Users size={48} />
-          <h2>Добавьте участников</h2>
-          <p>Перейдите на <Link to={`/checks/${checkId}/people`}>страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
-          <Arrow className="arrow--to-people" title={'Страница участников'} />
-        </div>
-      </div>
-    )
+    console.log('No people found in the check')
+    return null
   }
 
   return (
