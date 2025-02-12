@@ -78,11 +78,17 @@ function CostsPage() {
         personService.getPeople(checkId),
         costService.getCosts(checkId)
       ])
+      console.log('API Responses:', {
+        check: checkResponse,
+        people: peopleResponse,
+        costs: costsResponse
+      })
       setCheck(checkResponse)
       setCurrentCheck(checkResponse)
       setPeople(peopleResponse)
       setCosts(costsResponse)
     } catch (err) {
+      console.error('Load data error:', err)
       setError(err.message || 'Не удалось загрузить данные')
       if (err.message === 'Check not found') {
         navigate('/')
@@ -92,16 +98,16 @@ function CostsPage() {
     }
   }
 
-  const filteredCosts = costs.filter(cost => {
+  const filteredCosts = Array.isArray(costs) ? costs.filter(cost => {
     const query = searchQuery.toLowerCase()
     // Поиск по названию позиции
     const titleMatch = cost.title.toLowerCase().includes(query)
     // Поиск по именам плательщиков
-    const payerMatch = cost.paidBy.some(payer =>
+    const payerMatch = cost.paidBy && Array.isArray(cost.paidBy) && cost.paidBy.some(payer =>
       people.find(p => p.id === payer.id)?.name.toLowerCase().includes(query)
     )
     return titleMatch || payerMatch
-  })
+  }) : [];
 
   const handleAddPosition = async (position) => {
     try {
