@@ -95,6 +95,9 @@ export const analyzeReceipt = async (file) => {
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error('QUOTA_EXCEEDED');
+      }
       const errorData = await response.json();
       throw new Error(errorData.error?.message || 'Ошибка при обращении к API');
     }
@@ -119,7 +122,8 @@ export const analyzeReceipt = async (file) => {
   } catch (error) {
     console.error('AI Error:', error);
     
-    if (error.message.includes('You exceeded your current quota') || 
+    if (error.message === 'QUOTA_EXCEEDED' || 
+        error.message.includes('You exceeded your current quota') || 
         error.message.includes('Quota exceeded')) {
       if (currentModelIndex < MODELS.length - 1) {
         currentModelIndex++;

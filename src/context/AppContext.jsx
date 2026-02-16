@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { StorageService } from '../services/storage'
 import { validatePerson, validateCost } from '../utils/validation'
 import { toast } from 'react-hot-toast'
@@ -35,7 +35,7 @@ export function AppProvider({ children }) {
   }, [singlePayer])
 
   // People methods
-  const addPerson = (newPerson) => {
+  const addPerson = useCallback((newPerson) => {
     try {
       if (Array.isArray(newPerson)) {
         // Filter only unique names and find duplicates
@@ -73,9 +73,9 @@ export function AppProvider({ children }) {
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [people])
 
-  const removePerson = (personId) => {
+  const removePerson = useCallback((personId) => {
     const personToRemove = people.find(person => person.id === personId)
     const updatedPeople = people.filter(person => person.id !== personId)
     setPeople(updatedPeople)
@@ -93,10 +93,10 @@ export function AppProvider({ children }) {
       })))
       toast.success(`Участник ${personToRemove.name} удален`)
     }
-  }
+  }, [people])
 
   // Costs methods
-  const addCost = (newCost) => {
+  const addCost = useCallback((newCost) => {
     try {
       if (Array.isArray(newCost)) {
         setPendingCosts(newCost)
@@ -108,46 +108,53 @@ export function AppProvider({ children }) {
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [])
 
-  const addCosts = (newCosts) => {
+  const addCosts = useCallback((newCosts) => {
     try {
       setCosts(prev => [...prev, ...newCosts])
       toast.success(`Добавлено ${newCosts.length} позиций`)
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [])
 
-  const updateCost = (costId, updatedCost) => {
+  const updateCost = useCallback((costId, updatedCost) => {
     try {
       validateCost(updatedCost)
-      if (updatedCost.id !== costId) {
-        // This is a duplicate operation
-        setCosts(prevCosts => {
-          const index = prevCosts.findIndex(cost => cost.id === costId)
-          const newCosts = [...prevCosts]
-          newCosts.splice(index + 1, 0, updatedCost)
-          return newCosts
-        })
-        toast.success('Позиция успешно дублирована')
-      } else {
-        // This is a regular update operation
-        setCosts(prev => prev.map(cost => 
-          cost.id === costId ? updatedCost : cost
-        ))
-      }
+      setCosts(prev => prev.map(cost => 
+        cost.id === costId ? updatedCost : cost
+      ))
     } catch (error) {
       toast.error(error.message)
     }
-  }
+  }, [])
 
-  const deleteCost = (costId) => {
+  const duplicateCost = useCallback((originalCostId, newCost) => {
+    try {
+      validateCost(newCost)
+      setCosts(prevCosts => {
+        const index = prevCosts.findIndex(cost => cost.id === originalCostId)
+        const newCosts = [...prevCosts]
+        if (index !== -1) {
+          newCosts.splice(index + 1, 0, newCost)
+        } else {
+          newCosts.push(newCost)
+        }
+        return newCosts
+      })
+      toast.success('Позиция успешно дублирована')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }, [])
+
+  const deleteCost = useCallback((costId) => {
     setCosts(prev => prev.filter(cost => cost.id !== costId))
-  }
+  }, [])
 
   // Payment mode methods
-  const changePaymentMode = (mode) => {
+  const changePaymentMode = useCallback((mode) => {
     if (mode === paymentMode) return
 
     if (mode === 'single') {
@@ -170,15 +177,15 @@ export function AppProvider({ children }) {
     }
 
     setPaymentMode(mode)
-  }
+  }, [paymentMode, costs, manualModeCosts, singlePayer])
 
-  const selectSinglePayer = (person) => {
+  const selectSinglePayer = useCallback((person) => {
     setSinglePayer(person)
     setCosts(prev => prev.map(cost => ({
       ...cost,
       paidBy: [person]
     })))
-  }
+  }, [])
 
   // Computed values
   const showCostSection = people.length > 0
@@ -189,7 +196,7 @@ export function AppProvider({ children }) {
     )
   }, [costs])
 
-  const value = {
+  const value = useMemo(() => ({
     // State
     people,
     costs,
@@ -216,10 +223,32 @@ export function AppProvider({ children }) {
     addCost,
     addCosts,
     updateCost,
+    duplicateCost,
     deleteCost,
     changePaymentMode,
     selectSinglePayer
-  }
+  }), [
+    people,
+    costs,
+    paymentMode,
+    singlePayer,
+    transfers,
+    isCalculating,
+    isPayerModalOpen,
+    pendingCosts,
+    showCostSection,
+    showTransferSection,
+    isModalOpen,
+    addPerson,
+    removePerson,
+    addCost,
+    addCosts,
+    updateCost,
+    duplicateCost,
+    deleteCost,
+    changePaymentMode,
+    selectSinglePayer
+  ])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

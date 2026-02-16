@@ -6,20 +6,24 @@ const STORAGE_KEYS = {
   CURRENT_SESSION: 'splitcheck_current_session'
 }
 
+const safeParse = (key, fallback) => {
+  try {
+    const data = localStorage.getItem(key)
+    return data ? JSON.parse(data) : fallback
+  } catch (error) {
+    console.error(`Error parsing ${key} from localStorage:`, error)
+    return fallback
+  }
+}
+
 export const StorageService = {
-  getPeople: () => {
-    const data = localStorage.getItem(STORAGE_KEYS.PEOPLE)
-    return data ? JSON.parse(data) : []
-  },
+  getPeople: () => safeParse(STORAGE_KEYS.PEOPLE, []),
 
   setPeople: (people) => {
     localStorage.setItem(STORAGE_KEYS.PEOPLE, JSON.stringify(people))
   },
 
-  getCosts: () => {
-    const data = localStorage.getItem(STORAGE_KEYS.COSTS)
-    return data ? JSON.parse(data) : []
-  },
+  getCosts: () => safeParse(STORAGE_KEYS.COSTS, []),
 
   setCosts: (costs) => {
     localStorage.setItem(STORAGE_KEYS.COSTS, JSON.stringify(costs))
@@ -33,10 +37,7 @@ export const StorageService = {
     localStorage.setItem(STORAGE_KEYS.PAYMENT_MODE, mode)
   },
 
-  getSinglePayer: () => {
-    const data = localStorage.getItem(STORAGE_KEYS.SINGLE_PAYER)
-    return data ? JSON.parse(data) : null
-  },
+  getSinglePayer: () => safeParse(STORAGE_KEYS.SINGLE_PAYER, null),
 
   setSinglePayer: (payer) => {
     localStorage.setItem(STORAGE_KEYS.SINGLE_PAYER, JSON.stringify(payer))
@@ -55,4 +56,4 @@ export const StorageService = {
       localStorage.removeItem(key)
     })
   }
-} 
+}

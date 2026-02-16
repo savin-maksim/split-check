@@ -24,6 +24,7 @@ function CostsPage() {
     addCost,
     addCosts,
     updateCost,
+    duplicateCost,
     deleteCost,
     changePaymentMode,
     selectSinglePayer,
@@ -181,6 +182,7 @@ function CostsPage() {
             paymentMode={paymentMode}
             onDelete={() => deleteCost(cost.id)}
             onUpdate={(updatedCost) => updateCost(cost.id, updatedCost)}
+            onDuplicate={(newCost) => duplicateCost(cost.id, newCost)}
           />
         ))}
       </div>

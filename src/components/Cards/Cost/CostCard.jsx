@@ -15,6 +15,7 @@ function CostCard({
   splitBetween,
   onDelete,
   onUpdate,
+  onDuplicate,
   onCalculate,
   people,
   paymentMode
@@ -113,7 +114,7 @@ function CostCard({
           <IconButton
             icon={<Copy />}
             className="cost-card__action-btn"
-            onClick={() => onUpdate({
+            onClick={() => onDuplicate({
               id: Date.now(),
               title,
               amount,
