@@ -110,6 +110,15 @@ export function AppProvider({ children }) {
     }
   }
 
+  const addCosts = (newCosts) => {
+    try {
+      setCosts(prev => [...prev, ...newCosts])
+      toast.success(`Добавлено ${newCosts.length} позиций`)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   const updateCost = (costId, updatedCost) => {
     try {
       validateCost(updatedCost)
@@ -205,6 +214,7 @@ export function AppProvider({ children }) {
     addPerson,
     removePerson,
     addCost,
+    addCosts,
     updateCost,
     deleteCost,
     changePaymentMode,

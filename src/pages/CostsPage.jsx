@@ -9,6 +9,7 @@ import PersonButton from '../components/Button/PersonButton'
 import CostCard from '../components/Cards/Cost/CostCard'
 import AddPositionModal from '../components/Modal/AddPositionModal'
 import Arrow from '../components/Arrow/Arrow'
+import ReceiptScanner from '../components/ReceiptScanner/ReceiptScanner'
 
 // Import styles
 import './cost-section.scss'
@@ -21,6 +22,7 @@ function CostsPage() {
     paymentMode,
     singlePayer,
     addCost,
+    addCosts,
     updateCost,
     deleteCost,
     changePaymentMode,
@@ -79,6 +81,15 @@ function CostsPage() {
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками</p>
+          <p>Или воспользуйтесь <span className="gemini-text-span">ИИ распознаванием</span></p>
+          <div style={{ marginTop: '20px' }}>
+             <ReceiptScanner 
+              onAddCosts={addCosts}
+              people={people}
+              paymentMode={paymentMode}
+              singlePayer={singlePayer}
+            />
+          </div>
           {people.length > 0 && <Arrow />}
         </div>
         <AddPositionModal 
@@ -118,16 +129,24 @@ function CostsPage() {
         </div>
 
         <div className="cost-section__search">
-        <div className="search-input">
-          <Search size={20} />
-          <input
-            type="text"
-            placeholder="Поиск наименование/имя"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <div className="search-container">
+            <div className="search-input">
+              <Search size={20} />
+              <input
+                type="text"
+                placeholder="Поиск наименование/имя"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <ReceiptScanner 
+              onAddCosts={addCosts}
+              people={people}
+              paymentMode={paymentMode}
+              singlePayer={singlePayer}
+            />
+          </div>
         </div>
-      </div>
 
         {paymentMode === 'single' && (
           <div className="payment-mode__single-payer">
