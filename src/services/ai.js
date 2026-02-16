@@ -1,4 +1,51 @@
+const MODELS = [
+  'gemini-3-flash-preview',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-robotics-er-1.5-preview'
+];
+
+const STORAGE_KEY = 'gemini_model_state';
+
+// Helper to get current index respecting day change
+const getValidModelIndex = () => {
+  try {
+    const today = new Date().toDateString();
+    const stored = localStorage.getItem(STORAGE_KEY);
+    
+    if (stored) {
+      const { index, date } = JSON.parse(stored);
+      // If saved date is today, return saved index
+      if (date === today) {
+        return index;
+      }
+    }
+    // If no data or different date, reset to 0
+    return 0;
+  } catch (e) {
+    console.warn('Error reading model state:', e);
+    return 0;
+  }
+};
+
+// Helper to save index with current date
+const saveModelIndex = (index) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      index,
+      date: new Date().toDateString()
+    }));
+  } catch (e) {
+    console.warn('Error saving model state:', e);
+  }
+};
+
+let currentModelIndex = getValidModelIndex();
+
 export const analyzeReceipt = async (file) => {
+  // Sync index before starting (in case day changed while app was open)
+  currentModelIndex = getValidModelIndex();
+
   try {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
@@ -19,7 +66,8 @@ export const analyzeReceipt = async (file) => {
     // Determine mime type from file
     const mimeType = file.type || 'image/jpeg';
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+    const currentModel = MODELS[currentModelIndex];
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,6 +118,17 @@ export const analyzeReceipt = async (file) => {
     return content.items;
   } catch (error) {
     console.error('AI Error:', error);
+    
+    if (error.message.includes('You exceeded your current quota') || 
+        error.message.includes('Quota exceeded')) {
+      if (currentModelIndex < MODELS.length - 1) {
+        currentModelIndex++;
+        // Save the new index and today's date
+        saveModelIndex(currentModelIndex);
+        throw new Error('Достигнут лимит модели, сейчас сменим на другую, пожалуйста попробуйте снова');
+      }
+    }
+    
     throw error;
   }
 };
