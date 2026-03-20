@@ -1,3 +1,5 @@
+import { getLineAmount } from './splitCompute'
+
 export const initializeDebtsMatrix = (people) => {
   const debts = {}
   people.forEach(person1 => {
@@ -83,6 +85,47 @@ export const generateOptimalTransfers = (positiveBalances, negativeBalances) => 
   return transfers
 }
 
+function sumWeights(cost) {
+  if (cost.distributionType !== 'weighted') return 0
+  return Object.values(cost.weights || {}).reduce(
+    (s, u) => s + Math.max(0, Math.floor(Number(u) || 0)),
+    0
+  )
+}
+
+function weightForPerson(weights, personId) {
+  if (!weights) return 0
+  const raw = weights[personId] ?? weights[String(personId)]
+  return Math.max(0, Math.floor(Number(raw) || 0))
+}
+
+function personParticipatesInCost(cost, personId) {
+  if (cost.distributionType === 'weighted') {
+    return weightForPerson(cost.weights, personId) > 0
+  }
+  return cost.splitBetween?.some((p) => p.id === personId)
+}
+
+function getPersonShare(cost, personId) {
+  const amount = getLineAmount(cost)
+  if (cost.distributionType === 'weighted') {
+    const w = weightForPerson(cost.weights, personId)
+    const total = sumWeights(cost)
+    if (total === 0 || w === 0) return null
+    return (amount * w) / total
+  }
+  if (!cost.splitBetween?.some((p) => p.id === personId)) return null
+  return amount / cost.splitBetween.length
+}
+
+function splitCountForDisplay(cost) {
+  if (cost.distributionType === 'weighted') {
+    const t = sumWeights(cost)
+    return t > 0 ? t : 1
+  }
+  return cost.splitBetween?.length || 1
+}
+
 export const calculateStatistics = (people, costs) => {
   if (!people?.length || !costs?.length) {
     return {
@@ -94,27 +137,26 @@ export const calculateStatistics = (people, costs) => {
     }
   }
 
-  // Calculate per-person statistics
-  const peopleStats = people.map(person => {
-    const personExpenses = costs.filter(cost =>
-      cost.splitBetween.some(p => p.id === person.id)
-    ).map(cost => {
-      const splitCount = cost.splitBetween.length
-      const personShare = cost.amount / splitCount
-      const personQuantity = cost.quantity || 1
+  const peopleStats = people.map((person) => {
+    const personExpenses = costs
+      .filter((cost) => personParticipatesInCost(cost, person.id))
+      .map((cost) => {
+        const personShare = getPersonShare(cost, person.id)
+        const personQuantity = cost.quantity || 1
+        const splitCount = splitCountForDisplay(cost)
 
-      return {
-        description: cost.title,
-        amount: personShare,
-        quantity: personQuantity,
-        splitCount: splitCount,
-        pricePerUnit: cost.pricePerUnit || cost.amount
-      }
-    })
+        return {
+          description: cost.title,
+          amount: personShare,
+          quantity: personQuantity,
+          splitCount,
+          pricePerUnit: cost.pricePerUnit || cost.amount
+        }
+      })
 
     const totalSpent = costs
-      .filter(cost => cost.paidBy.some(p => p.id === person.id))
-      .reduce((sum, cost) => sum + cost.amount, 0)
+      .filter((cost) => cost.paidBy.some((p) => p.id === person.id))
+      .reduce((sum, cost) => sum + getLineAmount(cost), 0)
 
     const totalOwed = personExpenses.reduce((sum, exp) => sum + exp.amount, 0)
 
@@ -127,28 +169,28 @@ export const calculateStatistics = (people, costs) => {
     }
   })
 
-  // Calculate total statistics
   const combinedExpenses = costs.reduce((acc, cost) => {
-    const existingExpense = acc.find(exp => 
-      exp.title.toLowerCase() === cost.title.toLowerCase()
+    const lineAmount = getLineAmount(cost)
+    const existingExpense = acc.find(
+      (exp) => exp.title.toLowerCase() === cost.title.toLowerCase()
     )
-    
+
     if (existingExpense) {
-      existingExpense.amount += cost.amount
-      existingExpense.quantity += (cost.quantity || 1)
+      existingExpense.amount += lineAmount
+      existingExpense.quantity += cost.quantity || 1
       existingExpense.pricePerUnit = existingExpense.amount / existingExpense.quantity
     } else {
       acc.push({
         title: cost.title,
-        amount: cost.amount,
+        amount: lineAmount,
         quantity: cost.quantity || 1,
-        pricePerUnit: cost.pricePerUnit || cost.amount
+        pricePerUnit: cost.pricePerUnit || lineAmount
       })
     }
     return acc
   }, [])
 
-  const totalAmount = costs.reduce((sum, cost) => sum + cost.amount, 0)
+  const totalAmount = costs.reduce((sum, cost) => sum + getLineAmount(cost), 0)
 
   return {
     peopleStats,

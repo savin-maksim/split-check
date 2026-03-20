@@ -71,7 +71,9 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
       quantity: item.quantity,
       pricePerUnit: item.pricePerUnit,
       paidBy: initialPaidBy,
-      splitBetween: [] // Default split between no one
+      splitBetween: [],
+      distributionType: 'equal',
+      weights: {}
     }));
     
     onAddCosts(newCosts);

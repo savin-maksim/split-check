@@ -8,7 +8,7 @@ function PersonButton({ children, onClick, className, icon }) {
          onClick={onClick}
          className={`button button__person ${className}`}
       >
-         {children}
+         <span className="button__person-text">{children}</span>
          {icon && <span className="button--icon-right">{icon}</span>}
       </button>
    );

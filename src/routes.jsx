@@ -1,5 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useApp } from './context/AppContext'
+import { Routes, Route } from 'react-router-dom'
 
 // Pages
 import ChecksPage from './pages/ChecksPage'
@@ -10,7 +9,7 @@ import StatsPage from './pages/StatsPage'
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/people" replace />} />
+      <Route path="/" element={<ChecksPage />} />
       <Route path="/people" element={<PeoplePage />} />
       <Route path="/costs" element={<CostsPage />} />
       <Route path="/stats" element={<StatsPage />} />

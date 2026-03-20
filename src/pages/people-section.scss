@@ -1,10 +1,73 @@
+@use "/src/styles/mixins" as *;
+
 .people-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
+  width: 100%;
+  max-width: var(--cards-width);
+  margin-inline: auto;
   min-height: calc(90vh - var(--navigation-height));
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 1.25rem;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    z-index: 1;
+  }
+
+  &__title-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  &__title-icon {
+    flex-shrink: 0;
+    color: var(--color-orange);
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-light);
+    line-height: 1.2;
+    @include fluid-text(26, 20);
+  }
+
+  &__subtitle {
+    color: var(--color-text-secondary);
+    opacity: 0.9;
+    @include fluid-text(15, 12);
+  }
+
+  &__toolbar {
+    flex-shrink: 0;
+  }
+
+  &__btn-clear {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.875rem;
+    border-radius: var(--border-radius-small);
+    border: 1px solid rgba(255, 100, 100, 0.45);
+    background: rgba(180, 60, 60, 0.2);
+    color: var(--color-light);
+    cursor: pointer;
+    font-weight: 500;
+
+    @include hover {
+      background: rgba(200, 80, 80, 0.35);
+    }
+  }
 
   &__empty {
     flex: 1;
@@ -13,9 +76,9 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    max-width: 400px;
+    padding: 2rem 1rem;
     color: var(--color-text-secondary);
-    min-height: inherit;
+    min-height: 50vh;
 
     svg {
       color: var(--color-orange);
@@ -29,14 +92,116 @@
 
     p {
       line-height: 1.5;
+      max-width: 22rem;
     }
   }
 
-  &__people {
+  &__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    column-gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-weight: 600;
+    background: var(--color-active);
+    color: var(--color-text-active);
+    @include flex-center();
+    @include fluid-text(17, 14);
+  }
+
+  &__name {
+    padding-left: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__modal-text {
+    margin: 0;
+    line-height: 1.45;
+    color: var(--color-light);
+    opacity: 0.92;
+    @include fluid-text(15, 13);
+  }
+
+  &__row-actions {
     display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  &__row-edit {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-light);
+    cursor: pointer;
+
+    @include hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--color-orange);
+    }
+  }
+
+  &__modal-btn-danger {
+    border: 1px solid rgba(255, 100, 100, 0.45);
+    background: rgba(180, 60, 60, 0.35);
+    color: var(--color-light);
+
+    @include hover {
+      background: rgba(200, 80, 80, 0.5);
+    }
+  }
+
+  &__row-delete {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--border-radius-small);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-light);
+    cursor: pointer;
+
+    @include hover {
+      background: rgba(255, 80, 80, 0.25);
+      color: #ffb4b4;
+    }
   }
 }

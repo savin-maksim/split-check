@@ -3,7 +3,9 @@ const STORAGE_KEYS = {
   COSTS: 'splitcheck_costs',
   PAYMENT_MODE: 'splitcheck_payment_mode',
   SINGLE_PAYER: 'splitcheck_single_payer',
-  CURRENT_SESSION: 'splitcheck_current_session'
+  CURRENT_SESSION: 'splitcheck_current_session',
+  STATS_CACHE: 'splitcheck_stats_cache',
+  SAVED_CHECKS: 'splitcheck_saved_checks'
 }
 
 const safeParse = (key, fallback) => {
@@ -41,6 +43,27 @@ export const StorageService = {
 
   setSinglePayer: (payer) => {
     localStorage.setItem(STORAGE_KEYS.SINGLE_PAYER, JSON.stringify(payer))
+  },
+
+  /**
+   * Кеш снимка статистики/переводов для страницы статистики.
+   * @returns {{ dataFingerprint: string, fullFingerprint: string, statistics: object, transfers: object[] } | null}
+   */
+  getStatsCache: () => safeParse(STORAGE_KEYS.STATS_CACHE, null),
+
+  setStatsCache: (payload) => {
+    localStorage.setItem(STORAGE_KEYS.STATS_CACHE, JSON.stringify(payload))
+  },
+
+  clearStatsCache: () => {
+    localStorage.removeItem(STORAGE_KEYS.STATS_CACHE)
+  },
+
+  /** @returns {Array<{ id: string, title: string, createdAt: number, people: object[], costs: object[], paymentMode: string, singlePayer: object | null }>} */
+  getSavedChecks: () => safeParse(STORAGE_KEYS.SAVED_CHECKS, []),
+
+  setSavedChecks: (checks) => {
+    localStorage.setItem(STORAGE_KEYS.SAVED_CHECKS, JSON.stringify(checks))
   },
 
   getCurrentSession: () => {

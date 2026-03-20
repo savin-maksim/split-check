@@ -15,8 +15,20 @@
   &__person {
     border-radius: var(--border-radius-person);
     font-weight: 500;
+    min-width: 0;
     @include button-animation;
     @include fluid-text(17, 13);
+    // max-width: calc(var(--cards-width) / 2 - 1.5rem);
+
+    &-text {
+      overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .button--icon-right {
+      flex-shrink: 0;
+    }
 
     &--active {
       background-color: var(--color-active);

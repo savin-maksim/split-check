@@ -1,7 +1,6 @@
 // Import components
 import { useApp } from '../context/AppContext'
-import { useTransfers } from '../hooks/useTransfers'
-import { useStatistics } from '../hooks/useStatistics'
+import { useStatsPageSnapshot } from '../hooks/useStatsPageSnapshot'
 import TransferCard from '../components/Cards/Transfer/TransferCard'
 import Spinner from '../components/Spinner/Spinner'
 import { formatAmount, formatQuantity, formatTotalQuantity } from '../utils/formatters.js'
@@ -14,9 +13,13 @@ import './statistics-section.scss'
 import './transfer-section.scss'
 
 function StatsPage() {
-  const { people, costs, paymentMode } = useApp()
-  const { transfers, isCalculating: isCalculatingTransfers } = useTransfers(people, costs)
-  const { statistics, isCalculating: isCalculatingStats } = useStatistics(people, costs)
+  const { people, costs, paymentMode, singlePayer } = useApp()
+  const { transfers, statistics, ready } = useStatsPageSnapshot(
+    people,
+    costs,
+    paymentMode,
+    singlePayer
+  )
 
   if (!people.length) {
     return (
@@ -44,7 +47,7 @@ function StatsPage() {
     )
   }
 
-  if (isCalculatingTransfers || isCalculatingStats) {
+  if (!ready || !statistics) {
     return (
       <div className="statistics-section">
         <div className="statistics-section__empty">
@@ -70,7 +73,7 @@ function StatsPage() {
     <>
       <div className="transfer-section">
         <div className="transfer-section__cards">
-          <TransferCard transfers={transfers} isLoading={isCalculatingTransfers} />
+          <TransferCard transfers={transfers} isLoading={false} />
         </div>
       </div>
 
@@ -79,7 +82,6 @@ function StatsPage() {
           <div className="statistics-card statistics-card--summary">
             <div className="statistics-card__header">
               <h3 className="statistics-card__name">Общая сумма</h3>
-              {isCalculatingStats && <Spinner />}
             </div>
 
             <div className="statistics-card__total">
@@ -106,22 +108,21 @@ function StatsPage() {
             </div>
           </div>
 
-          {statistics.peopleStats.map(person => (
+          {statistics.peopleStats.map((person) => (
             <div key={person.id} className="statistics-card">
               <div className="statistics-card__header">
                 <h3 className="statistics-card__name">{person.name}</h3>
-                {isCalculatingStats && <Spinner />}
               </div>
 
               {paymentMode === 'single' ? (
                 <div className="statistics-card__info">
                   <span>Потратил:</span>
-                  <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
+                  <h4 className="">{formatAmount(person.totalAmount)} ₽</h4>
                 </div>
               ) : (
                 <div className="statistics-card__info">
                   <span>Потратил(а):</span>
-                  <h4 className=''>{formatAmount(person.totalAmount)} ₽</h4>
+                  <h4 className="">{formatAmount(person.totalAmount)} ₽</h4>
                 </div>
               )}
 
@@ -166,4 +167,4 @@ function StatsPage() {
   )
 }
 
-export default StatsPage 
+export default StatsPage

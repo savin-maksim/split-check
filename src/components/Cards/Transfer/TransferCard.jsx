@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Combine } from 'lucide-react';
 import PersonButton from '../../Button/PersonButton';
 import Spinner from '../../Spinner/Spinner';
 
@@ -17,7 +17,8 @@ function TransferCard({ transfers, isLoading }) {
    return (
       <div className="transfer-card">
          <div className="transfer-card__header">
-            <h3>Необходимые переводы</h3>
+            <h3>Переводы</h3>
+            <Combine className="transfer-card__header-icon" size={22} aria-hidden />
             {isLoading && <Spinner />}
          </div>
          

@@ -11,8 +11,6 @@ export function AppProvider({ children }) {
   const [paymentMode, setPaymentMode] = useState(() => StorageService.getPaymentMode())
   const [singlePayer, setSinglePayer] = useState(() => StorageService.getSinglePayer())
   const [manualModeCosts, setManualModeCosts] = useState([]) // Сохраняем состояние расходов для ручного режима
-  const [transfers, setTransfers] = useState([])
-  const [isCalculating, setIsCalculating] = useState(false)
   const [isPayerModalOpen, setIsPayerModalOpen] = useState(false)
   const [pendingCosts, setPendingCosts] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(null) // 'addPerson', 'addCost', null
@@ -75,6 +73,79 @@ export function AppProvider({ children }) {
     }
   }, [people])
 
+  const removeAllPeople = useCallback(() => {
+    setPeople([])
+    setCosts([])
+    setSinglePayer(null)
+    setManualModeCosts([])
+    toast.success('Все участники и расходы удалены')
+  }, [])
+
+  const updatePerson = useCallback(
+    (personId, rawName) => {
+      try {
+        const trimmed = rawName.trim()
+        const name =
+          trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+        validatePerson({ name })
+
+        const duplicate = people.some(
+          (p) => p.id !== personId && p.name.toLowerCase() === name.toLowerCase()
+        )
+        if (duplicate) {
+          toast.error('Участник с таким именем уже есть')
+          return false
+        }
+
+        const prev = people.find((p) => p.id === personId)
+        if (!prev) return false
+
+        if (prev.name === name) {
+          return true
+        }
+
+        const updatedPerson = { id: personId, name }
+
+        setPeople((list) =>
+          list.map((p) => (p.id === personId ? updatedPerson : p))
+        )
+
+        setCosts((prevCosts) =>
+          prevCosts.map((cost) => ({
+            ...cost,
+            paidBy: (cost.paidBy || []).map((p) =>
+              p.id === personId ? updatedPerson : p
+            ),
+            splitBetween: (cost.splitBetween || []).map((p) =>
+              p.id === personId ? updatedPerson : p
+            )
+          }))
+        )
+
+        setSinglePayer((p) => (p?.id === personId ? updatedPerson : p))
+
+        setManualModeCosts((prev) =>
+          prev.map((cost) => ({
+            ...cost,
+            paidBy: (cost.paidBy || []).map((p) =>
+              p.id === personId ? updatedPerson : p
+            ),
+            splitBetween: (cost.splitBetween || []).map((p) =>
+              p.id === personId ? updatedPerson : p
+            )
+          }))
+        )
+
+        toast.success('Имя обновлено')
+        return true
+      } catch (error) {
+        toast.error(error.message)
+        return false
+      }
+    },
+    [people]
+  )
+
   const removePerson = useCallback((personId) => {
     const personToRemove = people.find(person => person.id === personId)
     const updatedPeople = people.filter(person => person.id !== personId)
@@ -86,11 +157,21 @@ export function AppProvider({ children }) {
       toast.success('Все данные очищены')
     } else {
       // Otherwise just filter costs, removing the deleted person
-      setCosts(prevCosts => prevCosts.map(cost => ({
-        ...cost,
-        paidBy: cost.paidBy.filter(p => p.id !== personId),
-        splitBetween: cost.splitBetween.filter(p => p.id !== personId)
-      })))
+      setCosts(prevCosts => prevCosts.map(cost => {
+        const weights = cost.weights
+        const nextWeights =
+          weights && typeof weights === 'object'
+            ? Object.fromEntries(
+                Object.entries(weights).filter(([key]) => String(key) !== String(personId))
+              )
+            : weights
+        return {
+          ...cost,
+          paidBy: cost.paidBy.filter(p => p.id !== personId),
+          splitBetween: cost.splitBetween.filter(p => p.id !== personId),
+          ...(nextWeights !== undefined ? { weights: nextWeights } : {})
+        }
+      }))
       toast.success(`Участник ${personToRemove.name} удален`)
     }
   }, [people])
@@ -187,13 +268,34 @@ export function AppProvider({ children }) {
     })))
   }, [])
 
+  /** Полная подстановка сессии (например, загрузка сохранённого чека). Статистика пересчитается по данным. */
+  const applySessionSnapshot = useCallback((snapshot) => {
+    setPeople(Array.isArray(snapshot.people) ? snapshot.people : [])
+    setCosts(Array.isArray(snapshot.costs) ? snapshot.costs : [])
+    setPaymentMode(snapshot.paymentMode === 'single' ? 'single' : 'manual')
+    setSinglePayer(snapshot.singlePayer ?? null)
+    setManualModeCosts([])
+    setPendingCosts(null)
+    setIsPayerModalOpen(false)
+    setIsModalOpen(null)
+    StorageService.clearStatsCache()
+  }, [])
+
   // Computed values
   const showCostSection = people.length > 0
 
   const showTransferSection = useMemo(() => {
-    return costs.some(cost => 
-      cost.paidBy.length > 0 && cost.splitBetween.length > 0
-    )
+    return costs.some((cost) => {
+      if (!cost.paidBy?.length) return false
+      if (cost.distributionType === 'weighted') {
+        const total = Object.values(cost.weights || {}).reduce(
+          (s, u) => s + Math.max(0, Math.floor(Number(u) || 0)),
+          0
+        )
+        return total > 0
+      }
+      return cost.splitBetween?.length > 0
+    })
   }, [costs])
 
   const value = useMemo(() => ({
@@ -202,8 +304,6 @@ export function AppProvider({ children }) {
     costs,
     paymentMode,
     singlePayer,
-    transfers,
-    isCalculating,
     isPayerModalOpen,
     pendingCosts,
     showCostSection,
@@ -211,8 +311,6 @@ export function AppProvider({ children }) {
     isModalOpen,
 
     // Setters
-    setTransfers,
-    setIsCalculating,
     setIsPayerModalOpen,
     setPendingCosts,
     setIsModalOpen,
@@ -220,20 +318,21 @@ export function AppProvider({ children }) {
     // Methods
     addPerson,
     removePerson,
+    removeAllPeople,
+    updatePerson,
     addCost,
     addCosts,
     updateCost,
     duplicateCost,
     deleteCost,
     changePaymentMode,
-    selectSinglePayer
+    selectSinglePayer,
+    applySessionSnapshot
   }), [
     people,
     costs,
     paymentMode,
     singlePayer,
-    transfers,
-    isCalculating,
     isPayerModalOpen,
     pendingCosts,
     showCostSection,
@@ -241,13 +340,16 @@ export function AppProvider({ children }) {
     isModalOpen,
     addPerson,
     removePerson,
+    removeAllPeople,
+    updatePerson,
     addCost,
     addCosts,
     updateCost,
     duplicateCost,
     deleteCost,
     changePaymentMode,
-    selectSinglePayer
+    selectSinglePayer,
+    applySessionSnapshot
   ])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

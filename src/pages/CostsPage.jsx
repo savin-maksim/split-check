@@ -47,9 +47,9 @@ function CostsPage() {
     addCost({
       ...position,
       id: Date.now(),
-      // В режиме single используем singlePayer, в режиме manual используем выбранного в модальном окне
+      distributionType: position.distributionType ?? 'equal',
+      weights: position.weights ?? {},
       paidBy: paymentMode === 'single' ? (singlePayer ? [singlePayer] : []) : position.paidBy,
-      // Всегда используем выбранных в модальном окне участников
       splitBetween: position.splitBetween
     })
   }
@@ -178,6 +178,8 @@ function CostsPage() {
             pricePerUnit={cost.pricePerUnit}
             paidBy={cost.paidBy}
             splitBetween={cost.splitBetween}
+            distributionType={cost.distributionType ?? 'equal'}
+            weights={cost.weights ?? {}}
             people={people}
             paymentMode={paymentMode}
             onDelete={() => deleteCost(cost.id)}

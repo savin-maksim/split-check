@@ -1,9 +1,19 @@
-import { Toaster } from 'react-hot-toast'
+import { Toaster, toast, useToasterStore } from 'react-hot-toast'
 import { useEffect, useState } from 'react'
+
+const TOAST_LIMIT = 2
 
 function Toast() {
   const [isMobile, setIsMobile] = useState(false)
   const [visualViewport, setVisualViewport] = useState(null)
+  const { toasts } = useToasterStore()
+
+  useEffect(() => {
+    const visible = toasts.filter((t) => t.visible)
+    if (visible.length <= TOAST_LIMIT) return
+    // В сторе порядок: сначала новые — оставляем две последних по времени, старые убираем
+    visible.slice(TOAST_LIMIT).forEach((t) => toast.dismiss(t.id))
+  }, [toasts])
 
   useEffect(() => {
     const checkIfMobile = () => {

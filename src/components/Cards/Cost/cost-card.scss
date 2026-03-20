@@ -15,11 +15,83 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
     margin-bottom: 1rem;
+    min-width: 0;
+  }
+
+  &__title-track {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+
+    &--marquee {
+      .cost-card__title-inner {
+        animation: cost-card-title-marquee 8s linear infinite;
+      }
+    }
+  }
+
+  &__title {
+    margin: 0;
+    min-width: 0;
+    font-weight: 600;
+    line-height: 1.2;
+    @include fluid-text(18, 14);
+  }
+
+  &__title-inner {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+  &__title-track:not(&__title-track--marquee) .cost-card__title-inner {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 8% пауза в начале + 83.99% скролл + 8% пауза в конце + скачок; следующий цикл снова с паузы в начале */
+  @keyframes cost-card-title-marquee {
+    0% {
+      transform: translateX(0);
+      animation-timing-function: linear;
+    }
+    8% {
+      transform: translateX(0);
+      animation-timing-function: ease-in-out;
+    }
+    95% {
+      transform: translateX(calc(-1 * var(--scroll, 0px)));
+      animation-timing-function: linear;
+    }
+    95.01% {
+      transform: translateX(calc(-1 * var(--scroll, 0px)));
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cost-card__title-track--marquee .cost-card__title-inner {
+      animation: none;
+      transform: none;
+    }
+
+    .cost-card__title-track--marquee .cost-card__title-inner,
+    .cost-card__title-inner {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   &__actions {
     display: flex;
+    flex-shrink: 0;
     gap: 1rem;
   }
 
@@ -43,10 +115,17 @@
     @include fluid-text(15, 11);
   }
 
+  /* auto-fit + 1fr: перенос как у flex-wrap, но кнопки на строке тянутся на всю ширину */
   &__tags {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
     gap: 0.5rem;
+
+    .button.button__person {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
   }
 
   &__tag {
@@ -57,6 +136,107 @@
     &.active {
       background-color: var(--color-light);
       color: var(--color-dark);
+    }
+  }
+
+  &__split-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__label--inline {
+    margin-bottom: 0;
+  }
+
+  &__mode-toggle {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-light);
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &__weights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+
+    /* нечётное число строк: последняя одна в ряду — на всю ширину карточки */
+    > .cost-card__weight-row:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__weight-row {
+    &.button.button__person {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+      padding: 0;
+      border: none;
+      border-radius: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      cursor: default;
+      font-weight: 500;
+      @include fluid-text(17, 13);
+    }
+
+    &.button__person--active {
+      .cost-card__weight-label {
+        color: var(--color-text-active);
+      }
+
+      .cost-card__weight-btn {
+        // border-color: rgba(255, 255, 255, 0.45);
+        color: var(--color-text-active);
+        border: none;
+        // background: rgba(0, 0, 0, 0.08);
+      }
+    }
+  }
+
+  &__weight-label {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__weight-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--border-radius-small);
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
     }
   }
 
@@ -80,6 +260,51 @@
   }
 
   &__calculation-details {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
     opacity: 0.7;
+  }
+
+  &__qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  &__qty-value {
+    min-width: 1.25rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    @include fluid-text(15, 11);
+  }
+
+  &__calculation-formula {
+    white-space: nowrap;
+  }
+
+  &__qty-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--border-radius-small);
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
   }
 }

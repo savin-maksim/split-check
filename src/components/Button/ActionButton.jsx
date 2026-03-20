@@ -1,12 +1,13 @@
 import React from 'react';
 import './button.scss';
 
-function ActionButton({ children, onClick, className, icon }) {
+function ActionButton({ children, onClick, className, icon, disabled }) {
    return (
       <button
          type={'button'}
          onClick={onClick}
-         className={`button ${className}`}
+         disabled={disabled}
+         className={['button', className].filter(Boolean).join(' ')}
       >
          {icon && <span className="button--icon-left">{icon}</span>}
          {children}

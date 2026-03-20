@@ -51,4 +51,14 @@ export const validateCost = (cost) => {
   if (cost.pricePerUnit !== undefined && cost.pricePerUnit < 0) {
     throw new Error('Цена за единицу не может быть отрицательной')
   }
+
+  if (cost.distributionType === 'weighted') {
+    const total = Object.values(cost.weights || {}).reduce(
+      (s, u) => s + Math.max(0, Math.floor(Number(u) || 0)),
+      0
+    )
+    if (total <= 0) {
+      throw new Error('Укажите хотя бы одну долю больше нуля')
+    }
+  }
 } 

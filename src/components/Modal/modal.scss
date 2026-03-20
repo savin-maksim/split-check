@@ -2,6 +2,7 @@
   border: none;
   padding: 0;
   background: none;
+  max-width: var(--cards-width);
   
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
@@ -102,8 +103,8 @@
   }
 
   &__tags {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
     gap: 0.5rem;
   }
 
@@ -111,6 +112,75 @@
     &.button__person--active {
         background-color: var(--color-active);
         color: var(--color-text-active);
+    }
+  }
+
+  &__split-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__mode-toggle {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-light);
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &__weights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  &__weight-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  &__weight-label {
+    flex: 1;
+    text-align: center;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__weight-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-light);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
     }
   }
 }
