@@ -6,7 +6,7 @@
   -webkit-backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--border-radius);
-  padding: 1rem;
+  padding: 0.5rem;
   color: var(--color-light);
   width: 100%;
   max-width: var(--cards-width);
@@ -52,7 +52,6 @@
     text-overflow: ellipsis;
   }
 
-  /* 8% пауза в начале + 83.99% скролл + 8% пауза в конце + скачок; следующий цикл снова с паузы в начале */
   @keyframes cost-card-title-marquee {
     0% {
       transform: translateX(0);
@@ -111,8 +110,8 @@
   }
 
   &__label {
-    margin-bottom: 0.5rem;
-    @include fluid-text(15, 11);
+    margin-bottom: 1rem;
+    font-size: 14px;
   }
 
   /* auto-fit + 1fr: перенос как у flex-wrap, но кнопки на строке тянутся на всю ширину */
@@ -145,24 +144,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   &__label--inline {
     margin-bottom: 0;
   }
 
-  &__mode-toggle {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.8rem;
-    border-radius: 0.25rem;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--color-light);
-    cursor: pointer;
+  &__distribution-btn--active {
+    color: var(--color-orange);
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
+    svg {
+      color: inherit;
     }
   }
 
@@ -199,16 +192,14 @@
       }
 
       .cost-card__weight-btn {
-        // border-color: rgba(255, 255, 255, 0.45);
         color: var(--color-text-active);
         border: none;
-        // background: rgba(0, 0, 0, 0.08);
       }
     }
   }
 
   &__weight-label {
-    flex: 1;
+    flex: 0.9;
     text-align: center;
     min-width: 0;
     overflow: hidden;

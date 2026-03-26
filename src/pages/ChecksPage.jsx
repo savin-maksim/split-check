@@ -1,19 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Receipt,
   Users,
   Calculator,
-  Save,
   FolderInput,
   Trash2,
-  Import,
+  FilePlus,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useApp } from '../context/AppContext'
-import { StorageService } from '../services/storage'
 import { formatAmount } from '../utils/formatters'
 import ActionButton from '../components/Button/ActionButton'
+import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
 import Modal from '../components/Modal/Modal'
 import './checks-page.scss'
 
@@ -46,160 +45,80 @@ function sumCosts(costs) {
   return costs.reduce((s, c) => s + (Number(c.amount) || 0), 0)
 }
 
+const DISCARD_DRAFT_CONFIRM =
+  'Начать новый чек? Текущие несохранённые данные в редакторе будут сброшены.'
+
 function ChecksPage() {
+  const navigate = useNavigate()
   const {
     people,
     costs,
-    paymentMode,
-    singlePayer,
-    applySessionSnapshot,
+    sessionMeta,
+    startNewCheck,
+    newCheckModalNonce,
+    savedChecks,
+    deleteSavedCheck,
   } = useApp()
 
-  const [savedChecks, setSavedChecks] = useState(() =>
-    StorageService.getSavedChecks()
-  )
-  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
-  const [saveTitle, setSaveTitle] = useState('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [createTitle, setCreateTitle] = useState('')
 
-  const totalAmount = useMemo(() => sumCosts(costs), [costs])
-  const canSave = people.length > 0
+  /** При ре-монте страницы nonce в контексте не сбрасывается — ref тоже должен стартовать с текущего nonce, иначе FAB снова «откроет» модалку. */
+  const lastNewCheckNonce = useRef(newCheckModalNonce)
 
-  const openSaveModal = () => {
-    setSaveTitle(
-      `Чек от ${new Date().toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })}`
-    )
-    setIsSaveModalOpen(true)
+  const openCreateModal = useCallback(() => {
+    setCreateTitle('')
+    setIsCreateModalOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (newCheckModalNonce > lastNewCheckNonce.current) {
+      lastNewCheckNonce.current = newCheckModalNonce
+      openCreateModal()
+    }
+  }, [newCheckModalNonce, openCreateModal])
+
+  const handleDelete = (id, title) => {
+    if (!window.confirm(`Удалить чек «${title}»?`)) return
+    deleteSavedCheck(id)
+    toast.success('Удалено')
   }
 
-  const handleSaveSubmit = (e) => {
+  const handleCreateSubmit = (e) => {
     e.preventDefault()
-    const trimmed = saveTitle.trim()
+    const trimmed = createTitle.trim()
     if (!trimmed) {
       toast.error('Введите название')
       return
     }
-    if (!canSave) {
-      toast.error('Добавьте хотя бы одного участника')
-      return
-    }
-
-    const snapshot = {
-      id:
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `check-${Date.now()}`,
-      title: trimmed,
-      createdAt: Date.now(),
-      people: JSON.parse(JSON.stringify(people)),
-      costs: JSON.parse(JSON.stringify(costs)),
-      paymentMode,
-      singlePayer: singlePayer ? JSON.parse(JSON.stringify(singlePayer)) : null,
-    }
-
-    const next = [snapshot, ...StorageService.getSavedChecks()]
-    StorageService.setSavedChecks(next)
-    setSavedChecks(next)
-    setIsSaveModalOpen(false)
-    toast.success('Чек сохранён')
-  }
-
-  const confirmLoad = (check) => {
     const hasDraft = people.length > 0 || costs.length > 0
-    if (
-      hasDraft &&
-      !window.confirm(
-        'Загрузить сохранённый чек? Текущие несохранённые данные в редакторе будут заменены.'
-      )
-    ) {
+    if (hasDraft && !window.confirm(DISCARD_DRAFT_CONFIRM)) {
       return
     }
-    applySessionSnapshot(check)
-    toast.success(`Загружено: ${check.title}`)
-  }
-
-  const handleDelete = (id, title) => {
-    if (!window.confirm(`Удалить «${title}» из сохранённых?`)) return
-    const next = StorageService.getSavedChecks().filter((c) => c.id !== id)
-    StorageService.setSavedChecks(next)
-    setSavedChecks(next)
-    toast.success('Удалено')
+    if (!startNewCheck(trimmed)) {
+      toast.error('Введите название')
+      return
+    }
+    setIsCreateModalOpen(false)
+    navigate('/people')
   }
 
   return (
     <div className="checks-page">
       <div className="checks-page__container">
-        <header className="checks-page__header">
-          <div className="checks-page__title-block">
-            <Receipt
-              className="checks-page__title-icon"
-              size={28}
-              aria-hidden
-            />
-            <div>
-              <h1 className="checks-page__title">Чеки</h1>
-              <p className="checks-page__subtitle">
-                Сохраняйте сессию целиком и открывайте позже
-              </p>
-            </div>
-          </div>
-        </header>
+        <PageSectionHeader
+          icon={<Receipt size={28} aria-hidden />}
+          title="Чеки"
+        />
 
-        <section className="checks-page__section" aria-labelledby="current-heading">
-          <h2 id="current-heading" className="checks-page__section-title">
-            Текущий чек
-          </h2>
-          <div className="checks-page__current-card">
-            <div className="checks-page__current-meta">
-              <span className="checks-page__current-stat">
-                <Users size={18} aria-hidden />
-                {people.length}{' '}
-                {pluralizeParticipants(people.length)}
-              </span>
-              <span className="checks-page__current-stat">
-                <Calculator size={18} aria-hidden />
-                {costs.length} {pluralizePositions(costs.length)}
-              </span>
-              <span className="checks-page__current-stat checks-page__current-stat--sum">
-                <Receipt size={18} aria-hidden />
-                {formatAmount(totalAmount)} ₽
-              </span>
-            </div>
-            <p className="checks-page__hint">
-              Данные с разделов{' '}
-              <Link to="/people">Участники</Link>,{' '}
-              <Link to="/costs">Расходы</Link> и расчёт на{' '}
-              <Link to="/stats">Статистика</Link> попадают в один сохранённый
-              снимок.
-            </p>
-            <ActionButton
-              icon={<Save size={18} />}
-              onClick={openSaveModal}
-              disabled={!canSave}
-              className="checks-page__save-btn"
-            >
-              Сохранить в список
-            </ActionButton>
-            {!canSave && (
-              <p className="checks-page__save-hint">
-                Чтобы сохранить, добавьте участников на странице «Участники».
-              </p>
-            )}
-          </div>
-        </section>
-
-        <section className="checks-page__section" aria-labelledby="saved-heading">
-          <h2 id="saved-heading" className="checks-page__section-title">
-            Сохранённые чеки
-          </h2>
+        <section className="checks-page__section">
           {savedChecks.length === 0 ? (
             <div className="checks-page__empty-saved">
               <FolderInput size={40} aria-hidden />
-              <p>Пока нет сохранённых чеков — заполните участников и расходы и
-                нажмите «Сохранить в список».</p>
+              <p>
+                Пока нет чеков — нажмите «Новый чек», задайте название и
+                переходите к участникам.
+              </p>
             </div>
           ) : (
             <ul className="checks-page__saved-list">
@@ -207,52 +126,62 @@ function ChecksPage() {
                 const sum = sumCosts(check.costs || [])
                 const pCount = (check.people || []).length
                 const cCount = (check.costs || []).length
+                const isActive = sessionMeta?.id === check.id
                 return (
-                  <li key={check.id} className="checks-page__saved-card">
-                    <div className="checks-page__saved-card-main">
-                      <h3 className="checks-page__saved-title">{check.title}</h3>
-                      <time
-                        className="checks-page__saved-date"
-                        dateTime={new Date(check.createdAt).toISOString()}
-                      >
-                        {formatSavedDate(check.createdAt)}
-                      </time>
-                      <div className="checks-page__saved-meta">
-                        <span>
-                          {pCount} {pluralizeParticipants(pCount)}
-                        </span>
-                        <span>
-                          {cCount} {pluralizePositions(cCount)}
-                        </span>
-                        <span className="checks-page__saved-sum">
-                          {formatAmount(sum)} ₽
-                        </span>
-                        {check.paymentMode === 'single' && (
-                          <span className="checks-page__saved-badge">
-                            Один плательщик
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="checks-page__saved-actions">
-                      <button
-                        type="button"
-                        className="checks-page__icon-btn checks-page__icon-btn--load"
-                        onClick={() => confirmLoad(check)}
-                        title="Загрузить в редактор"
-                      >
-                        <Import size={20} aria-hidden />
-                        <span>Загрузить</span>
-                      </button>
-                      <button
+                  <li key={check.id} className="checks-page__saved-list-item">
+                    <Link
+                      to={`/check/${check.id}`}
+                      className={`checks-page__saved-card${isActive ? ' checks-page__saved-card--active' : ''}`}
+                      onClick={(e) => {
+                        if (sessionMeta?.id === check.id) {
+                          e.preventDefault()
+                          toast('Этот чек уже открыт')
+                        }
+                      }}
+                    >
+                      <div className="checks-page__saved-card-main">
+                        <div className="checks-page__saved-card-header">
+                          <h3 className="checks-page__saved-title">{check.title}</h3>
+                          <button
                         type="button"
                         className="checks-page__icon-btn checks-page__icon-btn--delete"
                         onClick={() => handleDelete(check.id, check.title)}
-                        title="Удалить из списка"
-                        aria-label="Удалить из списка"
+                        title="Удалить чек"
+                        aria-label="Удалить чек"
                       >
                         <Trash2 size={20} aria-hidden />
                       </button>
+                        </div>
+                        
+                        <time
+                          className="checks-page__saved-date"
+                          dateTime={new Date(check.createdAt).toISOString()}
+                        >
+                          {formatSavedDate(check.createdAt)}
+                        </time>
+                        <div className="checks-page__current-meta checks-page__saved-card-meta">
+                          <span className="checks-page__current-stat">
+                            <Users size={18} aria-hidden />
+                            {pCount} {pluralizeParticipants(pCount)}
+                          </span>
+                          <span className="checks-page__current-stat">
+                            <Calculator size={18} aria-hidden />
+                            {cCount} {pluralizePositions(cCount)}
+                          </span>
+                          <span className="checks-page__current-stat checks-page__current-stat--sum">
+                            <Receipt size={18} aria-hidden />
+                            {formatAmount(sum)} ₽
+                          </span>
+                          {check.paymentMode === 'single' && (
+                            <span className="checks-page__saved-badge">
+                              Один плательщик
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="checks-page__saved-actions">
+                      
                     </div>
                   </li>
                 )
@@ -262,32 +191,36 @@ function ChecksPage() {
         </section>
       </div>
 
-      <Modal isOpen={isSaveModalOpen} onClose={() => setIsSaveModalOpen(false)}>
-        <form onSubmit={handleSaveSubmit}>
-          <h3 className="modal__title">Сохранить чек</h3>
+      <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
+        <form onSubmit={handleCreateSubmit}>
+          <h3 className="modal__title">Новый чек</h3>
+          <p className="checks-page__create-lead">
+            Задайте название — далее вы перейдёте к списку участников.
+          </p>
           <div className="modal__inputs">
-            <label className="modal__label" htmlFor="check-title">
+            <label className="modal__label" htmlFor="new-check-title">
               Название
             </label>
             <input
-              id="check-title"
+              id="new-check-title"
               className="modal__input"
-              value={saveTitle}
-              onChange={(e) => setSaveTitle(e.target.value)}
+              value={createTitle}
+              onChange={(e) => setCreateTitle(e.target.value)}
               placeholder="Например: Ужин в пятницу"
               autoComplete="off"
+              autoFocus
             />
           </div>
           <div className="modal__buttons">
             <button
               type="button"
               className="button"
-              onClick={() => setIsSaveModalOpen(false)}
+              onClick={() => setIsCreateModalOpen(false)}
             >
               Отмена
             </button>
             <button type="submit" className="button">
-              Сохранить
+              Далее: участники
             </button>
           </div>
         </form>

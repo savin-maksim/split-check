@@ -1,0 +1,57 @@
+@use "/src/styles/mixins" as *;
+
+.page-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1.25rem;
+  gap: 1rem;
+
+  &--sticky {
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    z-index: 1;
+  }
+
+  &__title-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  &__icon-wrap {
+    flex-shrink: 0;
+    color: var(--color-orange);
+    line-height: 0;
+
+    svg {
+      display: block;
+    }
+  }
+
+  &__text {
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-light);
+    line-height: 1.2;
+    @include fluid-text(26, 20);
+  }
+
+  &__subtitle {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-secondary);
+    opacity: 0.9;
+    @include fluid-text(15, 12);
+  }
+
+  &__actions {
+    flex-shrink: 0;
+  }
+}

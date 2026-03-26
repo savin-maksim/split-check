@@ -5,7 +5,7 @@ import ActionNavButton from '../Button/ActionNavButton'
 import './navigation.scss'
 
 function Navigation() {
-  const { setIsModalOpen } = useApp()
+  const { setIsModalOpen, triggerNewCheckModal } = useApp()
 
   const handlePeopleAction = () => {
     setIsModalOpen('addPerson')
@@ -33,6 +33,7 @@ function Navigation() {
         onPeopleAction={handlePeopleAction}
         onCostAction={handleCostAction}
         onShareAction={handleShareAction}
+        onNewCheckAction={triggerNewCheckModal}
       />
 
       <NavLink to="/costs" className={({ isActive }) => isActive ? 'active' : ''}>

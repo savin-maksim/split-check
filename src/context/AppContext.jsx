@@ -5,6 +5,20 @@ import { toast } from 'react-hot-toast'
 
 const AppContext = createContext()
 
+function newSessionId() {
+  return typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `check-${Date.now()}`
+}
+
+function defaultLegacyCheckTitle() {
+  return `Чек от ${new Date().toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })}`
+}
+
 export function AppProvider({ children }) {
   const [people, setPeople] = useState(() => StorageService.getPeople())
   const [costs, setCosts] = useState(() => StorageService.getCosts())
@@ -14,8 +28,48 @@ export function AppProvider({ children }) {
   const [isPayerModalOpen, setIsPayerModalOpen] = useState(false)
   const [pendingCosts, setPendingCosts] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(null) // 'addPerson', 'addCost', null
+  const [sessionMeta, setSessionMeta] = useState(() => StorageService.getSessionMeta())
+  const [newCheckModalNonce, setNewCheckModalNonce] = useState(0)
+  const [savedChecks, setSavedChecks] = useState(() => StorageService.getSavedChecks())
 
   // Save to localStorage when data changes
+  useEffect(() => {
+    StorageService.setSessionMeta(sessionMeta)
+  }, [sessionMeta])
+
+  /**
+   * Есть участники/расходы, но нет meta (старые данные или зашли на /people без «Новый чек») —
+   * создаём meta, чтобы автосохранение в список чеков работало.
+   */
+  useEffect(() => {
+    if (sessionMeta != null) return
+    if (people.length === 0 && costs.length === 0) return
+    setSessionMeta({ id: newSessionId(), title: defaultLegacyCheckTitle() })
+  }, [sessionMeta, people, costs])
+
+  /** Текущий чек всегда отражён в списке чеков. */
+  useEffect(() => {
+    if (!sessionMeta?.id) return
+    const existing = StorageService.getSavedChecks()
+    const idx = existing.findIndex((c) => c.id === sessionMeta.id)
+    const createdAt = idx >= 0 ? existing[idx].createdAt : Date.now()
+    const snapshot = {
+      id: sessionMeta.id,
+      title: sessionMeta.title?.trim() || 'Без названия',
+      createdAt,
+      people: JSON.parse(JSON.stringify(people)),
+      costs: JSON.parse(JSON.stringify(costs)),
+      paymentMode,
+      singlePayer: singlePayer ? JSON.parse(JSON.stringify(singlePayer)) : null,
+    }
+    const next =
+      idx >= 0
+        ? existing.map((c, i) => (i === idx ? snapshot : c))
+        : [snapshot, ...existing]
+    StorageService.setSavedChecks(next)
+    setSavedChecks(next)
+  }, [sessionMeta, people, costs, paymentMode, singlePayer])
+
   useEffect(() => {
     StorageService.setPeople(people)
   }, [people])
@@ -234,6 +288,14 @@ export function AppProvider({ children }) {
     setCosts(prev => prev.filter(cost => cost.id !== costId))
   }, [])
 
+  const removeAllCosts = useCallback(() => {
+    setCosts([])
+    setManualModeCosts([])
+    setPendingCosts(null)
+    StorageService.clearStatsCache()
+    toast.success('Все позиции удалены')
+  }, [])
+
   // Payment mode methods
   const changePaymentMode = useCallback((mode) => {
     if (mode === paymentMode) return
@@ -268,6 +330,46 @@ export function AppProvider({ children }) {
     })))
   }, [])
 
+  /** Новый чек: пустая сессия, новый id, название. Вызывающий код делает navigate('/people'). */
+  const startNewCheck = useCallback((title) => {
+    const trimmed = title.trim()
+    if (!trimmed) return false
+    const id = newSessionId()
+    setPeople([])
+    setCosts([])
+    setSinglePayer(null)
+    setManualModeCosts([])
+    setPaymentMode('manual')
+    setPendingCosts(null)
+    setIsPayerModalOpen(false)
+    setIsModalOpen(null)
+    setSessionMeta({ id, title: trimmed })
+    StorageService.clearStatsCache()
+    return true
+  }, [])
+
+  const triggerNewCheckModal = useCallback(() => {
+    setNewCheckModalNonce((n) => n + 1)
+  }, [])
+
+  const deleteSavedCheck = useCallback((id) => {
+    const next = StorageService.getSavedChecks().filter((c) => c.id !== id)
+    StorageService.setSavedChecks(next)
+    setSavedChecks(next)
+    if (sessionMeta?.id === id) {
+      setSessionMeta(null)
+      setPeople([])
+      setCosts([])
+      setSinglePayer(null)
+      setManualModeCosts([])
+      setPaymentMode('manual')
+      setPendingCosts(null)
+      setIsPayerModalOpen(false)
+      setIsModalOpen(null)
+      StorageService.clearStatsCache()
+    }
+  }, [sessionMeta])
+
   /** Полная подстановка сессии (например, загрузка сохранённого чека). Статистика пересчитается по данным. */
   const applySessionSnapshot = useCallback((snapshot) => {
     setPeople(Array.isArray(snapshot.people) ? snapshot.people : [])
@@ -278,6 +380,15 @@ export function AppProvider({ children }) {
     setPendingCosts(null)
     setIsPayerModalOpen(false)
     setIsModalOpen(null)
+    const sid =
+      typeof snapshot.id === 'string' && snapshot.id
+        ? snapshot.id
+        : newSessionId()
+    const stitle =
+      typeof snapshot.title === 'string' && snapshot.title.trim()
+        ? snapshot.title.trim()
+        : 'Без названия'
+    setSessionMeta({ id: sid, title: stitle })
     StorageService.clearStatsCache()
   }, [])
 
@@ -309,6 +420,10 @@ export function AppProvider({ children }) {
     showCostSection,
     showTransferSection,
     isModalOpen,
+    sessionMeta,
+    setSessionMeta,
+    newCheckModalNonce,
+    savedChecks,
 
     // Setters
     setIsPayerModalOpen,
@@ -325,9 +440,13 @@ export function AppProvider({ children }) {
     updateCost,
     duplicateCost,
     deleteCost,
+    removeAllCosts,
     changePaymentMode,
     selectSinglePayer,
-    applySessionSnapshot
+    applySessionSnapshot,
+    startNewCheck,
+    triggerNewCheckModal,
+    deleteSavedCheck,
   }), [
     people,
     costs,
@@ -338,6 +457,10 @@ export function AppProvider({ children }) {
     showCostSection,
     showTransferSection,
     isModalOpen,
+    sessionMeta,
+    setSessionMeta,
+    newCheckModalNonce,
+    savedChecks,
     addPerson,
     removePerson,
     removeAllPeople,
@@ -347,9 +470,13 @@ export function AppProvider({ children }) {
     updateCost,
     duplicateCost,
     deleteCost,
+    removeAllCosts,
     changePaymentMode,
     selectSinglePayer,
-    applySessionSnapshot
+    applySessionSnapshot,
+    startNewCheck,
+    triggerNewCheckModal,
+    deleteSavedCheck,
   ])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

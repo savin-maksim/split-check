@@ -5,7 +5,8 @@ import TransferCard from '../components/Cards/Transfer/TransferCard'
 import Spinner from '../components/Spinner/Spinner'
 import { formatAmount, formatQuantity, formatTotalQuantity } from '../utils/formatters.js'
 import { Link } from 'react-router-dom'
-import { Users, Calculator } from 'lucide-react'
+import { Users, Calculator, BarChart3 } from 'lucide-react'
+import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
 import Arrow from '../components/Arrow/Arrow'
 
 // Import styles
@@ -72,6 +73,11 @@ function StatsPage() {
   return (
     <>
       <div className="transfer-section">
+        <PageSectionHeader
+          sticky={false}
+          icon={<BarChart3 size={28} aria-hidden />}
+          title="Статистика"
+        />
         <div className="transfer-section__cards">
           <TransferCard transfers={transfers} isLoading={false} />
         </div>

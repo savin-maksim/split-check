@@ -60,7 +60,6 @@
   position: relative;
   transition: all var(--transition-duration) ease;
   
-  // Для устройств с мышью
   @media (hover: hover) {
     &:hover {
       box-shadow: 0 0 15px var(--color-glass);
@@ -71,13 +70,11 @@
       animation: pulse 0.5s ease-in-out;
     }
 
-    // Для активных кнопок меняем цвет тени
     &.button__person--active:hover {
       box-shadow: 0 0 15px var(--color-active);
     }
   }
 
-  // Для тач-устройств
   @media (hover: none) {
     &:active {
       animation: pulse 0.5s ease-in-out;
@@ -121,7 +118,6 @@
   }
 }
 
-// Добавляем новый миксин
 @mixin no-animation {
   animation: none !important;
   transition: none !important;
@@ -136,30 +132,25 @@
   }
 }
 
-// Добавляем новый миксин для простой анимации
 @mixin simple-button-animation {
   position: relative;
   transition: all var(--transition-duration) ease;
   
-  // Для устройств с мышью
   @media (hover: hover) {
     &:hover {
       box-shadow: 0 0 30px var(--color-glass);
       border-color: rgba(255, 255, 255, 0.5);
     }
 
-    // Для активных кнопок
     &.button--icon-active:hover {
       box-shadow: 0 0 30px var(--color-active);
     }
 
     &:active {
-      // box-shadow: 0 0 30px var(--color-glass);
       transform: scale(0.95);
     }
   }
 
-  // Для тач-устройств
   @media (hover: none) {
     &:active {
       transform: scale(0.95);

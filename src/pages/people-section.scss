@@ -11,49 +11,6 @@
     flex-direction: column;
   }
 
-  &__header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    padding-block: 1.25rem;
-    gap: 1rem;
-    position: sticky;
-    top: 0;
-    background: var(--color-bg);
-    z-index: 1;
-  }
-
-  &__title-block {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 0;
-  }
-
-  &__title-icon {
-    flex-shrink: 0;
-    color: var(--color-orange);
-  }
-
-  &__title {
-    margin: 0;
-    font-weight: 700;
-    color: var(--color-light);
-    line-height: 1.2;
-    @include fluid-text(26, 20);
-  }
-
-  &__subtitle {
-    color: var(--color-text-secondary);
-    opacity: 0.9;
-    @include fluid-text(15, 12);
-  }
-
-  &__toolbar {
-    flex-shrink: 0;
-  }
-
   &__btn-clear {
     padding: 0.5rem 0.85rem;
     font-size: 0.875rem;

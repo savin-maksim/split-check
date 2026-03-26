@@ -4,18 +4,22 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
 // Import components
+import ActionButton from '../components/Button/ActionButton'
 import IconButton from '../components/Button/IconButton'
+import Modal from '../components/Modal/Modal'
 import PersonButton from '../components/Button/PersonButton'
 import CostCard from '../components/Cards/Cost/CostCard'
 import AddPositionModal from '../components/Modal/AddPositionModal'
 import Arrow from '../components/Arrow/Arrow'
 import ReceiptScanner from '../components/ReceiptScanner/ReceiptScanner'
+import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
 
 // Import styles
 import './cost-section.scss'
 
 function CostsPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [isClearCostsModalOpen, setIsClearCostsModalOpen] = useState(false)
   const { 
     people,
     costs,
@@ -26,6 +30,7 @@ function CostsPage() {
     updateCost,
     duplicateCost,
     deleteCost,
+    removeAllCosts,
     changePaymentMode,
     selectSinglePayer,
     isModalOpen,
@@ -52,6 +57,11 @@ function CostsPage() {
       paidBy: paymentMode === 'single' ? (singlePayer ? [singlePayer] : []) : position.paidBy,
       splitBetween: position.splitBetween
     })
+  }
+
+  const confirmRemoveAllCosts = () => {
+    removeAllCosts()
+    setIsClearCostsModalOpen(false)
   }
 
   if (!people.length) {
@@ -107,6 +117,19 @@ function CostsPage() {
 
   return (
     <div className="cost-section">
+      <PageSectionHeader
+        icon={<Calculator size={28} aria-hidden />}
+        title="Расходы"
+        action={
+          <button
+            type="button"
+            className="cost-section__btn-clear-all"
+            onClick={() => setIsClearCostsModalOpen(true)}
+          >
+            Удалить все позиции
+          </button>
+        }
+      />
       <div className="payment-mode flex-center flex-center__column">
         <div className="payment-mode__selector">
           <h3>Режим оплаты</h3>
@@ -197,6 +220,28 @@ function CostsPage() {
         people={people}
         paymentMode={paymentMode}
       />
+
+      <Modal
+        isOpen={isClearCostsModalOpen}
+        onClose={() => setIsClearCostsModalOpen(false)}
+      >
+        <h2 className="modal__title">Удалить все позиции?</h2>
+        <p className="cost-section__modal-text">
+          Все расходы в текущем чеке будут удалены. Участники останутся. Действие
+          нельзя отменить.
+        </p>
+        <div className="modal__buttons">
+          <ActionButton onClick={() => setIsClearCostsModalOpen(false)}>
+            Отмена
+          </ActionButton>
+          <ActionButton
+            onClick={confirmRemoveAllCosts}
+            className="cost-section__modal-btn-danger"
+          >
+            Удалить все
+          </ActionButton>
+        </div>
+      </Modal>
     </div>
   )
 }

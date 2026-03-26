@@ -4,6 +4,12 @@
   align-items: center;
   gap: 1rem;
 
+  .page-section-header {
+    width: 100%;
+    max-width: var(--cards-width);
+    box-sizing: border-box;
+  }
+
   &__cards {
     display: flex;
     flex-direction: column;

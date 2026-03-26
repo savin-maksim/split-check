@@ -3,6 +3,7 @@ import { Pencil, UserPlus, Trash2, Users } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 import ActionButton from "../components/Button/ActionButton";
+import PageSectionHeader from "../components/PageSectionHeader/PageSectionHeader";
 import AddPersonModal from "../components/Modal/AddPersonModal";
 import EditPersonModal from "../components/Modal/EditPersonModal";
 import Modal from "../components/Modal/Modal";
@@ -63,26 +64,12 @@ function PeoplePage() {
   return (
     <div className="people-section">
       <div className="people-section__container">
-        <header className="people-section__header">
-          <div className="people-section__title-block">
-            {people.length > 0 && (
-              <>
-                <Users
-                  className="people-section__title-icon"
-                  size={28}
-                  aria-hidden
-                />
-                <div className="people-section__title-block-content">
-                  <h1 className="people-section__title">Участники</h1>
-                  <p className="people-section__subtitle">
-                    {people.length} {pluralizeParticipants(people.length)}
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-          {people.length > 0 && (
-            <div className="people-section__toolbar">
+        {people.length > 0 && (
+          <PageSectionHeader
+            icon={<Users size={28} aria-hidden />}
+            title="Участники"
+            subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
+            action={
               <button
                 type="button"
                 className="people-section__btn-clear"
@@ -90,9 +77,9 @@ function PeoplePage() {
               >
                 Удалить всех
               </button>
-            </div>
-          )}
-        </header>
+            }
+          />
+        )}
 
         {people.length === 0 ? (
           <div className="people-section__empty">

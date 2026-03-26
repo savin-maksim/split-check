@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Copy, Minus, Plus } from 'lucide-react'
+import { Pencil, Trash2, Copy, Minus, Plus, ChartPie } from 'lucide-react'
 import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
 import './cost-card.scss'
@@ -204,9 +204,16 @@ function CostCard({
       <div className="cost-card__section">
         <div className="cost-card__split-header">
           <p className="cost-card__label cost-card__label--inline">На кого разделить?</p>
-          <button type="button" className="cost-card__mode-toggle" onClick={toggleDistribution}>
-            {distributionType === 'weighted' ? 'Равные доли' : 'По долям (веса)'}
-          </button>
+          <IconButton
+            icon={<ChartPie />}
+            className={`cost-card__action-btn${distributionType === 'weighted' ? ' cost-card__distribution-btn--active' : ''}`}
+            onClick={toggleDistribution}
+            ariaLabel={
+              distributionType === 'weighted'
+                ? 'Переключить на равные доли'
+                : 'Переключить на доли по весам'
+            }
+          />
         </div>
 
         {distributionType === 'equal' ? (

@@ -6,6 +6,46 @@
   gap: 1rem;
   min-height: calc(90vh - var(--navigation-height));
 
+  .page-section-header {
+    width: 100%;
+    max-width: var(--cards-width);
+    margin-inline: auto;
+    box-sizing: border-box;
+  }
+
+  &__btn-clear-all {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.875rem;
+    border-radius: var(--border-radius-small);
+    border: 1px solid rgba(255, 100, 100, 0.45);
+    background: rgba(180, 60, 60, 0.2);
+    color: var(--color-light);
+    cursor: pointer;
+    font-weight: 500;
+
+    @include hover {
+      background: rgba(200, 80, 80, 0.35);
+    }
+  }
+
+  &__modal-text {
+    margin: 0;
+    line-height: 1.45;
+    color: var(--color-light);
+    opacity: 0.92;
+    @include fluid-text(15, 13);
+  }
+
+  &__modal-btn-danger {
+    border: 1px solid rgba(255, 100, 100, 0.45);
+    background: rgba(180, 60, 60, 0.35);
+    color: var(--color-light);
+
+    @include hover {
+      background: rgba(200, 80, 80, 0.5);
+    }
+  }
+
   &__empty {
     flex: 1;
     display: flex;

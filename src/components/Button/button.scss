@@ -16,9 +16,7 @@
     border-radius: var(--border-radius-person);
     font-weight: 500;
     min-width: 0;
-    @include button-animation;
     @include fluid-text(17, 13);
-    // max-width: calc(var(--cards-width) / 2 - 1.5rem);
 
     &-text {
       overflow: hidden;
@@ -31,6 +29,8 @@
     }
 
     &--active {
+      border-color: var(--color-orange);
+      box-shadow: 0 0 15px var(--color-active);
       background-color: var(--color-active);
       color: var(--color-text-active);
     }

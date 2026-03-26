@@ -5,7 +5,9 @@ const STORAGE_KEYS = {
   SINGLE_PAYER: 'splitcheck_single_payer',
   CURRENT_SESSION: 'splitcheck_current_session',
   STATS_CACHE: 'splitcheck_stats_cache',
-  SAVED_CHECKS: 'splitcheck_saved_checks'
+  SAVED_CHECKS: 'splitcheck_saved_checks',
+  SESSION_META: 'splitcheck_session_meta',
+  TRANSFER_MERGE_UI: 'splitcheck_transfer_merge_ui',
 }
 
 const safeParse = (key, fallback) => {
@@ -64,6 +66,48 @@ export const StorageService = {
 
   setSavedChecks: (checks) => {
     localStorage.setItem(STORAGE_KEYS.SAVED_CHECKS, JSON.stringify(checks))
+  },
+
+  /**
+   * Метаданные активного редактируемого чека (имя, id для связи со снимком).
+   * @returns {{ id: string, title: string } | null}
+   */
+  getSessionMeta: () => safeParse(STORAGE_KEYS.SESSION_META, null),
+
+  /** @param {{ id: string, title: string } | null} meta */
+  setSessionMeta: (meta) => {
+    if (meta == null) {
+      localStorage.removeItem(STORAGE_KEYS.SESSION_META)
+    } else {
+      localStorage.setItem(STORAGE_KEYS.SESSION_META, JSON.stringify(meta))
+    }
+  },
+
+  /**
+   * UI режима объединения переводов на странице статистики.
+   * @returns {{
+   *   mergeMode: boolean,
+   *   pendingSelection?: number[],
+   *   selectedIndices?: number[],
+   *   committedGroups?: number[][],
+   *   transfersSig: string
+   * } | null}
+   */
+  getTransferMergeUi: () => safeParse(STORAGE_KEYS.TRANSFER_MERGE_UI, null),
+
+  /**
+   * @param {{
+   *   mergeMode: boolean,
+   *   pendingSelection: number[],
+   *   committedGroups: number[][],
+   *   transfersSig: string
+   * }} payload
+   */
+  setTransferMergeUi: (payload) => {
+    localStorage.setItem(
+      STORAGE_KEYS.TRANSFER_MERGE_UI,
+      JSON.stringify(payload)
+    )
   },
 
   getCurrentSession: () => {

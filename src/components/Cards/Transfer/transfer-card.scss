@@ -1,5 +1,23 @@
 @use "/src/styles/mixins" as *;
 
+@keyframes transfer-card-shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-3deg);
+  }
+
+  50% {
+    transform: rotate(3deg);
+  }
+
+  75% {
+    transform: rotate(-3deg);
+  }
+}
 .transfer-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -31,17 +49,126 @@
     gap: 0.5rem;
   }
 
-  &__person {
+  &__person:not(&__person--shake) {
     @include no-animation;
+  }
+
+  &__person {
+    &--merged-from {
+      border-radius: 20px;
+      width: 100%;
+      min-width: 0;
+      justify-self: stretch;
+      align-self: stretch;
+      box-sizing: border-box;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.35;
+
+      .button__person-text {
+        display: block;
+        width: 100%;
+        white-space: pre-line;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+    }
+
+    &--from-selectable {
+      @include hover {
+        cursor: pointer;
+      }
+    }
+
+    &--shake {
+      transform-origin: center center;
+      animation: transfer-card-shake 0.65s ease-in-out infinite !important;
+
+      &:hover,
+      &:active {
+        animation: transfer-card-shake 0.65s ease-in-out infinite !important;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .transfer-card__person--shake {
+      animation: none !important;
+    }
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
 
     .spinner {
-      margin-left: 1rem;
+      margin-left: 0;
+    }
+  }
+
+  &__merge-toggle {
+    flex-shrink: 0;
+    border: none;
+    background: none;
+    padding: 0.5rem;
+
+    &--active {
+      color: var(--color-orange);
+
+      svg {
+        color: inherit;
+      }
+    }
+  }
+
+  &__merge-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  &__merge-action {
+    flex: 1;
+    min-width: 8rem;
+    padding: 0.65rem 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-light);
+    transition: opacity 0.15s ease, background 0.15s ease;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &--primary:not(:disabled):hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    &--primary:not(:disabled) {
+      border-color: var(--color-orange);
+      color: var(--color-orange);
+    }
+
+    &--secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }
