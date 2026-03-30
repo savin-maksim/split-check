@@ -4,9 +4,7 @@
  */
 export function transferListSignature(transfers) {
   if (!transfers?.length) return ''
-  return JSON.stringify(
-    transfers.map((t) => [t.from, t.to, Number(t.amount)])
-  )
+  return JSON.stringify(transfers.map((t) => [t.from, t.to, Number(t.amount)]))
 }
 
 /**
@@ -54,9 +52,7 @@ export function validateCommittedGroups(transfers, groups) {
 
   for (const raw of groups) {
     if (!Array.isArray(raw) || raw.length < 2) continue
-    const uniq = [...new Set(raw)].filter(
-      (i) => typeof i === 'number' && i >= 0 && i < n && Math.floor(i) === i
-    )
+    const uniq = [...new Set(raw)].filter((i) => typeof i === 'number' && i >= 0 && i < n && Math.floor(i) === i)
     if (uniq.length < 2) continue
     if (uniq.some((i) => used.has(i))) continue
     const to0 = transfers[uniq[0]].to

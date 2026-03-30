@@ -2,17 +2,14 @@ import { useState, useEffect, useMemo } from 'react'
 import { StorageService } from '../services/storage'
 import { calculateStatistics } from '../utils/calculations'
 import { getTransfersFromCosts } from '../utils/splitCompute'
-import {
-  computeDataFingerprint,
-  computeFullFingerprint
-} from '../utils/statsFingerprint'
+import { computeDataFingerprint, computeFullFingerprint } from '../utils/statsFingerprint'
 
 const emptyStatistics = {
   peopleStats: [],
   totalStats: {
     totalAmount: 0,
-    expenses: []
-  }
+    expenses: [],
+  },
 }
 
 /**
@@ -38,11 +35,7 @@ export function useStatsPageSnapshot(people, costs, paymentMode, singlePayer) {
     setReady(false)
 
     const dataFingerprint = computeDataFingerprint(people, costs)
-    const fullFingerprint = computeFullFingerprint(
-      dataFingerprint,
-      paymentMode,
-      singlePayer
-    )
+    const fullFingerprint = computeFullFingerprint(dataFingerprint, paymentMode, singlePayer)
     const cache = StorageService.getStatsCache()
 
     let nextTransfers
@@ -50,30 +43,20 @@ export function useStatsPageSnapshot(people, costs, paymentMode, singlePayer) {
 
     if (!cache || cache.dataFingerprint !== dataFingerprint) {
       nextStatistics = calculateStatistics(people, costs)
-      nextTransfers = getTransfersFromCosts(
-        people,
-        costs,
-        paymentMode,
-        singlePayer
-      )
+      nextTransfers = getTransfersFromCosts(people, costs, paymentMode, singlePayer)
       StorageService.setStatsCache({
         dataFingerprint,
         fullFingerprint,
         statistics: nextStatistics,
-        transfers: nextTransfers
+        transfers: nextTransfers,
       })
     } else if (cache.fullFingerprint !== fullFingerprint) {
       nextStatistics = cache.statistics
-      nextTransfers = getTransfersFromCosts(
-        people,
-        costs,
-        paymentMode,
-        singlePayer
-      )
+      nextTransfers = getTransfersFromCosts(people, costs, paymentMode, singlePayer)
       StorageService.setStatsCache({
         ...cache,
         fullFingerprint,
-        transfers: nextTransfers
+        transfers: nextTransfers,
       })
     } else {
       nextStatistics = cache.statistics

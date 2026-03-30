@@ -22,8 +22,8 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className='modal__title'>{title}</h2>
-      <form 
+      <h2 className="modal__title">{title}</h2>
+      <form
         className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault()
@@ -40,16 +40,12 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
           autoFocus
         />
         <div className="modal__buttons">
-          <ActionButton onClick={handleSubmit}>
-            Добавить
-          </ActionButton>
-          <ActionButton onClick={onClose}>
-            Отмена
-          </ActionButton>
+          <ActionButton onClick={handleSubmit}>Добавить</ActionButton>
+          <ActionButton onClick={onClose}>Отмена</ActionButton>
         </div>
       </form>
     </Modal>
   )
 }
 
-export default AddPersonModal 
+export default AddPersonModal

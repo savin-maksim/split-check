@@ -41,20 +41,20 @@ export function costsToProducts(costsData, people) {
             items: people
               .map((p) => ({
                 name: p.name,
-                units: readWeight(cost.weights, p.id)
+                units: readWeight(cost.weights, p.id),
               }))
-              .filter((x) => x.units > 0)
+              .filter((x) => x.units > 0),
           }
         : {
             type: 'equal',
-            participants: (cost.splitBetween ?? []).map((p) => p.name)
+            participants: (cost.splitBetween ?? []).map((p) => p.name),
           }
 
     return {
       name: cost.title ?? '',
       amount,
       payer,
-      distribution
+      distribution,
     }
   })
 }
@@ -64,9 +64,7 @@ function getActualSpent(productsData, peopleMap, options = {}) {
   const result = Array.from({ length: peopleMap.size }, () => math.bignumber(0))
 
   for (const product of productsData) {
-    const payer = useProductPayer
-      ? product.payer
-      : (product.singlePayer ?? product.payer)
+    const payer = useProductPayer ? product.payer : (product.singlePayer ?? product.payer)
     const idx = peopleMap.get(payer)
 
     if (idx !== undefined) {
@@ -102,10 +100,7 @@ function getExpectedSpent(productsData, peopleMap) {
       if (totalUnits === 0) continue
 
       for (const item of items) {
-        const share = math.multiply(
-          math.divide(math.bignumber(item.units), math.bignumber(totalUnits)),
-          total
-        )
+        const share = math.multiply(math.divide(math.bignumber(item.units), math.bignumber(totalUnits)), total)
         const idx = peopleMap.get(item.name)
         if (idx !== undefined) {
           result[idx] = math.add(result[idx], share)
@@ -121,7 +116,7 @@ function getBalances(actual, expected, peopleList) {
   return actual
     .map((value, i) => ({
       person: peopleList[i],
-      balance: math.subtract(value, expected[i])
+      balance: math.subtract(value, expected[i]),
     }))
     .sort((a, b) => math.compare(b.balance, a.balance))
 }
@@ -142,7 +137,7 @@ function settleDebts(balances) {
     result.push({
       from: debt.person,
       to: credit.person,
-      amount: math.number(math.round(amount, 2))
+      amount: math.number(math.round(amount, 2)),
     })
 
     credit.balance = math.subtract(credit.balance, amount)
@@ -170,12 +165,12 @@ export function computeAll(productsData, peopleList) {
   const expectedRounded = expected.map(roundForDisplay)
 
   const actualPerProduct = getActualSpent(productsData, peopleMap, {
-    useProductPayer: true
+    useProductPayer: true,
   })
   const balancesPerProduct = getBalances(actualPerProduct, expected, peopleList)
   const balanceSnapshot = balancesPerProduct.map((b) => ({
     person: b.person,
-    balance: b.balance
+    balance: b.balance,
   }))
   const transactionsPerProduct = settleDebts(balancesPerProduct)
 
@@ -189,9 +184,9 @@ export function computeAll(productsData, peopleList) {
       expected: expectedRounded,
       balances: balanceSnapshot.map((b) => ({
         person: b.person,
-        balance: roundForDisplay(b.balance)
+        balance: roundForDisplay(b.balance),
       })),
-      transactions: transactionsPerProduct
+      transactions: transactionsPerProduct,
     },
     getSinglePayerTransactions(singlePayer) {
       return singlePayerDebts
@@ -199,9 +194,9 @@ export function computeAll(productsData, peopleList) {
         .map((d) => ({
           from: d.person,
           to: singlePayer,
-          amount: d.amount
+          amount: d.amount,
         }))
-    }
+    },
   }
 }
 

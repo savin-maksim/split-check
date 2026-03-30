@@ -1,4 +1,4 @@
-@use "/src/styles/mixins" as *;
+@use '/src/styles/mixins' as *;
 
 .button {
   background-color: var(--color-glass);
@@ -20,8 +20,8 @@
 
     &-text {
       overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .button--icon-right {

@@ -104,10 +104,7 @@ export const StorageService = {
    * }} payload
    */
   setTransferMergeUi: (payload) => {
-    localStorage.setItem(
-      STORAGE_KEYS.TRANSFER_MERGE_UI,
-      JSON.stringify(payload)
-    )
+    localStorage.setItem(STORAGE_KEYS.TRANSFER_MERGE_UI, JSON.stringify(payload))
   },
 
   getCurrentSession: () => {
@@ -119,8 +116,8 @@ export const StorageService = {
   },
 
   clearAll: () => {
-    Object.values(STORAGE_KEYS).forEach(key => {
+    Object.values(STORAGE_KEYS).forEach((key) => {
       localStorage.removeItem(key)
     })
-  }
+  },
 }

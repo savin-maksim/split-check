@@ -15,12 +15,7 @@ import './transfer-section.scss'
 
 function StatsPage() {
   const { people, costs, paymentMode, singlePayer } = useApp()
-  const { transfers, statistics, ready } = useStatsPageSnapshot(
-    people,
-    costs,
-    paymentMode,
-    singlePayer
-  )
+  const { transfers, statistics, ready } = useStatsPageSnapshot(people, costs, paymentMode, singlePayer)
 
   if (!people.length) {
     return (
@@ -28,7 +23,10 @@ function StatsPage() {
         <div className="statistics-section__empty">
           <Users size={48} />
           <h2>Добавьте участников</h2>
-          <p>Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
+          <p>
+            Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить
+            расходы
+          </p>
           <Arrow className="arrow--to-people" />
         </div>
       </div>
@@ -41,7 +39,10 @@ function StatsPage() {
         <div className="statistics-section__empty">
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
-          <p>Перейдите на <Link to="/costs">страницу расходов</Link> и добавьте расходы, которые нужно разделить между участниками</p>
+          <p>
+            Перейдите на <Link to="/costs">страницу расходов</Link> и добавьте расходы, которые нужно разделить между
+            участниками
+          </p>
           <Arrow className="arrow--to-cost" />
         </div>
       </div>
@@ -73,11 +74,7 @@ function StatsPage() {
   return (
     <>
       <div className="transfer-section">
-        <PageSectionHeader
-          sticky={false}
-          icon={<BarChart3 size={28} aria-hidden />}
-          title="Статистика"
-        />
+        <PageSectionHeader sticky={false} icon={<BarChart3 size={28} aria-hidden />} title="Статистика" />
         <div className="transfer-section__cards">
           <TransferCard transfers={transfers} isLoading={false} />
         </div>
@@ -134,12 +131,13 @@ function StatsPage() {
 
               {person.expenses.length > 0 && (
                 <div className="statistics-card__expenses">
-                  <h4 className="statistics-card__expenses-title">
-                    Детализация расходов:
-                  </h4>
+                  <h4 className="statistics-card__expenses-title">Детализация расходов:</h4>
                   <div className="statistics-card__expense-items">
                     {person.expenses.map((expense, index) => (
-                      <div key={index} className="statistics-card__expense-item statistics-card__expense-item--detailed">
+                      <div
+                        key={index}
+                        className="statistics-card__expense-item statistics-card__expense-item--detailed"
+                      >
                         <div className="statistics-card__expense-info">
                           <span className="statistics-card__expense-title">{expense.description}</span>
                         </div>
@@ -150,15 +148,19 @@ function StatsPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="statistics-card__summary">
                     <div className="statistics-card__summary-item">
                       <h4 className="">Итог:</h4>
-                      <h4 className="statistics-card__expense-amount">{formatAmount(person.expenses.reduce((sum, exp) => sum + exp.amount, 0))} ₽</h4>
+                      <h4 className="statistics-card__expense-amount">
+                        {formatAmount(person.expenses.reduce((sum, exp) => sum + exp.amount, 0))} ₽
+                      </h4>
                     </div>
                     <div className="statistics-card__summary-item">
                       <h4 className="">Баланс:</h4>
-                      <h4 className={`statistics-card__expense-amount ${person.balance > 0 ? 'positive' : person.balance < 0 ? 'negative' : ''}`}>
+                      <h4
+                        className={`statistics-card__expense-amount ${person.balance > 0 ? 'positive' : person.balance < 0 ? 'negative' : ''}`}
+                      >
                         {formatAmount(person.balance)} ₽
                       </h4>
                     </div>

@@ -1,5 +1,5 @@
 :root {
-  --font-family-base: "Montserrat", sans-serif;
+  --font-family-base: 'Montserrat', sans-serif;
 
   --font-p-max: 15;
   --font-p-min: 10;
@@ -17,6 +17,8 @@
   --border-radius: 10px;
   --border-radius-small: 7px;
   --border-radius-large: 45px;
+
+  --button-new-icon-size: 1.15rem;
 
   --container-width: 800px;
   --container-padding-x: 20px;
@@ -37,5 +39,6 @@
   --hover-color: rgba(0, 0, 0, 0.05);
   --border-color: #e5e7eb;
   --error-color: #ef4444;
+  --error-color-hover: #ff0000;
   --success-color: #22c55e;
 }

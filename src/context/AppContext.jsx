@@ -6,9 +6,7 @@ import { toast } from 'react-hot-toast'
 const AppContext = createContext()
 
 function newSessionId() {
-  return typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `check-${Date.now()}`
+  return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `check-${Date.now()}`
 }
 
 function defaultLegacyCheckTitle() {
@@ -62,10 +60,7 @@ export function AppProvider({ children }) {
       paymentMode,
       singlePayer: singlePayer ? JSON.parse(JSON.stringify(singlePayer)) : null,
     }
-    const next =
-      idx >= 0
-        ? existing.map((c, i) => (i === idx ? snapshot : c))
-        : [snapshot, ...existing]
+    const next = idx >= 0 ? existing.map((c, i) => (i === idx ? snapshot : c)) : [snapshot, ...existing]
     StorageService.setSavedChecks(next)
     setSavedChecks(next)
   }, [sessionMeta, people, costs, paymentMode, singlePayer])
@@ -87,45 +82,48 @@ export function AppProvider({ children }) {
   }, [singlePayer])
 
   // People methods
-  const addPerson = useCallback((newPerson) => {
-    try {
-      if (Array.isArray(newPerson)) {
-        // Filter only unique names and find duplicates
-        const duplicates = newPerson.filter(newP => 
-          people.some(p => p.name.toLowerCase() === newP.name.toLowerCase())
-        ).map(p => p.name)
+  const addPerson = useCallback(
+    (newPerson) => {
+      try {
+        if (Array.isArray(newPerson)) {
+          // Filter only unique names and find duplicates
+          const duplicates = newPerson
+            .filter((newP) => people.some((p) => p.name.toLowerCase() === newP.name.toLowerCase()))
+            .map((p) => p.name)
 
-        const uniqueNames = newPerson.filter(newP => 
-          !people.some(p => p.name.toLowerCase() === newP.name.toLowerCase())
-        )
+          const uniqueNames = newPerson.filter(
+            (newP) => !people.some((p) => p.name.toLowerCase() === newP.name.toLowerCase()),
+          )
 
-        uniqueNames.forEach(person => validatePerson(person))
+          uniqueNames.forEach((person) => validatePerson(person))
 
-        // Add only unique names
-        if (uniqueNames.length > 0) {
-          setPeople(prev => [...prev, ...uniqueNames])
-          
-          // Show success notification
-          if (uniqueNames.length === 1) {
-            toast.success(`Участник ${uniqueNames[0].name} добавлен`)
-          } else {
-            toast.success(`Добавлено ${uniqueNames.length} участников`)
+          // Add only unique names
+          if (uniqueNames.length > 0) {
+            setPeople((prev) => [...prev, ...uniqueNames])
+
+            // Show success notification
+            if (uniqueNames.length === 1) {
+              toast.success(`Участник ${uniqueNames[0].name} добавлен`)
+            } else {
+              toast.success(`Добавлено ${uniqueNames.length} участников`)
+            }
           }
-        }
 
-        // If there were duplicates, show warning
-        if (duplicates.length > 0) {
-          toast.error(`${duplicates.join(', ')} уже в списке`)
+          // If there were duplicates, show warning
+          if (duplicates.length > 0) {
+            toast.error(`${duplicates.join(', ')} уже в списке`)
+          }
+        } else {
+          validatePerson(newPerson)
+          setPeople((prev) => [...prev, newPerson])
+          toast.success(`Участник ${newPerson.name} добавлен`)
         }
-      } else {
-        validatePerson(newPerson)
-        setPeople(prev => [...prev, newPerson])
-        toast.success(`Участник ${newPerson.name} добавлен`)
+      } catch (error) {
+        toast.error(error.message)
       }
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }, [people])
+    },
+    [people],
+  )
 
   const removeAllPeople = useCallback(() => {
     setPeople([])
@@ -139,13 +137,10 @@ export function AppProvider({ children }) {
     (personId, rawName) => {
       try {
         const trimmed = rawName.trim()
-        const name =
-          trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+        const name = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
         validatePerson({ name })
 
-        const duplicate = people.some(
-          (p) => p.id !== personId && p.name.toLowerCase() === name.toLowerCase()
-        )
+        const duplicate = people.some((p) => p.id !== personId && p.name.toLowerCase() === name.toLowerCase())
         if (duplicate) {
           toast.error('Участник с таким именем уже есть')
           return false
@@ -160,20 +155,14 @@ export function AppProvider({ children }) {
 
         const updatedPerson = { id: personId, name }
 
-        setPeople((list) =>
-          list.map((p) => (p.id === personId ? updatedPerson : p))
-        )
+        setPeople((list) => list.map((p) => (p.id === personId ? updatedPerson : p)))
 
         setCosts((prevCosts) =>
           prevCosts.map((cost) => ({
             ...cost,
-            paidBy: (cost.paidBy || []).map((p) =>
-              p.id === personId ? updatedPerson : p
-            ),
-            splitBetween: (cost.splitBetween || []).map((p) =>
-              p.id === personId ? updatedPerson : p
-            )
-          }))
+            paidBy: (cost.paidBy || []).map((p) => (p.id === personId ? updatedPerson : p)),
+            splitBetween: (cost.splitBetween || []).map((p) => (p.id === personId ? updatedPerson : p)),
+          })),
         )
 
         setSinglePayer((p) => (p?.id === personId ? updatedPerson : p))
@@ -181,13 +170,9 @@ export function AppProvider({ children }) {
         setManualModeCosts((prev) =>
           prev.map((cost) => ({
             ...cost,
-            paidBy: (cost.paidBy || []).map((p) =>
-              p.id === personId ? updatedPerson : p
-            ),
-            splitBetween: (cost.splitBetween || []).map((p) =>
-              p.id === personId ? updatedPerson : p
-            )
-          }))
+            paidBy: (cost.paidBy || []).map((p) => (p.id === personId ? updatedPerson : p)),
+            splitBetween: (cost.splitBetween || []).map((p) => (p.id === personId ? updatedPerson : p)),
+          })),
         )
 
         toast.success('Имя обновлено')
@@ -197,38 +182,41 @@ export function AppProvider({ children }) {
         return false
       }
     },
-    [people]
+    [people],
   )
 
-  const removePerson = useCallback((personId) => {
-    const personToRemove = people.find(person => person.id === personId)
-    const updatedPeople = people.filter(person => person.id !== personId)
-    setPeople(updatedPeople)
-    
-    // If removed the last person, clear all costs
-    if (updatedPeople.length === 0) {
-      setCosts([])
-      toast.success('Все данные очищены')
-    } else {
-      // Otherwise just filter costs, removing the deleted person
-      setCosts(prevCosts => prevCosts.map(cost => {
-        const weights = cost.weights
-        const nextWeights =
-          weights && typeof weights === 'object'
-            ? Object.fromEntries(
-                Object.entries(weights).filter(([key]) => String(key) !== String(personId))
-              )
-            : weights
-        return {
-          ...cost,
-          paidBy: cost.paidBy.filter(p => p.id !== personId),
-          splitBetween: cost.splitBetween.filter(p => p.id !== personId),
-          ...(nextWeights !== undefined ? { weights: nextWeights } : {})
-        }
-      }))
-      toast.success(`Участник ${personToRemove.name} удален`)
-    }
-  }, [people])
+  const removePerson = useCallback(
+    (personId) => {
+      const personToRemove = people.find((person) => person.id === personId)
+      const updatedPeople = people.filter((person) => person.id !== personId)
+      setPeople(updatedPeople)
+
+      // If removed the last person, clear all costs
+      if (updatedPeople.length === 0) {
+        setCosts([])
+        toast.success('Все данные очищены')
+      } else {
+        // Otherwise just filter costs, removing the deleted person
+        setCosts((prevCosts) =>
+          prevCosts.map((cost) => {
+            const weights = cost.weights
+            const nextWeights =
+              weights && typeof weights === 'object'
+                ? Object.fromEntries(Object.entries(weights).filter(([key]) => String(key) !== String(personId)))
+                : weights
+            return {
+              ...cost,
+              paidBy: cost.paidBy.filter((p) => p.id !== personId),
+              splitBetween: cost.splitBetween.filter((p) => p.id !== personId),
+              ...(nextWeights !== undefined ? { weights: nextWeights } : {}),
+            }
+          }),
+        )
+        toast.success(`Участник ${personToRemove.name} удален`)
+      }
+    },
+    [people],
+  )
 
   // Costs methods
   const addCost = useCallback((newCost) => {
@@ -238,7 +226,7 @@ export function AppProvider({ children }) {
         setIsPayerModalOpen(true)
       } else {
         validateCost(newCost)
-        setCosts(prev => [...prev, newCost])
+        setCosts((prev) => [...prev, newCost])
       }
     } catch (error) {
       toast.error(error.message)
@@ -247,7 +235,7 @@ export function AppProvider({ children }) {
 
   const addCosts = useCallback((newCosts) => {
     try {
-      setCosts(prev => [...prev, ...newCosts])
+      setCosts((prev) => [...prev, ...newCosts])
       toast.success(`Добавлено ${newCosts.length} позиций`)
     } catch (error) {
       toast.error(error.message)
@@ -257,9 +245,7 @@ export function AppProvider({ children }) {
   const updateCost = useCallback((costId, updatedCost) => {
     try {
       validateCost(updatedCost)
-      setCosts(prev => prev.map(cost => 
-        cost.id === costId ? updatedCost : cost
-      ))
+      setCosts((prev) => prev.map((cost) => (cost.id === costId ? updatedCost : cost)))
     } catch (error) {
       toast.error(error.message)
     }
@@ -268,8 +254,8 @@ export function AppProvider({ children }) {
   const duplicateCost = useCallback((originalCostId, newCost) => {
     try {
       validateCost(newCost)
-      setCosts(prevCosts => {
-        const index = prevCosts.findIndex(cost => cost.id === originalCostId)
+      setCosts((prevCosts) => {
+        const index = prevCosts.findIndex((cost) => cost.id === originalCostId)
         const newCosts = [...prevCosts]
         if (index !== -1) {
           newCosts.splice(index + 1, 0, newCost)
@@ -285,7 +271,7 @@ export function AppProvider({ children }) {
   }, [])
 
   const deleteCost = useCallback((costId) => {
-    setCosts(prev => prev.filter(cost => cost.id !== costId))
+    setCosts((prev) => prev.filter((cost) => cost.id !== costId))
   }, [])
 
   const removeAllCosts = useCallback(() => {
@@ -297,37 +283,44 @@ export function AppProvider({ children }) {
   }, [])
 
   // Payment mode methods
-  const changePaymentMode = useCallback((mode) => {
-    if (mode === paymentMode) return
+  const changePaymentMode = useCallback(
+    (mode) => {
+      if (mode === paymentMode) return
 
-    if (mode === 'single') {
-      // Сохраняем текущее состояние расходов для ручного режима
-      setManualModeCosts(costs)
-      
-      // Устанавливаем единого плательщика для всех расходов
-      if (singlePayer) {
-        setCosts(prev => prev.map(cost => ({
-          ...cost,
-          paidBy: [singlePayer]
-        })))
-      }
-    } else if (mode === 'manual') {
-      setSinglePayer(null)
-      // Восстанавливаем сохраненное состояние расходов для ручного режима
-      if (manualModeCosts.length > 0) {
-        setCosts(manualModeCosts)
-      }
-    }
+      if (mode === 'single') {
+        // Сохраняем текущее состояние расходов для ручного режима
+        setManualModeCosts(costs)
 
-    setPaymentMode(mode)
-  }, [paymentMode, costs, manualModeCosts, singlePayer])
+        // Устанавливаем единого плательщика для всех расходов
+        if (singlePayer) {
+          setCosts((prev) =>
+            prev.map((cost) => ({
+              ...cost,
+              paidBy: [singlePayer],
+            })),
+          )
+        }
+      } else if (mode === 'manual') {
+        setSinglePayer(null)
+        // Восстанавливаем сохраненное состояние расходов для ручного режима
+        if (manualModeCosts.length > 0) {
+          setCosts(manualModeCosts)
+        }
+      }
+
+      setPaymentMode(mode)
+    },
+    [paymentMode, costs, manualModeCosts, singlePayer],
+  )
 
   const selectSinglePayer = useCallback((person) => {
     setSinglePayer(person)
-    setCosts(prev => prev.map(cost => ({
-      ...cost,
-      paidBy: [person]
-    })))
+    setCosts((prev) =>
+      prev.map((cost) => ({
+        ...cost,
+        paidBy: [person],
+      })),
+    )
   }, [])
 
   /** Новый чек: пустая сессия, новый id, название. Вызывающий код делает navigate('/people'). */
@@ -352,23 +345,26 @@ export function AppProvider({ children }) {
     setNewCheckModalNonce((n) => n + 1)
   }, [])
 
-  const deleteSavedCheck = useCallback((id) => {
-    const next = StorageService.getSavedChecks().filter((c) => c.id !== id)
-    StorageService.setSavedChecks(next)
-    setSavedChecks(next)
-    if (sessionMeta?.id === id) {
-      setSessionMeta(null)
-      setPeople([])
-      setCosts([])
-      setSinglePayer(null)
-      setManualModeCosts([])
-      setPaymentMode('manual')
-      setPendingCosts(null)
-      setIsPayerModalOpen(false)
-      setIsModalOpen(null)
-      StorageService.clearStatsCache()
-    }
-  }, [sessionMeta])
+  const deleteSavedCheck = useCallback(
+    (id) => {
+      const next = StorageService.getSavedChecks().filter((c) => c.id !== id)
+      StorageService.setSavedChecks(next)
+      setSavedChecks(next)
+      if (sessionMeta?.id === id) {
+        setSessionMeta(null)
+        setPeople([])
+        setCosts([])
+        setSinglePayer(null)
+        setManualModeCosts([])
+        setPaymentMode('manual')
+        setPendingCosts(null)
+        setIsPayerModalOpen(false)
+        setIsModalOpen(null)
+        StorageService.clearStatsCache()
+      }
+    },
+    [sessionMeta],
+  )
 
   /** Полная подстановка сессии (например, загрузка сохранённого чека). Статистика пересчитается по данным. */
   const applySessionSnapshot = useCallback((snapshot) => {
@@ -380,14 +376,8 @@ export function AppProvider({ children }) {
     setPendingCosts(null)
     setIsPayerModalOpen(false)
     setIsModalOpen(null)
-    const sid =
-      typeof snapshot.id === 'string' && snapshot.id
-        ? snapshot.id
-        : newSessionId()
-    const stitle =
-      typeof snapshot.title === 'string' && snapshot.title.trim()
-        ? snapshot.title.trim()
-        : 'Без названия'
+    const sid = typeof snapshot.id === 'string' && snapshot.id ? snapshot.id : newSessionId()
+    const stitle = typeof snapshot.title === 'string' && snapshot.title.trim() ? snapshot.title.trim() : 'Без названия'
     setSessionMeta({ id: sid, title: stitle })
     StorageService.clearStatsCache()
   }, [])
@@ -399,85 +389,85 @@ export function AppProvider({ children }) {
     return costs.some((cost) => {
       if (!cost.paidBy?.length) return false
       if (cost.distributionType === 'weighted') {
-        const total = Object.values(cost.weights || {}).reduce(
-          (s, u) => s + Math.max(0, Math.floor(Number(u) || 0)),
-          0
-        )
+        const total = Object.values(cost.weights || {}).reduce((s, u) => s + Math.max(0, Math.floor(Number(u) || 0)), 0)
         return total > 0
       }
       return cost.splitBetween?.length > 0
     })
   }, [costs])
 
-  const value = useMemo(() => ({
-    // State
-    people,
-    costs,
-    paymentMode,
-    singlePayer,
-    isPayerModalOpen,
-    pendingCosts,
-    showCostSection,
-    showTransferSection,
-    isModalOpen,
-    sessionMeta,
-    setSessionMeta,
-    newCheckModalNonce,
-    savedChecks,
+  const value = useMemo(
+    () => ({
+      // State
+      people,
+      costs,
+      paymentMode,
+      singlePayer,
+      isPayerModalOpen,
+      pendingCosts,
+      showCostSection,
+      showTransferSection,
+      isModalOpen,
+      sessionMeta,
+      setSessionMeta,
+      newCheckModalNonce,
+      savedChecks,
 
-    // Setters
-    setIsPayerModalOpen,
-    setPendingCosts,
-    setIsModalOpen,
+      // Setters
+      setIsPayerModalOpen,
+      setPendingCosts,
+      setIsModalOpen,
 
-    // Methods
-    addPerson,
-    removePerson,
-    removeAllPeople,
-    updatePerson,
-    addCost,
-    addCosts,
-    updateCost,
-    duplicateCost,
-    deleteCost,
-    removeAllCosts,
-    changePaymentMode,
-    selectSinglePayer,
-    applySessionSnapshot,
-    startNewCheck,
-    triggerNewCheckModal,
-    deleteSavedCheck,
-  }), [
-    people,
-    costs,
-    paymentMode,
-    singlePayer,
-    isPayerModalOpen,
-    pendingCosts,
-    showCostSection,
-    showTransferSection,
-    isModalOpen,
-    sessionMeta,
-    setSessionMeta,
-    newCheckModalNonce,
-    savedChecks,
-    addPerson,
-    removePerson,
-    removeAllPeople,
-    updatePerson,
-    addCost,
-    addCosts,
-    updateCost,
-    duplicateCost,
-    deleteCost,
-    removeAllCosts,
-    changePaymentMode,
-    selectSinglePayer,
-    applySessionSnapshot,
-    startNewCheck,
-    triggerNewCheckModal,
-    deleteSavedCheck,
-  ])
+      // Methods
+      addPerson,
+      removePerson,
+      removeAllPeople,
+      updatePerson,
+      addCost,
+      addCosts,
+      updateCost,
+      duplicateCost,
+      deleteCost,
+      removeAllCosts,
+      changePaymentMode,
+      selectSinglePayer,
+      applySessionSnapshot,
+      startNewCheck,
+      triggerNewCheckModal,
+      deleteSavedCheck,
+    }),
+    [
+      people,
+      costs,
+      paymentMode,
+      singlePayer,
+      isPayerModalOpen,
+      pendingCosts,
+      showCostSection,
+      showTransferSection,
+      isModalOpen,
+      sessionMeta,
+      setSessionMeta,
+      newCheckModalNonce,
+      savedChecks,
+      addPerson,
+      removePerson,
+      removeAllPeople,
+      updatePerson,
+      addCost,
+      addCosts,
+      updateCost,
+      duplicateCost,
+      deleteCost,
+      removeAllCosts,
+      changePaymentMode,
+      selectSinglePayer,
+      applySessionSnapshot,
+      startNewCheck,
+      triggerNewCheckModal,
+      deleteSavedCheck,
+    ],
+  )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
@@ -488,4 +478,4 @@ export const useApp = () => {
     throw new Error('useApp must be used within AppProvider')
   }
   return context
-} 
+}

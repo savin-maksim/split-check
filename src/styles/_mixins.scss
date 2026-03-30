@@ -7,7 +7,7 @@
 @mixin flex-center($isInline: false) {
   @if $isInline {
     display: inline-flex;
-  } @else  {
+  } @else {
     display: flex;
   }
 
@@ -56,10 +56,17 @@
   }
 }
 
+@mixin button-active {
+  color: var(--color-text-active);
+  background-color: var(--color-active);
+  border-color: var(--color-orange);
+  box-shadow: 0 0 15px var(--color-active);
+}
+
 @mixin button-animation {
   position: relative;
   transition: all var(--transition-duration) ease;
-  
+
   @media (hover: hover) {
     &:hover {
       box-shadow: 0 0 15px var(--color-glass);
@@ -124,7 +131,10 @@
   transform: none !important;
   box-shadow: none !important;
 
-  &:hover, &:active, &::before, &::after {
+  &:hover,
+  &:active,
+  &::before,
+  &::after {
     animation: none !important;
     transition: none !important;
     transform: none !important;
@@ -135,11 +145,10 @@
 @mixin simple-button-animation {
   position: relative;
   transition: all var(--transition-duration) ease;
-  
+
   @media (hover: hover) {
     &:hover {
       box-shadow: 0 0 30px var(--color-glass);
-      border-color: rgba(255, 255, 255, 0.5);
     }
 
     &.button--icon-active:hover {

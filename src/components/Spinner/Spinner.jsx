@@ -8,4 +8,4 @@ function Spinner({ className }) {
   )
 }
 
-export default Spinner 
+export default Spinner

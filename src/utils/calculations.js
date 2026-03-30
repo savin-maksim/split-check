@@ -2,9 +2,9 @@ import { getLineAmount } from './splitCompute'
 
 export const initializeDebtsMatrix = (people) => {
   const debts = {}
-  people.forEach(person1 => {
+  people.forEach((person1) => {
     debts[person1.name] = {}
-    people.forEach(person2 => {
+    people.forEach((person2) => {
       if (person1.id !== person2.id) {
         debts[person1.name][person2.name] = 0
       }
@@ -18,7 +18,7 @@ export const updateDebtsForCost = (debts, cost) => {
     const amountPerPerson = cost.amount / cost.splitBetween.length
     const payer = cost.paidBy[0].name
 
-    cost.splitBetween.forEach(person => {
+    cost.splitBetween.forEach((person) => {
       if (person.name !== payer) {
         debts[person.name][payer] += amountPerPerson
       }
@@ -28,14 +28,14 @@ export const updateDebtsForCost = (debts, cost) => {
 
 export const calculateBalances = (debts, people) => {
   const balances = {}
-  people.forEach(person => {
+  people.forEach((person) => {
     balances[person.name] = 0
-    Object.keys(debts).forEach(debtor => {
+    Object.keys(debts).forEach((debtor) => {
       if (debts[debtor][person.name]) {
-        balances[person.name] += debts[debtor][person.name]  // должны мне
+        balances[person.name] += debts[debtor][person.name] // должны мне
       }
       if (debts[person.name][debtor]) {
-        balances[person.name] -= debts[person.name][debtor]  // я должен
+        balances[person.name] -= debts[person.name][debtor] // я должен
       }
     })
   })
@@ -46,7 +46,7 @@ export const separateBalances = (balances) => {
   const positiveBalances = Object.entries(balances)
     .filter(([_, balance]) => balance > 0)
     .sort(([, a], [, b]) => b - a)
-  
+
   const negativeBalances = Object.entries(balances)
     .filter(([_, balance]) => balance < 0)
     .sort(([, a], [, b]) => a - b)
@@ -64,12 +64,12 @@ export const generateOptimalTransfers = (positiveBalances, negativeBalances) => 
     const [debtorName, debtorBalance] = negativeBalances[negativeIndex]
 
     const transferAmount = Math.min(creditorBalance, Math.abs(debtorBalance))
-    
+
     if (transferAmount > 0) {
       transfers.push({
         from: debtorName,
         to: creditorName,
-        amount: Math.round(transferAmount * 100) / 100
+        amount: Math.round(transferAmount * 100) / 100,
       })
 
       // Update balances
@@ -87,10 +87,7 @@ export const generateOptimalTransfers = (positiveBalances, negativeBalances) => 
 
 function sumWeights(cost) {
   if (cost.distributionType !== 'weighted') return 0
-  return Object.values(cost.weights || {}).reduce(
-    (s, u) => s + Math.max(0, Math.floor(Number(u) || 0)),
-    0
-  )
+  return Object.values(cost.weights || {}).reduce((s, u) => s + Math.max(0, Math.floor(Number(u) || 0)), 0)
 }
 
 function weightForPerson(weights, personId) {
@@ -132,8 +129,8 @@ export const calculateStatistics = (people, costs) => {
       peopleStats: [],
       totalStats: {
         totalAmount: 0,
-        expenses: []
-      }
+        expenses: [],
+      },
     }
   }
 
@@ -150,7 +147,7 @@ export const calculateStatistics = (people, costs) => {
           amount: personShare,
           quantity: personQuantity,
           splitCount,
-          pricePerUnit: cost.pricePerUnit || cost.amount
+          pricePerUnit: cost.pricePerUnit || cost.amount,
         }
       })
 
@@ -165,15 +162,13 @@ export const calculateStatistics = (people, costs) => {
       name: person.name,
       totalAmount: totalSpent,
       balance: totalSpent - totalOwed,
-      expenses: personExpenses
+      expenses: personExpenses,
     }
   })
 
   const combinedExpenses = costs.reduce((acc, cost) => {
     const lineAmount = getLineAmount(cost)
-    const existingExpense = acc.find(
-      (exp) => exp.title.toLowerCase() === cost.title.toLowerCase()
-    )
+    const existingExpense = acc.find((exp) => exp.title.toLowerCase() === cost.title.toLowerCase())
 
     if (existingExpense) {
       existingExpense.amount += lineAmount
@@ -184,7 +179,7 @@ export const calculateStatistics = (people, costs) => {
         title: cost.title,
         amount: lineAmount,
         quantity: cost.quantity || 1,
-        pricePerUnit: cost.pricePerUnit || lineAmount
+        pricePerUnit: cost.pricePerUnit || lineAmount,
       })
     }
     return acc
@@ -196,7 +191,7 @@ export const calculateStatistics = (people, costs) => {
     peopleStats,
     totalStats: {
       totalAmount,
-      expenses: combinedExpenses
-    }
+      expenses: combinedExpenses,
+    },
   }
-} 
+}

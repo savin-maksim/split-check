@@ -42,15 +42,15 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
     const total = qtyValue * priceValue
     const formattedPrice = new Intl.NumberFormat('ru-RU', {
       style: 'currency',
-      currency: 'RUB'
+      currency: 'RUB',
     }).format(total)
 
-    onSubmit({ 
+    onSubmit({
       ...initialData,
-      title: formatTitle(purchase.trim()), 
+      title: formatTitle(purchase.trim()),
       amount: total,
       quantity: qtyValue,
-      pricePerUnit: priceValue
+      pricePerUnit: priceValue,
     })
 
     toast.success(`Расход "${formatTitle(purchase.trim())}" - ${formattedPrice} обновлен`)
@@ -72,7 +72,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className='modal__title'>{title}</h2>
+      <h2 className="modal__title">{title}</h2>
       {error && <p className="modal__error">{error}</p>}
       <div className="modal__inputs">
         <input
@@ -91,9 +91,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
             type="text"
             value={quantity}
             onChange={(e) => {
-              const value = e.target.value
-                .replace(/,/g, '.')
-                .replace(/\.+/g, '.')
+              const value = e.target.value.replace(/,/g, '.').replace(/\.+/g, '.')
               setQuantity(value)
               setError('')
             }}
@@ -109,9 +107,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
             pattern="[0-9]*"
             value={pricePerUnit}
             onChange={(e) => {
-              const value = e.target.value
-                .replace(/,/g, '.')
-                .replace(/\.+/g, '.')
+              const value = e.target.value.replace(/,/g, '.').replace(/\.+/g, '.')
               setPricePerUnit(value)
               setError('')
             }}
@@ -122,12 +118,8 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
         </div>
       </div>
       <div className="modal__buttons">
-        <ActionButton onClick={handleSubmit}>
-          Сохранить
-        </ActionButton>
-        <ActionButton onClick={onClose}>
-          Отмена
-        </ActionButton>
+        <ActionButton onClick={handleSubmit}>Сохранить</ActionButton>
+        <ActionButton onClick={onClose}>Отмена</ActionButton>
       </div>
     </Modal>
   )

@@ -21,7 +21,7 @@ class ErrorBoundary extends React.Component {
         <div className="error-boundary">
           <h2>Что-то пошло не так</h2>
           <p>{this.state.error.message}</p>
-          <button 
+          <button
             onClick={() => {
               this.setState({ hasError: false, error: null })
               window.location.reload()
@@ -37,4 +37,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default ErrorBoundary 
+export default ErrorBoundary

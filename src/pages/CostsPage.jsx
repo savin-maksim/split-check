@@ -20,7 +20,7 @@ import './cost-section.scss'
 function CostsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isClearCostsModalOpen, setIsClearCostsModalOpen] = useState(false)
-  const { 
+  const {
     people,
     costs,
     paymentMode,
@@ -34,16 +34,19 @@ function CostsPage() {
     changePaymentMode,
     selectSinglePayer,
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
   } = useApp()
 
-  const filteredCosts = costs.filter(cost => {
+  const filteredCosts = costs.filter((cost) => {
     const query = searchQuery.toLowerCase()
     // Поиск по названию позиции
     const titleMatch = cost.title.toLowerCase().includes(query)
     // Поиск по именам плательщиков
-    const payerMatch = cost.paidBy.some(payer => 
-      people.find(p => p.id === payer.id)?.name.toLowerCase().includes(query)
+    const payerMatch = cost.paidBy.some((payer) =>
+      people
+        .find((p) => p.id === payer.id)
+        ?.name.toLowerCase()
+        .includes(query),
     )
     return titleMatch || payerMatch
   })
@@ -55,7 +58,7 @@ function CostsPage() {
       distributionType: position.distributionType ?? 'equal',
       weights: position.weights ?? {},
       paidBy: paymentMode === 'single' ? (singlePayer ? [singlePayer] : []) : position.paidBy,
-      splitBetween: position.splitBetween
+      splitBetween: position.splitBetween,
     })
   }
 
@@ -70,10 +73,13 @@ function CostsPage() {
         <div className="cost-section__empty">
           <Users size={48} />
           <h2>Добавьте участников</h2>
-          <p>Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить расходы</p>
+          <p>
+            Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить
+            расходы
+          </p>
           <Arrow className="arrow--to-people" />
         </div>
-        <AddPositionModal 
+        <AddPositionModal
           isOpen={isModalOpen === 'addCost'}
           onClose={() => setIsModalOpen(null)}
           onSubmit={handleAddPosition}
@@ -91,19 +97,18 @@ function CostsPage() {
         <div className="cost-section__empty">
           <Calculator size={48} />
           <h2>Добавьте расходы</h2>
-          <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками</p>
-          <p>Или воспользуйтесь <span className="gemini-text-span">ИИ распознаванием</span></p>
+          <p>
+            Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками
+          </p>
+          <p>
+            Или воспользуйтесь <span className="gemini-text-span">ИИ распознаванием</span>
+          </p>
           <div style={{ marginTop: '20px' }}>
-             <ReceiptScanner 
-              onAddCosts={addCosts}
-              people={people}
-              paymentMode={paymentMode}
-              singlePayer={singlePayer}
-            />
+            <ReceiptScanner onAddCosts={addCosts} people={people} paymentMode={paymentMode} singlePayer={singlePayer} />
           </div>
           {people.length > 0 && <Arrow />}
         </div>
-        <AddPositionModal 
+        <AddPositionModal
           isOpen={isModalOpen === 'addCost'}
           onClose={() => setIsModalOpen(null)}
           onSubmit={handleAddPosition}
@@ -121,11 +126,7 @@ function CostsPage() {
         icon={<Calculator size={28} aria-hidden />}
         title="Расходы"
         action={
-          <button
-            type="button"
-            className="cost-section__btn-clear-all"
-            onClick={() => setIsClearCostsModalOpen(true)}
-          >
+          <button type="button" className="cost-section__btn-clear-all" onClick={() => setIsClearCostsModalOpen(true)}>
             Удалить все позиции
           </button>
         }
@@ -163,12 +164,7 @@ function CostsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <ReceiptScanner 
-              onAddCosts={addCosts}
-              people={people}
-              paymentMode={paymentMode}
-              singlePayer={singlePayer}
-            />
+            <ReceiptScanner onAddCosts={addCosts} people={people} paymentMode={paymentMode} singlePayer={singlePayer} />
           </div>
         </div>
 
@@ -176,7 +172,7 @@ function CostsPage() {
           <div className="payment-mode__single-payer">
             <h3>Выберите плательщика</h3>
             <div className="payment-mode__people">
-              {people.map(person => (
+              {people.map((person) => (
                 <PersonButton
                   key={person.id}
                   onClick={() => selectSinglePayer(person)}
@@ -191,7 +187,7 @@ function CostsPage() {
       </div>
 
       <div className="cost-section__cards">
-        {filteredCosts.map(cost => (
+        {filteredCosts.map((cost) => (
           <CostCard
             key={cost.id}
             id={cost.id}
@@ -212,7 +208,7 @@ function CostsPage() {
         ))}
       </div>
 
-      <AddPositionModal 
+      <AddPositionModal
         isOpen={isModalOpen === 'addCost'}
         onClose={() => setIsModalOpen(null)}
         onSubmit={handleAddPosition}
@@ -221,23 +217,14 @@ function CostsPage() {
         paymentMode={paymentMode}
       />
 
-      <Modal
-        isOpen={isClearCostsModalOpen}
-        onClose={() => setIsClearCostsModalOpen(false)}
-      >
+      <Modal isOpen={isClearCostsModalOpen} onClose={() => setIsClearCostsModalOpen(false)}>
         <h2 className="modal__title">Удалить все позиции?</h2>
         <p className="cost-section__modal-text">
-          Все расходы в текущем чеке будут удалены. Участники останутся. Действие
-          нельзя отменить.
+          Все расходы в текущем чеке будут удалены. Участники останутся. Действие нельзя отменить.
         </p>
         <div className="modal__buttons">
-          <ActionButton onClick={() => setIsClearCostsModalOpen(false)}>
-            Отмена
-          </ActionButton>
-          <ActionButton
-            onClick={confirmRemoveAllCosts}
-            className="cost-section__modal-btn-danger"
-          >
+          <ActionButton onClick={() => setIsClearCostsModalOpen(false)}>Отмена</ActionButton>
+          <ActionButton onClick={confirmRemoveAllCosts} className="cost-section__modal-btn-danger">
             Удалить все
           </ActionButton>
         </div>
@@ -246,4 +233,4 @@ function CostsPage() {
   )
 }
 
-export default CostsPage 
+export default CostsPage

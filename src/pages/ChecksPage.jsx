@@ -1,19 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import {
-  Receipt,
-  Users,
-  Calculator,
-  FolderInput,
-  Trash2,
-  FilePlus,
-} from 'lucide-react'
+import { Receipt, Users, Calculator, FolderInput, Trash2, FilePlus, Edit } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { useApp } from '../context/AppContext'
-import { formatAmount } from '../utils/formatters'
-import ActionButton from '../components/Button/ActionButton'
-import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
-import Modal from '../components/Modal/Modal'
+import { useApp } from '@/context/AppContext'
+import IconButton from '@/components/Button/IconButton'
+import { formatAmount } from '@/utils/formatters'
+import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import Modal from '@/components/Modal/Modal'
 import './checks-page.scss'
 
 function formatSavedDate(ts) {
@@ -45,20 +38,11 @@ function sumCosts(costs) {
   return costs.reduce((s, c) => s + (Number(c.amount) || 0), 0)
 }
 
-const DISCARD_DRAFT_CONFIRM =
-  'Начать новый чек? Текущие несохранённые данные в редакторе будут сброшены.'
+const DISCARD_DRAFT_CONFIRM = 'Начать новый чек? Текущие несохранённые данные в редакторе будут сброшены.'
 
 function ChecksPage() {
   const navigate = useNavigate()
-  const {
-    people,
-    costs,
-    sessionMeta,
-    startNewCheck,
-    newCheckModalNonce,
-    savedChecks,
-    deleteSavedCheck,
-  } = useApp()
+  const { people, costs, sessionMeta, startNewCheck, newCheckModalNonce, savedChecks, deleteSavedCheck } = useApp()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [createTitle, setCreateTitle] = useState('')
@@ -106,19 +90,13 @@ function ChecksPage() {
   return (
     <div className="checks-page">
       <div className="checks-page__container">
-        <PageSectionHeader
-          icon={<Receipt size={28} aria-hidden />}
-          title="Чеки"
-        />
+        <PageSectionHeader icon={<Receipt size={28} aria-hidden />} title="Чеки" />
 
         <section className="checks-page__section">
           {savedChecks.length === 0 ? (
             <div className="checks-page__empty-saved">
               <FolderInput size={40} aria-hidden />
-              <p>
-                Пока нет чеков — нажмите «Новый чек», задайте название и
-                переходите к участникам.
-              </p>
+              <p>Пока нет чеков — нажмите «Новый чек», задайте название и переходите к участникам.</p>
             </div>
           ) : (
             <ul className="checks-page__saved-list">
@@ -142,21 +120,16 @@ function ChecksPage() {
                       <div className="checks-page__saved-card-main">
                         <div className="checks-page__saved-card-header">
                           <h3 className="checks-page__saved-title">{check.title}</h3>
-                          <button
-                        type="button"
-                        className="checks-page__icon-btn checks-page__icon-btn--delete"
-                        onClick={() => handleDelete(check.id, check.title)}
-                        title="Удалить чек"
-                        aria-label="Удалить чек"
-                      >
-                        <Trash2 size={20} aria-hidden />
-                      </button>
+                          <IconButton
+                            className="icon-button--danger"
+                            icon={<Trash2 aria-hidden />}
+                            title="Удалить чек"
+                            aria-label="Удалить чек"
+                            onClick={() => handleDelete(check.id, check.title)}
+                          />
                         </div>
-                        
-                        <time
-                          className="checks-page__saved-date"
-                          dateTime={new Date(check.createdAt).toISOString()}
-                        >
+
+                        <time className="checks-page__saved-date" dateTime={new Date(check.createdAt).toISOString()}>
                           {formatSavedDate(check.createdAt)}
                         </time>
                         <div className="checks-page__current-meta checks-page__saved-card-meta">
@@ -173,16 +146,12 @@ function ChecksPage() {
                             {formatAmount(sum)} ₽
                           </span>
                           {check.paymentMode === 'single' && (
-                            <span className="checks-page__saved-badge">
-                              Один плательщик
-                            </span>
+                            <span className="checks-page__saved-badge">Один плательщик</span>
                           )}
                         </div>
                       </div>
                     </Link>
-                    <div className="checks-page__saved-actions">
-                      
-                    </div>
+                    <div className="checks-page__saved-actions"></div>
                   </li>
                 )
               })}
@@ -194,9 +163,7 @@ function ChecksPage() {
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
         <form onSubmit={handleCreateSubmit}>
           <h3 className="modal__title">Новый чек</h3>
-          <p className="checks-page__create-lead">
-            Задайте название — далее вы перейдёте к списку участников.
-          </p>
+          <p className="checks-page__create-lead">Задайте название — далее вы перейдёте к списку участников.</p>
           <div className="modal__inputs">
             <label className="modal__label" htmlFor="new-check-title">
               Название
@@ -212,11 +179,7 @@ function ChecksPage() {
             />
           </div>
           <div className="modal__buttons">
-            <button
-              type="button"
-              className="button"
-              onClick={() => setIsCreateModalOpen(false)}
-            >
+            <button type="button" className="button" onClick={() => setIsCreateModalOpen(false)}>
               Отмена
             </button>
             <button type="submit" className="button">

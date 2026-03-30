@@ -1,0 +1,34 @@
+@use '/src/styles/mixins' as *;
+
+.button-new {
+  @include flex-center($isInline: true);
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  color: var(--color-light);
+  background-color: var(--color-glass);
+  border: var(--border);
+  border-radius: var(--border-radius-small);
+
+  @include hover {
+    @include button-active;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    @include flex-center($isInline: true);
+
+    svg {
+      display: block;
+    }
+  }
+
+  &__label {
+    min-width: 0;
+    line-height: 1.1;
+  }
+}

@@ -31,16 +31,12 @@ function Modal({ isOpen, onClose, children }) {
   }
 
   return (
-    <dialog 
-      ref={dialogRef}
-      className="modal"
-      onClick={handleClick}
-    >
-      <div className="modal__content" onClick={e => e.stopPropagation()}>
+    <dialog ref={dialogRef} className="modal" onClick={handleClick}>
+      <div className="modal__content" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </dialog>
   )
 }
 
-export default Modal 
+export default Modal

@@ -6,13 +6,13 @@ function ShareButton({ costs, people }) {
   const handleShare = async () => {
     try {
       const currentURL = window.location.href
-      
+
       await navigator.share({
-        url: currentURL
+        url: currentURL,
       })
     } catch (error) {
       console.error('Error sharing:', error)
-      
+
       // Don't show error for user cancellation
       if (error.name !== 'AbortError') {
         toast.error('Не удалось поделиться ссылкой')
@@ -22,15 +22,11 @@ function ShareButton({ costs, people }) {
 
   return (
     <div className="share-button">
-      <IconButton
-        onClick={handleShare}
-        icon={<Share2 size={24} />}
-        className="share-button__icon"
-      >
+      <IconButton onClick={handleShare} icon={<Share2 size={24} />} className="share-button__icon">
         Поделиться
       </IconButton>
     </div>
   )
 }
 
-export default ShareButton 
+export default ShareButton

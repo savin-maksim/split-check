@@ -1,18 +1,19 @@
-import React from 'react';
-import './button.scss';
+import React from 'react'
+import './icon-button.scss'
 
-function IconButton({ onClick, className, icon, ariaLabel, ...rest }) {
-   return (
-      <button
-         type="button"
-         onClick={onClick}
-         className={`button button--icon ${className ?? ''}`}
-         aria-label={ariaLabel}
-         {...rest}
-      >
-         {icon}
-      </button>
-   );
+function IconButton({ onClick, className, icon, ariaLabel, title, ...rest }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`icon-button ${className ?? ''}`}
+      title={title}
+      aria-label={ariaLabel}
+      {...rest}
+    >
+      {icon}
+    </button>
+  )
 }
 
-export default IconButton; 
+export default IconButton

@@ -17,21 +17,17 @@ function ScrollTopButton() {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     })
   }
 
   if (!showScrollTop) return null
 
   return (
-    <button 
-      className="scroll-top-button"
-      onClick={scrollToTop}
-      title="Наверх"
-    >
+    <button className="scroll-top-button" onClick={scrollToTop} title="Наверх">
       <ArrowUp size={24} />
     </button>
   )
 }
 
-export default ScrollTopButton 
+export default ScrollTopButton

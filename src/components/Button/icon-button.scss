@@ -1,0 +1,22 @@
+@use '/src/styles/mixins' as *;
+
+.icon-button {
+  background-color: transparent;
+  color: var(--color-light);
+  border: none;
+  border-radius: none;
+  padding: 0;
+
+  @include flex-center();
+  @include hover {
+    color: var(--color-orange);
+  }
+
+  &--danger {
+    color: var(--error-color);
+
+    @include hover {
+      color: var(--error-color-hover);
+    }
+  }
+}

@@ -25,7 +25,7 @@ function Toast() {
       if (window.visualViewport) {
         setVisualViewport({
           height: window.visualViewport.height,
-          offsetTop: window.visualViewport.offsetTop
+          offsetTop: window.visualViewport.offsetTop,
         })
       }
     }
@@ -83,4 +83,4 @@ function Toast() {
   )
 }
 
-export default Toast 
+export default Toast

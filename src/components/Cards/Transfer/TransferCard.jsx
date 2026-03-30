@@ -1,11 +1,4 @@
-import {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react'
+import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { ArrowRight, Combine } from 'lucide-react'
 import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
@@ -29,10 +22,7 @@ function TransferCard({ transfers, isLoading }) {
   const [pendingSelection, setPendingSelection] = useState(() => new Set())
   const [committedGroups, setCommittedGroups] = useState(() => [])
 
-  const transfersSig = useMemo(
-    () => transferListSignature(transfers),
-    [transfers]
-  )
+  const transfersSig = useMemo(() => transferListSignature(transfers), [transfers])
 
   const lastHydratedSigRef = useRef(null)
 
@@ -57,9 +47,7 @@ function TransferCard({ transfers, isLoading }) {
       if (i >= 0 && i < transfers.length) pending.add(i)
     }
     setPendingSelection(pending)
-    setCommittedGroups(
-      validateCommittedGroups(transfers, saved.committedGroups ?? [])
-    )
+    setCommittedGroups(validateCommittedGroups(transfers, saved.committedGroups ?? []))
   }, [transfersSig, transfers])
 
   useEffect(() => {
@@ -72,24 +60,18 @@ function TransferCard({ transfers, isLoading }) {
     })
   }, [mergeMode, pendingSelection, committedGroups, transfersSig, transfers.length])
 
-  const recipientCounts = useMemo(
-    () => getRecipientCounts(transfers),
-    [transfers]
-  )
+  const recipientCounts = useMemo(() => getRecipientCounts(transfers), [transfers])
 
-  const displayRows = useMemo(
-    () => buildDisplayTransfers(transfers, committedGroups),
-    [transfers, committedGroups]
-  )
+  const displayRows = useMemo(() => buildDisplayTransfers(transfers, committedGroups), [transfers, committedGroups])
 
   const mergeAllowed = useMemo(
     () => canMergeSelection(pendingSelection, transfers, committedGroups),
-    [pendingSelection, transfers, committedGroups]
+    [pendingSelection, transfers, committedGroups],
   )
 
   const unmergeAllowed = useMemo(
     () => canUnmergeSelection(pendingSelection, committedGroups),
-    [pendingSelection, committedGroups]
+    [pendingSelection, committedGroups],
   )
 
   const toggleMergeMode = useCallback(() => {
@@ -151,11 +133,7 @@ function TransferCard({ transfers, isLoading }) {
             icon={<Combine size={20} />}
             className={`transfer-card__merge-toggle${mergeMode ? ' transfer-card__merge-toggle--active' : ''}`}
             onClick={toggleMergeMode}
-            ariaLabel={
-              mergeMode
-                ? 'Выключить режим объединения переводов'
-                : 'Включить режим объединения переводов'
-            }
+            ariaLabel={mergeMode ? 'Выключить режим объединения переводов' : 'Включить режим объединения переводов'}
             ariaPressed={mergeMode}
           />
           {isLoading && <Spinner />}
@@ -165,9 +143,7 @@ function TransferCard({ transfers, isLoading }) {
       <div className="transfer-card__transfers">
         {displayRows.map((row) => {
           if (row.kind === 'merged') {
-            const mergedSelected = row.sourceIndices.every((i) =>
-              pendingSelection.has(i)
-            )
+            const mergedSelected = row.sourceIndices.every((i) => pendingSelection.has(i))
             const fromClasses = [
               'transfer-card__person',
               'transfer-card__person--merged-from',
@@ -183,11 +159,7 @@ function TransferCard({ transfers, isLoading }) {
                 <div className="transfer-card__people">
                   <PersonButton
                     className={fromClasses}
-                    onClick={
-                      mergeMode
-                        ? () => toggleMergedGroup(row.sourceIndices)
-                        : undefined
-                    }
+                    onClick={mergeMode ? () => toggleMergedGroup(row.sourceIndices) : undefined}
                     ariaPressed={mergeMode ? mergedSelected : undefined}
                     ariaLabel={
                       mergeMode
@@ -198,13 +170,9 @@ function TransferCard({ transfers, isLoading }) {
                     {row.fromLabel}
                   </PersonButton>
                   <ArrowRight size={20} aria-hidden />
-                  <PersonButton className="transfer-card__person">
-                    {row.to}
-                  </PersonButton>
+                  <PersonButton className="transfer-card__person">{row.to}</PersonButton>
                 </div>
-                <h4 className="">
-                  {formatAmount(row.amount)}
-                </h4>
+                <h4 className="">{formatAmount(row.amount)}</h4>
               </div>
             )
           }
@@ -226,11 +194,7 @@ function TransferCard({ transfers, isLoading }) {
               <div className="transfer-card__people">
                 <PersonButton
                   className={fromClasses}
-                  onClick={
-                    mergeMode && eligible
-                      ? () => toggleSelectIndex(index)
-                      : undefined
-                  }
+                  onClick={mergeMode && eligible ? () => toggleSelectIndex(index) : undefined}
                   ariaPressed={mergeMode && eligible ? selected : undefined}
                   ariaLabel={
                     mergeMode && eligible
@@ -241,13 +205,9 @@ function TransferCard({ transfers, isLoading }) {
                   {transfer.from}
                 </PersonButton>
                 <ArrowRight size={20} aria-hidden />
-                <PersonButton className="transfer-card__person">
-                  {transfer.to}
-                </PersonButton>
+                <PersonButton className="transfer-card__person">{transfer.to}</PersonButton>
               </div>
-              <h4 className="transfer-card__amount">
-                {formatAmount(transfer.amount)}
-              </h4>
+              <h4 className="transfer-card__amount">{formatAmount(transfer.amount)}</h4>
             </div>
           )
         })}

@@ -20,7 +20,7 @@ function CostCard({
   onUpdate,
   onDuplicate,
   people,
-  paymentMode
+  paymentMode,
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const titleTrackRef = useRef(null)
@@ -60,7 +60,7 @@ function CostCard({
       splitBetween,
       distributionType,
       weights,
-      ...partial
+      ...partial,
     })
   }
 
@@ -70,7 +70,7 @@ function CostCard({
       paidBy,
       splitBetween,
       distributionType,
-      weights
+      weights,
     })
     setIsEditModalOpen(false)
   }
@@ -81,14 +81,14 @@ function CostCard({
       style: 'currency',
       currency: 'RUB',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(amount)
   }
 
   const handlePaidByClick = (person) => {
     if (paymentMode === 'manual') {
       patch({
-        paidBy: [person]
+        paidBy: [person],
       })
     }
   }
@@ -96,9 +96,7 @@ function CostCard({
   const handleSplitBetweenClick = (person) => {
     if (distributionType === 'weighted') return
     const isSelected = splitBetween.some((p) => p.id === person.id)
-    const newSplitBetween = isSelected
-      ? splitBetween.filter((p) => p.id !== person.id)
-      : [...splitBetween, person]
+    const newSplitBetween = isSelected ? splitBetween.filter((p) => p.id !== person.id) : [...splitBetween, person]
 
     patch({ splitBetween: newSplitBetween })
   }
@@ -109,12 +107,12 @@ function CostCard({
       patch({
         distributionType: 'equal',
         splitBetween: sb,
-        weights: {}
+        weights: {},
       })
     } else {
       patch({
         distributionType: 'weighted',
-        weights: buildWeightsFromSplit(splitBetween, people)
+        weights: buildWeightsFromSplit(splitBetween, people),
       })
     }
   }
@@ -133,7 +131,7 @@ function CostCard({
     if (next <= 0) return
     patch({
       quantity: next,
-      amount: next * ppu
+      amount: next * ppu,
     })
   }
 
@@ -164,7 +162,7 @@ function CostCard({
                 paidBy,
                 splitBetween: [...splitBetween],
                 distributionType,
-                weights: { ...weights }
+                weights: { ...weights },
               })
             }
             title="Дублировать"
@@ -208,11 +206,7 @@ function CostCard({
             icon={<ChartPie />}
             className={`cost-card__action-btn${distributionType === 'weighted' ? ' cost-card__distribution-btn--active' : ''}`}
             onClick={toggleDistribution}
-            ariaLabel={
-              distributionType === 'weighted'
-                ? 'Переключить на равные доли'
-                : 'Переключить на доли по весам'
-            }
+            ariaLabel={distributionType === 'weighted' ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
           />
         </div>
 
@@ -287,9 +281,7 @@ function CostCard({
                 <Plus size={18} />
               </button>
             </div>
-            <span className="cost-card__calculation-formula">
-              × {formatAmount(pricePerUnit || 0)}
-            </span>
+            <span className="cost-card__calculation-formula">× {formatAmount(pricePerUnit || 0)}</span>
           </div>
           <h3 className="cost-card__amount">{formatAmount(amount)}</h3>
         </div>
@@ -307,7 +299,7 @@ function CostCard({
           quantity,
           pricePerUnit,
           paidBy,
-          splitBetween
+          splitBetween,
         }}
       />
     </div>

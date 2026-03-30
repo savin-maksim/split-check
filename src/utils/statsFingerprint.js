@@ -14,7 +14,5 @@ export function computeDataFingerprint(people, costs) {
 
 /** Полный ключ: данные + режим оплаты (переводы) */
 export function computeFullFingerprint(dataFingerprint, paymentMode, singlePayer) {
-  return hashString(
-    `${dataFingerprint}|${paymentMode}|${singlePayer?.id ?? ''}`
-  )
+  return hashString(`${dataFingerprint}|${paymentMode}|${singlePayer?.id ?? ''}`)
 }

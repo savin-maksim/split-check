@@ -22,29 +22,29 @@ function Navigation() {
 
   return (
     <nav className="navigation">
-      <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
+      <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
         <Receipt size={24} />
       </NavLink>
-      <NavLink to="/people" className={({ isActive }) => isActive ? 'active' : ''}>
+      <NavLink to="/people" className={({ isActive }) => (isActive ? 'active' : '')}>
         <Users size={24} />
       </NavLink>
 
-      <ActionNavButton 
+      <ActionNavButton
         onPeopleAction={handlePeopleAction}
         onCostAction={handleCostAction}
         onShareAction={handleShareAction}
         onNewCheckAction={triggerNewCheckModal}
       />
 
-      <NavLink to="/costs" className={({ isActive }) => isActive ? 'active' : ''}>
+      <NavLink to="/costs" className={({ isActive }) => (isActive ? 'active' : '')}>
         <Calculator size={24} />
       </NavLink>
-      
-      <NavLink to="/stats" className={({ isActive }) => isActive ? 'active' : ''}>
+
+      <NavLink to="/stats" className={({ isActive }) => (isActive ? 'active' : '')}>
         <BarChart3 size={24} />
       </NavLink>
     </nav>
   )
 }
 
-export default Navigation 
+export default Navigation

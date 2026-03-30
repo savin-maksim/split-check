@@ -50,9 +50,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   const handleSplitBetweenClick = (person) => {
     if (distributionType === 'weighted') return
     setSplitBetween((prev) =>
-      prev.some((p) => p.id === person.id)
-        ? prev.filter((p) => p.id !== person.id)
-        : [...prev, person]
+      prev.some((p) => p.id === person.id) ? prev.filter((p) => p.id !== person.id) : [...prev, person],
     )
   }
 
@@ -93,7 +91,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       const total = qtyValue * priceValue
       const formattedPrice = new Intl.NumberFormat('ru-RU', {
         style: 'currency',
-        currency: 'RUB'
+        currency: 'RUB',
       }).format(total)
 
       onSubmit({
@@ -105,7 +103,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         paidBy,
         splitBetween,
         distributionType,
-        weights
+        weights,
       })
 
       setPurchase('')

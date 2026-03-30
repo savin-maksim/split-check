@@ -1,65 +1,65 @@
-import React, { useState, useRef } from 'react';
-import { ScanLine, Camera, Image } from 'lucide-react';
-import IconButton from '../Button/IconButton';
-import { analyzeReceipt } from '../../services/ai';
-import ItemsPreviewModal from './ItemsPreviewModal';
-import { toast } from 'react-hot-toast';
-import Modal from '../Modal/Modal';
-import './scanner.scss';
+import React, { useState, useRef } from 'react'
+import { ScanLine, Camera, Image } from 'lucide-react'
+import IconButton from '../Button/IconButton'
+import { analyzeReceipt } from '../../services/ai'
+import ItemsPreviewModal from './ItemsPreviewModal'
+import { toast } from 'react-hot-toast'
+import Modal from '../Modal/Modal'
+import './scanner.scss'
 
 const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
-  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
-  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [parsedItems, setParsedItems] = useState([]);
-  
-  const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
+  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [parsedItems, setParsedItems] = useState([])
+
+  const fileInputRef = useRef(null)
+  const cameraInputRef = useRef(null)
 
   const handleScanClick = () => {
     // Check if key is configured (optional, since service handles it, but good for UX)
     if (!import.meta.env.VITE_GEMINI_API_KEY) {
-      toast.error('API ключ не настроен. См. инструкцию в README.');
-      return;
+      toast.error('API ключ не настроен. См. инструкцию в README.')
+      return
     }
-    setIsSourceModalOpen(true);
-  };
+    setIsSourceModalOpen(true)
+  }
 
   const handleSourceSelect = (source) => {
-    setIsSourceModalOpen(false);
+    setIsSourceModalOpen(false)
     setTimeout(() => {
       if (source === 'camera') {
-        cameraInputRef.current?.click();
+        cameraInputRef.current?.click()
       } else {
-        fileInputRef.current?.click();
+        fileInputRef.current?.click()
       }
-    }, 100);
-  };
+    }, 100)
+  }
 
   const handleFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]
+    if (!file) return
 
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const items = await analyzeReceipt(file);
-      setParsedItems(items);
-      setIsPreviewModalOpen(true);
+      const items = await analyzeReceipt(file)
+      setParsedItems(items)
+      setIsPreviewModalOpen(true)
     } catch (error) {
-      console.error(error);
-      toast.error(error.message || 'Ошибка при сканировании');
+      console.error(error)
+      toast.error(error.message || 'Ошибка при сканировании')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
       // Reset input value so same file can be selected again
-      e.target.value = '';
+      e.target.value = ''
     }
-  };
+  }
 
   const handleConfirmItems = (items) => {
     // Determine payer based on mode
-    let initialPaidBy = [];
+    let initialPaidBy = []
     if (paymentMode === 'single' && singlePayer) {
-      initialPaidBy = [singlePayer];
+      initialPaidBy = [singlePayer]
     }
     // For manual mode, leave empty for user to fill, or could imply "me" if we had that concept.
     // Leaving empty is safer.
@@ -73,13 +73,13 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
       paidBy: initialPaidBy,
       splitBetween: [],
       distributionType: 'equal',
-      weights: {}
-    }));
-    
-    onAddCosts(newCosts);
-    setIsPreviewModalOpen(false);
-    setParsedItems([]);
-  };
+      weights: {},
+    }))
+
+    onAddCosts(newCosts)
+    setIsPreviewModalOpen(false)
+    setParsedItems([])
+  }
 
   return (
     <>
@@ -89,15 +89,9 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
         ariaLabel="Сканировать чек"
         className="scanner-button"
       />
-      
+
       {/* File input (Gallery) */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        style={{ display: 'none' }}
-      />
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" style={{ display: 'none' }} />
 
       {/* Camera input (Force Camera) */}
       <input
@@ -127,14 +121,14 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
       {/* Loading Modal */}
       {isLoading && (
         <Modal isOpen={true} onClose={() => {}}>
-           <div className="scanner__loading">
-             <div className="scanner__gemini-logo">
-               <img src="/gemini_icon-logo.png" width='40px' alt="" />
-             </div>
-             <p className="scanner__loading-text">
-               Анализируем чек с помощью <span className="gemini-text-span">Gemini...</span>
-             </p>
-           </div>
+          <div className="scanner__loading">
+            <div className="scanner__gemini-logo">
+              <img src="/gemini_icon-logo.png" width="40px" alt="" />
+            </div>
+            <p className="scanner__loading-text">
+              Анализируем чек с помощью <span className="gemini-text-span">Gemini...</span>
+            </p>
+          </div>
         </Modal>
       )}
 
@@ -146,7 +140,7 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
         onConfirm={handleConfirmItems}
       />
     </>
-  );
-};
+  )
+}
 
-export default ReceiptScanner;
+export default ReceiptScanner

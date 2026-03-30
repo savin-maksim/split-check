@@ -1,4 +1,4 @@
-@use "/src/styles/mixins" as *;
+@use '/src/styles/mixins' as *;
 
 .checks-page {
   width: 100%;
@@ -113,7 +113,9 @@
     border-radius: var(--border-radius-small);
     padding: 0.9rem 1rem;
     text-align: left;
-    transition: filter 0.15s ease, border-color 0.15s ease;
+    transition:
+      filter 0.15s ease,
+      border-color 0.15s ease;
 
     @include hover {
       filter: brightness(1.06);
@@ -121,11 +123,6 @@
 
     &:focus {
       outline: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--color-orange);
-      outline-offset: 2px;
     }
 
     &--active {

@@ -11,4 +11,4 @@ function Arrow({ direction = 'down', className = '' }) {
   )
 }
 
-export default Arrow 
+export default Arrow
