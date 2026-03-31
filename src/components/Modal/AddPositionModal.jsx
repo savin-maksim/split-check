@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { Minus, Plus } from 'lucide-react'
+import { Minus, Plus, ChartPie } from 'lucide-react'
 import Button from '../Button/Button'
 import PersonButton from '../Button/PersonButton'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
 import Modal from './Modal'
+import IconButton from '../Button/IconButton'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../utils/costDistribution'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
@@ -204,13 +205,13 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
             <p className="modal__label">Кто платил?</p>
             <div className="modal__tags">
               {people?.map((person) => (
-                <PersonButton
+                <Button
                   key={person.id}
-                  className={`modal__tag ${paidBy.some((p) => p.id === person.id) ? 'button__person--active' : ''}`}
+                  className={`button-new ${paidBy.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
                   onClick={() => handlePaidByClick(person)}
                 >
                   {person.name}
-                </PersonButton>
+                </Button>
               ))}
             </div>
           </div>
@@ -219,20 +220,18 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         <div className="modal__section">
           <div className="modal__split-header">
             <p className="modal__label">На кого разделить?</p>
-            <button type="button" className="modal__mode-toggle" onClick={toggleDistribution}>
-              {distributionType === 'weighted' ? 'Равные доли' : 'По долям (веса)'}
-            </button>
+            <IconButton icon={<ChartPie />} onClick={toggleDistribution} className={`icon-button${distributionType === 'weighted' ? ' icon-button--active' : ''}`}/>
           </div>
           {distributionType === 'equal' ? (
             <div className="modal__tags">
               {people?.map((person) => (
-                <PersonButton
+                <Button
                   key={person.id}
-                  className={`modal__tag ${splitBetween.some((p) => p.id === person.id) ? 'button__person--active' : ''}`}
+                  className={`button-new ${splitBetween.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
                   onClick={() => handleSplitBetweenClick(person)}
                 >
                   {person.name}
-                </PersonButton>
+                </Button>
               ))}
             </div>
           ) : (
@@ -240,27 +239,23 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
               {people?.map((person) => {
                 const u = Math.max(0, Math.floor(Number(weights[person.id]) || 0))
                 return (
-                  <div key={person.id} className="modal__weight-row">
-                    <button
-                      type="button"
-                      className="modal__weight-btn"
+                  <div key={person.id} className={`button-new button-new--weight${u > 0 ? ' button-new--active' : ''}`}>
+                    <IconButton
+                      className="icon-button--wide"
                       onClick={() => adjustWeight(person.id, -1)}
                       disabled={u <= 0}
                       aria-label="Меньше"
-                    >
-                      <Minus size={18} />
-                    </button>
+                      icon={<Minus size={18} />}
+                    />
                     <span className="modal__weight-label">
                       x{u} {person.name}
                     </span>
-                    <button
-                      type="button"
-                      className="modal__weight-btn"
+                    <IconButton
+                      className="icon-button--wide"
                       onClick={() => adjustWeight(person.id, 1)}
                       aria-label="Больше"
-                    >
-                      <Plus size={18} />
-                    </button>
+                      icon={<Plus size={18} />}
+                    />
                   </div>
                 )
               })}
