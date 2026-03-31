@@ -54,9 +54,6 @@
   }
 
   &__person {
-    &--merged-from {
-    }
-
     &--from-selectable {
       @include hover {
         cursor: pointer;
