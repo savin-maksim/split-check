@@ -8,6 +8,7 @@ import { formatAmount } from '@/utils/formatters'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
 import Modal from '@/components/Modal/Modal'
 import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
+import Button from '@/components/Button/Button'
 import './checks-page.scss'
 
 function formatSavedDate(ts) {
@@ -162,30 +163,28 @@ function ChecksPage() {
       </div>
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
-        <form onSubmit={handleCreateSubmit}>
-          <h3 className="modal__title">Новый чек</h3>
-          <p className="checks-page__create-lead">Задайте название — далее вы перейдёте к списку участников.</p>
-          <div className="modal__inputs">
-            <label className="modal__label" htmlFor="new-check-title">
-              Название
-            </label>
-            <input
-              id="new-check-title"
-              className="modal__input"
-              value={createTitle}
-              onChange={(e) => setCreateTitle(e.target.value)}
-              placeholder="Например: Ужин в пятницу"
-              autoComplete="off"
-              autoFocus
-            />
-          </div>
+        <h3 className="modal__title">Новый чек</h3>
+        <form
+          className="modal__inputs"
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleCreateSubmit(e)
+          }}
+        >
+          <input
+            type="text"
+            className="modal__input"
+            value={createTitle}
+            onChange={(e) => setCreateTitle(e.target.value)}
+            placeholder="Например: Ужин в пятницу"
+            autoComplete="off"
+            autoFocus
+          />
           <div className="modal__buttons">
-            <button type="button" className="button" onClick={() => setIsCreateModalOpen(false)}>
-              Отмена
-            </button>
-            <button type="submit" className="button">
-              Далее: участники
-            </button>
+            <Button onClick={() => setIsCreateModalOpen(false)}>Отмена</Button>
+            <Button type="submit" className="button-new--active">
+              Создать
+            </Button>
           </div>
         </form>
       </Modal>
