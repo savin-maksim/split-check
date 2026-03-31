@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { ScanLine, Camera, Image } from 'lucide-react'
 import IconButton from '../Button/IconButton'
 import { analyzeReceipt } from '../../services/ai'
@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast'
 import Modal from '../Modal/Modal'
 import './scanner.scss'
 
-const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
+const ReceiptScanner = ({ onAddCosts, paymentMode, singlePayer }) => {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
   const [isSourceModalOpen, setIsSourceModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)

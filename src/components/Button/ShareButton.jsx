@@ -2,7 +2,7 @@ import { Share2 } from 'lucide-react'
 import IconButton from './IconButton'
 import { toast } from 'react-hot-toast'
 
-function ShareButton({ costs, people }) {
+function ShareButton() {
   const handleShare = async () => {
     try {
       const currentURL = window.location.href

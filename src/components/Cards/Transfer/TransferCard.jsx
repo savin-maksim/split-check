@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { ArrowRight, Combine } from 'lucide-react'
-import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
 import Button from '../../Button/Button'
 import Spinner from '../../Spinner/Spinner'
@@ -216,18 +215,11 @@ function TransferCard({ transfers, isLoading }) {
 
       {mergeMode && (
         <div className="transfer-card__merge-actions">
-          <Button
-            className="button-new--active"
-            disabled={!mergeAllowed}
-            onClick={handleMerge}
-          >
+          <Button className="button-new--active" disabled={!mergeAllowed} onClick={handleMerge}>
             Объединить
           </Button>
           {unmergeAllowed && (
-            <Button
-              className="button-new--danger"
-              onClick={handleUnmerge}
-            >
+            <Button className="button-new--danger" onClick={handleUnmerge}>
               Разъединить
             </Button>
           )}

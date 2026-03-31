@@ -1,4 +1,3 @@
-import React from 'react'
 import './icon-button.scss'
 
 function IconButton({ onClick, className, icon, ariaLabel, title, ...rest }) {

@@ -5,7 +5,6 @@ import { useState } from 'react'
 
 // Import components
 import Button from '@/components/Button/Button'
-import IconButton from '@/components/Button/IconButton'
 import Modal from '@/components/Modal/Modal'
 import PersonButton from '@/components/Button/PersonButton'
 import CostCard from '@/components/Cards/Cost/CostCard'
@@ -104,7 +103,7 @@ function CostsPage() {
             Или воспользуйтесь <span className="gemini-text-span">ИИ распознаванием</span>
           </p>
           <div style={{ marginTop: '20px' }}>
-            <ReceiptScanner onAddCosts={addCosts} people={people} paymentMode={paymentMode} singlePayer={singlePayer} />
+            <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
           </div>
           {people.length > 0 && <Arrow />}
         </div>
@@ -133,7 +132,7 @@ function CostsPage() {
       />
       <div className="payment-mode">
         <h3 className="">Режим плательщиков</h3>
-        
+
         <div className="payment-mode__icons">
           <Button
             icon={<User />}
@@ -164,7 +163,7 @@ function CostsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <ReceiptScanner onAddCosts={addCosts} people={people} paymentMode={paymentMode} singlePayer={singlePayer} />
+            <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
           </div>
         </div>
 

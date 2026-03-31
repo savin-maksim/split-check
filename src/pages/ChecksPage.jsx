@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Receipt, Users, Calculator, FolderInput, Trash2, FilePlus, Edit } from 'lucide-react'
+import { Receipt, Users, Calculator, FolderInput, Trash2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useApp } from '@/context/AppContext'

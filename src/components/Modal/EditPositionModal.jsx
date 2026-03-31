@@ -119,7 +119,9 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       </div>
       <div className="modal__buttons">
         <Button onClick={onClose}>Отмена</Button>
-        <Button variant="active" onClick={handleSubmit}>Сохранить</Button>
+        <Button variant="active" onClick={handleSubmit}>
+          Сохранить
+        </Button>
       </div>
     </Modal>
   )

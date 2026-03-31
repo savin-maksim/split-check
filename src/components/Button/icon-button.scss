@@ -9,9 +9,9 @@
   padding: 0;
 
   @include hover {
-      color: var(--color-orange);
+    color: var(--color-orange);
 
-      &:not(.icon-button--qty):not(.icon-button--danger) {
+    &:not(.icon-button--qty):not(.icon-button--danger) {
       filter: drop-shadow(0 0 8px rgba(var(--button-new-active-surface-rgb), var(--button-new-active-shadow-alpha)));
     }
   }
@@ -19,7 +19,7 @@
   &:disabled {
     opacity: 0.35;
     cursor: not-allowed;
- }
+  }
 
   &--active {
     color: var(--color-orange);

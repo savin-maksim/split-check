@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Minus, Plus } from 'lucide-react'
 import Button from '../Button/Button'
 import PersonButton from '../Button/PersonButton'
@@ -272,7 +272,9 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       </form>
       <div className="modal__buttons">
         <Button onClick={onClose}>Отмена</Button>
-        <Button variant="active" onClick={handleSubmit}>Добавить</Button>
+        <Button variant="active" onClick={handleSubmit}>
+          Добавить
+        </Button>
       </div>
     </Modal>
   )

@@ -4,7 +4,7 @@
   min-width: 0;
   flex: 1;
   overflow: hidden;
-  
+
   &:hover .marquee-title__text--running {
     animation-play-state: paused;
   }

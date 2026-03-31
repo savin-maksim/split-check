@@ -44,11 +44,11 @@ export const calculateBalances = (debts, people) => {
 
 export const separateBalances = (balances) => {
   const positiveBalances = Object.entries(balances)
-    .filter(([_, balance]) => balance > 0)
+    .filter(([, balance]) => balance > 0)
     .sort(([, a], [, b]) => b - a)
 
   const negativeBalances = Object.entries(balances)
-    .filter(([_, balance]) => balance < 0)
+    .filter(([, balance]) => balance < 0)
     .sort(([, a], [, b]) => a - b)
 
   return { positiveBalances, negativeBalances }

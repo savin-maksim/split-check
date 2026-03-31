@@ -1,14 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import './marquee-title.scss'
 
-function MarqueeTitle({
-  as: Tag = 'div',
-  className,
-  textClassName,
-  style,
-  children,
-  ...rest
-}) {
+function MarqueeTitle({ as: Tag = 'div', className, textClassName, style, children, ...rest }) {
   const containerRef = useRef(null)
   const innerRef = useRef(null)
   const [running, setRunning] = useState(false)
@@ -30,11 +23,7 @@ function MarqueeTitle({
   }, [children])
 
   return (
-    <div
-      ref={containerRef}
-      className={['marquee-title', className].filter(Boolean).join(' ')}
-      style={style}
-    >
+    <div ref={containerRef} className={['marquee-title', className].filter(Boolean).join(' ')} style={style}>
       <Tag
         ref={innerRef}
         className={['marquee-title__text', textClassName, running && 'marquee-title__text--running']

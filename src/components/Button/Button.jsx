@@ -1,4 +1,3 @@
-import React from 'react'
 import './button-new.scss'
 
 const variantClass = {

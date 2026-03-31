@@ -1,5 +1,4 @@
 import { Pencil, Trash2, Copy, Minus, Plus, ChartPie } from 'lucide-react'
-import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
 import Button from '../../Button/Button'
 import './cost-card.scss'

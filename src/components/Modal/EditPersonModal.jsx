@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '../Button/Button'
 import Modal from './Modal'
 import './modal.scss'
@@ -46,7 +46,9 @@ function EditPersonModal({ isOpen, onClose, onSubmit, title = 'Редактир�
         />
         <div className="modal__buttons">
           <Button onClick={onClose}>Отмена</Button>
-          <Button variant="active" onClick={handleSubmit}>Сохранить</Button>
+          <Button variant="active" onClick={handleSubmit}>
+            Сохранить
+          </Button>
         </div>
       </form>
     </Modal>
