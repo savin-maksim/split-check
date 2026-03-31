@@ -188,7 +188,6 @@
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    @include simple-button-animation;
 
     @include hover {
       filter: brightness(1.08);

@@ -1,14 +1,21 @@
 import React from 'react'
 import './button-new.scss'
 
-function Button({ onClick, disabled = false, className, icon, children, title, type = 'button', ...rest }) {
+const variantClass = {
+  danger: 'button-new--danger',
+  active: 'button-new--active',
+}
+
+function Button({ onClick, disabled = false, className, icon, children, title, type = 'button', variant, ...rest }) {
+  const variantModifier = variant != null ? variantClass[variant] : null
+
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={['button-new', className].filter(Boolean).join(' ')}
+      className={['button-new', variantModifier, className].filter(Boolean).join(' ')}
       {...rest}
     >
       {icon != null && icon !== false && (

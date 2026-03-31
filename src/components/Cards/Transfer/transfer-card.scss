@@ -55,25 +55,7 @@
 
   &__person {
     &--merged-from {
-      border-radius: 20px;
-      width: 100%;
-      min-width: 0;
-      justify-self: stretch;
-      align-self: stretch;
-      box-sizing: border-box;
-      white-space: normal;
-      text-align: center;
-      line-height: 1.35;
-
-      .button__person-text {
-        display: block;
-        width: 100%;
-        white-space: pre-line;
-        overflow: visible;
-        text-overflow: clip;
-        overflow-wrap: break-word;
-        word-break: break-word;
-      }
+      
     }
 
     &--from-selectable {

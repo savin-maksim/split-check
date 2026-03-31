@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ActionButton from '../Button/ActionButton'
+import Button from '../Button/Button'
 import Modal from './Modal'
 import './modal.scss'
 
@@ -40,9 +40,9 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
           autoFocus
         />
         <div className="modal__buttons">
-          <ActionButton onClick={handleSubmit}>Добавить</ActionButton>
-          <ActionButton onClick={onClose}>Отмена</ActionButton>
-        </div>
+          <Button onClick={onClose}>Отмена</Button>
+          <Button className="button-new--active" onClick={handleSubmit}>Добавить</Button>
+          </div>
       </form>
     </Modal>
   )

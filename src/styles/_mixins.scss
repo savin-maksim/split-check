@@ -42,87 +42,17 @@
   overflow: hidden !important;
 }
 
-@mixin gradient-animation {
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+@mixin button-surface {
+  background-color: rgba(var(--button-new-surface-rgb), var(--button-new-background-alpha));
+  border: 2px solid rgba(var(--button-new-surface-rgb), var(--button-new-border-alpha));
+  box-shadow: var(--button-new-box-shadow, none);
 }
 
-@mixin button-active {
-  color: var(--color-text-active);
-  background-color: var(--color-active);
-  border-color: var(--color-orange);
-  box-shadow: 0 0 15px var(--color-active);
-}
-
-@mixin button-animation {
-  position: relative;
-  transition: all var(--transition-duration) ease;
-
-  @media (hover: hover) {
-    &:hover {
-      box-shadow: 0 0 15px var(--color-glass);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    &:active {
-      animation: pulse 0.5s ease-in-out;
-    }
-
-    &.button__person--active:hover {
-      box-shadow: 0 0 15px var(--color-active);
-    }
-  }
-
-  @media (hover: none) {
-    &:active {
-      animation: pulse 0.5s ease-in-out;
-    }
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-      background-color: var(--color-glass);
-    }
-    50% {
-      transform: scale(1.1);
-      background-color: var(--color-active);
-      box-shadow: 0 0 20px var(--color-active);
-    }
-    100% {
-      transform: scale(1);
-      background-color: var(--color-glass);
-    }
-  }
-
-  &--active {
-    box-shadow: 0 0 30px var(--color-active);
-    animation: activate 0.4s ease-in-out;
-  }
-
-  @keyframes activate {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 var(--color-active);
-    }
-    50% {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px var(--color-active);
-    }
-    100% {
-      transform: scale(1);
-      box-shadow: 0 0 15px var(--color-active);
-    }
-  }
+@mixin button-new--active-tokens {
+  --button-new-surface-rgb: var(--button-new-active-surface-rgb);
+  --button-new-background-alpha: var(--button-new-active-background-alpha);
+  --button-new-border-alpha: var(--button-new-active-border-alpha);
+  --button-new-box-shadow: 0 0 15px rgba(var(--button-new-active-surface-rgb), var(--button-new-active-shadow-alpha));
 }
 
 @mixin no-animation {
@@ -139,30 +69,5 @@
     transition: none !important;
     transform: none !important;
     box-shadow: none !important;
-  }
-}
-
-@mixin simple-button-animation {
-  position: relative;
-  transition: all var(--transition-duration) ease;
-
-  @media (hover: hover) {
-    &:hover {
-      box-shadow: 0 0 30px var(--color-glass);
-    }
-
-    &.button--icon-active:hover {
-      box-shadow: 0 0 30px var(--color-active);
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-
-  @media (hover: none) {
-    &:active {
-      transform: scale(0.95);
-    }
   }
 }

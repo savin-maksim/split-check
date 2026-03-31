@@ -18,73 +18,9 @@
     gap: 0.75rem;
     margin-bottom: 1rem;
     min-width: 0;
-  }
 
-  &__title-track {
-    min-width: 0;
-    flex: 1;
-    overflow: hidden;
-
-    &--marquee {
-      .cost-card__title-inner {
-        animation: cost-card-title-marquee 8s linear infinite;
-      }
-    }
-  }
-
-  &__title {
-    margin: 0;
-    min-width: 0;
-    font-weight: 600;
-    line-height: 1.2;
-    @include fluid-text(18, 14);
-  }
-
-  &__title-inner {
-    display: inline-block;
-    white-space: nowrap;
-    vertical-align: bottom;
-  }
-
-  &__title-track:not(&__title-track--marquee) .cost-card__title-inner {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  @keyframes cost-card-title-marquee {
-    0% {
-      transform: translateX(0);
-      animation-timing-function: linear;
-    }
-    8% {
-      transform: translateX(0);
-      animation-timing-function: ease-in-out;
-    }
-    95% {
-      transform: translateX(calc(-1 * var(--scroll, 0px)));
-      animation-timing-function: linear;
-    }
-    95.01% {
-      transform: translateX(calc(-1 * var(--scroll, 0px)));
-      animation-timing-function: ease-in-out;
-    }
-    100% {
-      transform: translateX(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cost-card__title-track--marquee .cost-card__title-inner {
-      animation: none;
-      transform: none;
-    }
-
-    .cost-card__title-track--marquee .cost-card__title-inner,
-    .cost-card__title-inner {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .marquee-title {
+      flex: 1;
     }
   }
 
@@ -159,38 +95,11 @@
     }
   }
 
-  &__weight-row {
-    &.button.button__person {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-width: 0;
-      padding: 0;
-      border: none;
-      border-radius: 10px;
-      width: 100%;
-      box-sizing: border-box;
-      cursor: default;
-      font-weight: 500;
-      @include fluid-text(17, 13);
-    }
-
-    &.button__person--active {
-      .cost-card__weight-label {
-        color: var(--color-text-active);
-      }
-
-      .cost-card__weight-btn {
-        color: var(--color-text-active);
-        border: none;
-      }
-    }
-  }
+  
 
   &__weight-label {
-    flex: 0.9;
+    flex: 1;
     text-align: center;
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -244,7 +153,6 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 0.35rem 0.5rem;
-    opacity: 0.7;
   }
 
   &__qty-stepper {

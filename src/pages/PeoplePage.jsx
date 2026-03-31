@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { Pencil, UserPlus, Trash2, Users } from 'lucide-react'
-import { useApp } from '../context/AppContext'
+import { useApp } from '@/context/AppContext'
 
-import ActionButton from '../components/Button/ActionButton'
-import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
-import AddPersonModal from '../components/Modal/AddPersonModal'
-import EditPersonModal from '../components/Modal/EditPersonModal'
-import Modal from '../components/Modal/Modal'
-import Arrow from '../components/Arrow/Arrow'
+import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import AddPersonModal from '@/components/Modal/AddPersonModal'
+import EditPersonModal from '@/components/Modal/EditPersonModal'
+import Modal from '@/components/Modal/Modal'
+import Arrow from '@/components/Arrow/Arrow'
 
 import './people-section.scss'
+import Button from '@/components/Button/Button'
+import IconButton from '@/components/Button/IconButton'
+import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
 
 /** 1 человек, 2 человека, 5 человек, 11 человек */
 function pluralizeParticipants(n) {
@@ -62,9 +64,9 @@ function PeoplePage() {
             title="Участники"
             subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
             action={
-              <button type="button" className="people-section__btn-clear" onClick={() => setIsClearAllModalOpen(true)}>
+              <Button variant="danger" onClick={() => setIsClearAllModalOpen(true)}>
                 Удалить всех
-              </button>
+              </Button>
             }
           />
         )}
@@ -82,24 +84,19 @@ function PeoplePage() {
           <ul className="people-section__grid" role="list">
             {people.map((person) => (
               <li key={person.id} className="people-section__row">
-                <h3 className="people-section__name">{person.name}</h3>
+                <MarqueeTitle as="h3">{person.name}</MarqueeTitle>
                 <div className="people-section__row-actions">
-                  <button
-                    type="button"
-                    className="people-section__row-edit"
+                  <IconButton
+                    icon={<Pencil />}
                     onClick={() => setEditingPerson(person)}
                     aria-label={`Редактировать имя: ${person.name}`}
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    type="button"
-                    className="people-section__row-delete"
+                  />
+                  <IconButton
+                    className="icon-button--danger"
+                    icon={<Trash2 />}
                     onClick={() => removePerson(person.id)}
                     aria-label={`Удалить ${person.name}`}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  />
                 </div>
               </li>
             ))}
@@ -128,10 +125,10 @@ function PeoplePage() {
           Будут удалены все участники и все расходы. Это действие нельзя отменить.
         </p>
         <div className="modal__buttons">
-          <ActionButton onClick={() => setIsClearAllModalOpen(false)}>Отмена</ActionButton>
-          <ActionButton onClick={confirmRemoveAll} className="people-section__modal-btn-danger">
+          <Button onClick={() => setIsClearAllModalOpen(false)}>Отмена</Button>
+          <Button variant="danger" onClick={confirmRemoveAll}>
             Удалить всех
-          </ActionButton>
+          </Button>
         </div>
       </Modal>
     </div>

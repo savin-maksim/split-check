@@ -1,14 +1,27 @@
 @use '/src/styles/mixins' as *;
 
 .icon-button {
+  @include flex-center();
   background-color: transparent;
   color: var(--color-light);
   border: none;
   border-radius: none;
   padding: 0;
 
-  @include flex-center();
   @include hover {
+      color: var(--color-orange);
+
+      &:not(.icon-button--qty):not(.icon-button--danger) {
+      filter: drop-shadow(0 0 8px rgba(var(--button-new-active-surface-rgb), var(--button-new-active-shadow-alpha)));
+    }
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+ }
+
+  &--active {
     color: var(--color-orange);
   }
 
@@ -16,7 +29,54 @@
     color: var(--error-color);
 
     @include hover {
-      color: var(--error-color-hover);
+      color: var(--error-color);
+      filter: drop-shadow(0 0 8px rgba(var(--color-error), var(--button-new-danger-shadow-alpha)));
+    }
+  }
+
+  &--scanner {
+    padding: 0.75rem 2rem 0.75rem 2rem;
+    background-color: transparent;
+    border: 2px solid var(--color-active);
+    border-radius: var(--border-radius-small);
+    color: var(--color-orange);
+
+    @include hover {
+      background-color: var(--color-active);
+      color: var(--color-light);
+      box-shadow: 0 0 15px var(--color-active);
+    }
+  }
+
+  &--wide {
+    width: 20%;
+  }
+
+  &--qty {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-glass);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--border-radius-small);
+
+    @include hover {
+      color: var(--color-light);
+      border-color: var(--color-orange);
+      background-color: var(--color-active);
+      box-shadow: 0 0 15px var(--color-active);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+
+      @include hover {
+        @include button-surface;
+        --button-new-surface-rgb: var(--button-new-neutral-surface-rgb);
+        --button-new-background-alpha: var(--button-new-neutral-background-alpha);
+        --button-new-border-alpha: var(--button-new-neutral-border-alpha);
+        --button-new-box-shadow: none;
+      }
     }
   }
 }

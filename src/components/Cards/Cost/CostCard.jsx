@@ -1,8 +1,10 @@
 import { Pencil, Trash2, Copy, Minus, Plus, ChartPie } from 'lucide-react'
 import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
+import Button from '../../Button/Button'
 import './cost-card.scss'
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useState } from 'react'
+import MarqueeTitle from '../../MarqueeTitle/MarqueeTitle'
 import EditPositionModal from '../../Modal/EditPositionModal'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../../utils/costDistribution'
 
@@ -23,31 +25,6 @@ function CostCard({
   paymentMode,
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const titleTrackRef = useRef(null)
-  const titleInnerRef = useRef(null)
-
-  useLayoutEffect(() => {
-    const track = titleTrackRef.current
-    const inner = titleInnerRef.current
-    if (!track || !inner) return
-
-    const update = () => {
-      const overflow = inner.scrollWidth - track.clientWidth
-      if (overflow > 1) {
-        track.style.setProperty('--scroll', `${overflow}px`)
-        track.classList.add('cost-card__title-track--marquee')
-      } else {
-        track.classList.remove('cost-card__title-track--marquee')
-        track.style.removeProperty('--scroll')
-      }
-    }
-
-    update()
-    const ro = new ResizeObserver(update)
-    ro.observe(track)
-    ro.observe(inner)
-    return () => ro.disconnect()
-  }, [title])
 
   const patch = (partial) => {
     onUpdate({
@@ -141,13 +118,7 @@ function CostCard({
   return (
     <div className="cost-card">
       <div className="cost-card__header">
-        <div ref={titleTrackRef} className="cost-card__title-track">
-          <div className="cost-card__title">
-            <h3 ref={titleInnerRef} className="cost-card__title-inner">
-              {title}
-            </h3>
-          </div>
-        </div>
+        <MarqueeTitle as="h3">{title}</MarqueeTitle>
         <div className="cost-card__actions">
           <IconButton
             icon={<Copy />}
@@ -173,12 +144,7 @@ function CostCard({
             onClick={() => setIsEditModalOpen(true)}
             title="Редактировать"
           />
-          <IconButton
-            icon={<Trash2 />}
-            className="cost-card__action-btn cost-card__action-btn--delete"
-            onClick={onDelete}
-            title="Удалить"
-          />
+          <IconButton icon={<Trash2 />} className="icon-button--danger" onClick={onDelete} title="Удалить" />
         </div>
       </div>
 
@@ -187,13 +153,13 @@ function CostCard({
           <p className="cost-card__label">Кто платил?</p>
           <div className="cost-card__tags">
             {people.map((person) => (
-              <PersonButton
+              <Button
                 key={person.id}
-                className={`cost-card__tag ${paidBy.some((p) => p.id === person.id) ? 'button__person--active' : ''}`}
+                className={`button-new ${paidBy.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
                 onClick={() => handlePaidByClick(person)}
               >
                 {person.name}
-              </PersonButton>
+              </Button>
             ))}
           </div>
         </div>
@@ -204,7 +170,7 @@ function CostCard({
           <p className="cost-card__label cost-card__label--inline">На кого разделить?</p>
           <IconButton
             icon={<ChartPie />}
-            className={`cost-card__action-btn${distributionType === 'weighted' ? ' cost-card__distribution-btn--active' : ''}`}
+            className={`icon-button${distributionType === 'weighted' ? ' icon-button--active' : ''}`}
             onClick={toggleDistribution}
             ariaLabel={distributionType === 'weighted' ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
           />
@@ -213,13 +179,13 @@ function CostCard({
         {distributionType === 'equal' ? (
           <div className="cost-card__tags">
             {people.map((person) => (
-              <PersonButton
+              <Button
                 key={person.id}
-                className={`cost-card__tag ${splitBetween.some((p) => p.id === person.id) ? 'button__person--active' : ''}`}
+                className={`button-new ${splitBetween.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
                 onClick={() => handleSplitBetweenClick(person)}
               >
                 {person.name}
-              </PersonButton>
+              </Button>
             ))}
           </div>
         ) : (
@@ -227,30 +193,23 @@ function CostCard({
             {people.map((person) => {
               const u = Math.max(0, Math.floor(Number(weights[person.id]) || 0))
               return (
-                <div
-                  key={person.id}
-                  className={`cost-card__weight-row button button__person cost-card__tag${u > 0 ? ' button__person--active' : ''}`}
-                >
-                  <button
-                    type="button"
-                    className="cost-card__weight-btn"
+                <div key={person.id} className={`button-new button-new--weight${u > 0 ? ' button-new--active' : ''}`}>
+                  <IconButton
+                    className="icon-button--wide"
+                    icon={<Minus size={18} />}
                     onClick={() => adjustWeight(person.id, -1)}
                     disabled={u <= 0}
                     aria-label="Меньше"
-                  >
-                    <Minus size={18} />
-                  </button>
+                  />
                   <span className="cost-card__weight-label">
                     x{u} {person.name}
                   </span>
-                  <button
-                    type="button"
-                    className="cost-card__weight-btn"
+                  <IconButton
+                    className="icon-button--wide"
+                    icon={<Plus size={18} />}
                     onClick={() => adjustWeight(person.id, 1)}
                     aria-label="Больше"
-                  >
-                    <Plus size={18} />
-                  </button>
+                  />
                 </div>
               )
             })}
@@ -262,24 +221,20 @@ function CostCard({
         <div className="cost-card__calculation">
           <div className="cost-card__calculation-details">
             <div className="cost-card__qty-stepper" role="group" aria-label="Количество">
-              <button
-                type="button"
-                className="cost-card__qty-btn"
+              <IconButton
+                icon={<Minus size={18} />}
+                className="icon-button--qty"
                 onClick={() => adjustQuantity(-1)}
                 disabled={!canDecreaseQty}
                 aria-label="Уменьшить количество"
-              >
-                <Minus size={18} />
-              </button>
+              />
               <span className="cost-card__qty-value">{qty}</span>
-              <button
-                type="button"
-                className="cost-card__qty-btn"
+              <IconButton
+                icon={<Plus size={18} />}
+                className="icon-button--qty"
                 onClick={() => adjustQuantity(1)}
                 aria-label="Увеличить количество"
-              >
-                <Plus size={18} />
-              </button>
+              />
             </div>
             <span className="cost-card__calculation-formula">× {formatAmount(pricePerUnit || 0)}</span>
           </div>

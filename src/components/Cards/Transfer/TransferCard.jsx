@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback, useEffect, useLayoutEffect, useRef } fr
 import { ArrowRight, Combine } from 'lucide-react'
 import PersonButton from '../../Button/PersonButton'
 import IconButton from '../../Button/IconButton'
+import Button from '../../Button/Button'
 import Spinner from '../../Spinner/Spinner'
 import { StorageService } from '../../../services/storage'
 import {
@@ -130,7 +131,7 @@ function TransferCard({ transfers, isLoading }) {
         <h3>Переводы</h3>
         <div className="transfer-card__header-actions">
           <IconButton
-            icon={<Combine size={20} />}
+            icon={<Combine />}
             className={`transfer-card__merge-toggle${mergeMode ? ' transfer-card__merge-toggle--active' : ''}`}
             onClick={toggleMergeMode}
             ariaLabel={mergeMode ? 'Выключить режим объединения переводов' : 'Включить режим объединения переводов'}
@@ -145,7 +146,7 @@ function TransferCard({ transfers, isLoading }) {
           if (row.kind === 'merged') {
             const mergedSelected = row.sourceIndices.every((i) => pendingSelection.has(i))
             const fromClasses = [
-              'transfer-card__person',
+              'button-new--wide',
               'transfer-card__person--merged-from',
               mergeMode && 'transfer-card__person--from-selectable',
               mergeMode && 'transfer-card__person--shake',
@@ -157,7 +158,7 @@ function TransferCard({ transfers, isLoading }) {
             return (
               <div key={row.key} className="transfer-card__item">
                 <div className="transfer-card__people">
-                  <PersonButton
+                  <Button
                     className={fromClasses}
                     onClick={mergeMode ? () => toggleMergedGroup(row.sourceIndices) : undefined}
                     ariaPressed={mergeMode ? mergedSelected : undefined}
@@ -168,9 +169,9 @@ function TransferCard({ transfers, isLoading }) {
                     }
                   >
                     {row.fromLabel}
-                  </PersonButton>
+                  </Button>
                   <ArrowRight size={20} aria-hidden />
-                  <PersonButton className="transfer-card__person">{row.to}</PersonButton>
+                  <Button>{row.to}</Button>
                 </div>
                 <h4 className="">{formatAmount(row.amount)}</h4>
               </div>
@@ -181,7 +182,7 @@ function TransferCard({ transfers, isLoading }) {
           const eligible = isEligibleForMerge(index, transfers, recipientCounts)
           const selected = pendingSelection.has(index)
           const fromClasses = [
-            'transfer-card__person',
+            'button-new--wide',
             mergeMode && eligible && 'transfer-card__person--from-selectable',
             mergeMode && eligible && 'transfer-card__person--shake',
             mergeMode && eligible && selected && 'button__person--active',
@@ -192,7 +193,7 @@ function TransferCard({ transfers, isLoading }) {
           return (
             <div key={row.key} className="transfer-card__item">
               <div className="transfer-card__people">
-                <PersonButton
+                <Button
                   className={fromClasses}
                   onClick={mergeMode && eligible ? () => toggleSelectIndex(index) : undefined}
                   ariaPressed={mergeMode && eligible ? selected : undefined}
@@ -203,9 +204,9 @@ function TransferCard({ transfers, isLoading }) {
                   }
                 >
                   {transfer.from}
-                </PersonButton>
+                </Button>
                 <ArrowRight size={20} aria-hidden />
-                <PersonButton className="transfer-card__person">{transfer.to}</PersonButton>
+                <Button>{transfer.to}</Button>
               </div>
               <h4 className="transfer-card__amount">{formatAmount(transfer.amount)}</h4>
             </div>
@@ -215,22 +216,20 @@ function TransferCard({ transfers, isLoading }) {
 
       {mergeMode && (
         <div className="transfer-card__merge-actions">
-          <button
-            type="button"
-            className="transfer-card__merge-action transfer-card__merge-action--primary"
+          <Button
+            className="button-new--active"
             disabled={!mergeAllowed}
             onClick={handleMerge}
           >
             Объединить
-          </button>
+          </Button>
           {unmergeAllowed && (
-            <button
-              type="button"
-              className="transfer-card__merge-action transfer-card__merge-action--secondary"
+            <Button
+              className="button-new--danger"
               onClick={handleUnmerge}
             >
               Разъединить
-            </button>
+            </Button>
           )}
         </div>
       )}

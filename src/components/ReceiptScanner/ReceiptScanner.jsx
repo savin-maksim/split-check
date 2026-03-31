@@ -84,10 +84,10 @@ const ReceiptScanner = ({ onAddCosts, people, paymentMode, singlePayer }) => {
   return (
     <>
       <IconButton
-        icon={<ScanLine />}
+        icon={<ScanLine size={21} />}
         onClick={handleScanClick}
         ariaLabel="Сканировать чек"
-        className="scanner-button"
+        className="icon-button--scanner"
       />
 
       {/* File input (Gallery) */}

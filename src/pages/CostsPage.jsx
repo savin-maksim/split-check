@@ -1,18 +1,18 @@
 import { User, Users, Calculator, Search } from 'lucide-react'
-import { useApp } from '../context/AppContext'
+import { useApp } from '@/context/AppContext'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
 // Import components
-import ActionButton from '../components/Button/ActionButton'
-import IconButton from '../components/Button/IconButton'
-import Modal from '../components/Modal/Modal'
-import PersonButton from '../components/Button/PersonButton'
-import CostCard from '../components/Cards/Cost/CostCard'
-import AddPositionModal from '../components/Modal/AddPositionModal'
-import Arrow from '../components/Arrow/Arrow'
-import ReceiptScanner from '../components/ReceiptScanner/ReceiptScanner'
-import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
+import Button from '@/components/Button/Button'
+import IconButton from '@/components/Button/IconButton'
+import Modal from '@/components/Modal/Modal'
+import PersonButton from '@/components/Button/PersonButton'
+import CostCard from '@/components/Cards/Cost/CostCard'
+import AddPositionModal from '@/components/Modal/AddPositionModal'
+import Arrow from '@/components/Arrow/Arrow'
+import ReceiptScanner from '@/components/ReceiptScanner/ReceiptScanner'
+import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
 
 // Import styles
 import './cost-section.scss'
@@ -126,31 +126,31 @@ function CostsPage() {
         icon={<Calculator size={28} aria-hidden />}
         title="Расходы"
         action={
-          <button type="button" className="cost-section__btn-clear-all" onClick={() => setIsClearCostsModalOpen(true)}>
+          <Button className="button-new--danger" onClick={() => setIsClearCostsModalOpen(true)}>
             Удалить все позиции
-          </button>
+          </Button>
         }
       />
-      <div className="payment-mode flex-center flex-center__column">
-        <div className="payment-mode__selector">
-          <h3>Режим оплаты</h3>
-          <div className="payment-mode__icons">
-            <IconButton
-              icon={<User />}
-              onClick={() => changePaymentMode('single')}
-              className={`payment-mode__icon ${paymentMode === 'single' ? 'button--icon-active' : ''}`}
-              title="Единый плательщик"
-            />
-            <IconButton
-              icon={<Users />}
-              onClick={() => changePaymentMode('manual')}
-              className={`payment-mode__icon ${paymentMode === 'manual' ? 'button--icon-active' : ''}`}
-              title="Множество плательщиков"
-            />
-          </div>
-          <span className="payment-mode__label">
-            {paymentMode === 'single' ? 'Единый плательщик' : 'Множество плательщиков'}
-          </span>
+      <div className="payment-mode">
+        <h3 className="">Режим плательщиков</h3>
+        
+        <div className="payment-mode__icons">
+          <Button
+            icon={<User />}
+            onClick={() => changePaymentMode('single')}
+            className={paymentMode === 'single' ? 'button-new--active' : ''}
+            title="Единый плательщик"
+          >
+            Единственный
+          </Button>
+          <Button
+            icon={<Users />}
+            onClick={() => changePaymentMode('manual')}
+            className={paymentMode === 'manual' ? 'button-new--active' : ''}
+            title="Множество плательщиков"
+          >
+            Множество
+          </Button>
         </div>
 
         <div className="cost-section__search">
@@ -223,10 +223,10 @@ function CostsPage() {
           Все расходы в текущем чеке будут удалены. Участники останутся. Действие нельзя отменить.
         </p>
         <div className="modal__buttons">
-          <ActionButton onClick={() => setIsClearCostsModalOpen(false)}>Отмена</ActionButton>
-          <ActionButton onClick={confirmRemoveAllCosts} className="cost-section__modal-btn-danger">
+          <Button onClick={() => setIsClearCostsModalOpen(false)}>Отмена</Button>
+          <Button variant="danger" onClick={confirmRemoveAllCosts}>
             Удалить все
-          </ActionButton>
+          </Button>
         </div>
       </Modal>
     </div>

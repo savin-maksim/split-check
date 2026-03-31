@@ -35,14 +35,6 @@ body {
   padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }
 
-.flex-center {
-  @include flex-center();
-
-  &__column {
-    flex-direction: column;
-  }
-}
-
 .margin--bottom {
   margin: 0 0 var(--section-padding-y) 0;
 }

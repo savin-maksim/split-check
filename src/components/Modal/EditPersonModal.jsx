@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import ActionButton from '../Button/ActionButton'
+import Button from '../Button/Button'
 import Modal from './Modal'
 import './modal.scss'
 
@@ -45,8 +45,8 @@ function EditPersonModal({ isOpen, onClose, onSubmit, title = 'Редактир�
           autoFocus
         />
         <div className="modal__buttons">
-          <ActionButton onClick={handleSubmit}>Сохранить</ActionButton>
-          <ActionButton onClick={onClose}>Отмена</ActionButton>
+          <Button onClick={onClose}>Отмена</Button>
+          <Button variant="active" onClick={handleSubmit}>Сохранить</Button>
         </div>
       </form>
     </Modal>

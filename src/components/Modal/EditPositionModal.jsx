@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import ActionButton from '../Button/ActionButton'
+import Button from '../Button/Button'
 import Modal from './Modal'
 import { toast } from 'react-hot-toast'
 
@@ -118,8 +118,8 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
         </div>
       </div>
       <div className="modal__buttons">
-        <ActionButton onClick={handleSubmit}>Сохранить</ActionButton>
-        <ActionButton onClick={onClose}>Отмена</ActionButton>
+        <Button onClick={onClose}>Отмена</Button>
+        <Button variant="active" onClick={handleSubmit}>Сохранить</Button>
       </div>
     </Modal>
   )

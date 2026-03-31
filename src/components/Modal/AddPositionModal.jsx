@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Minus, Plus } from 'lucide-react'
-import ActionButton from '../Button/ActionButton'
+import Button from '../Button/Button'
 import PersonButton from '../Button/PersonButton'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
@@ -271,8 +271,8 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         <button type="submit" style={{ display: 'none' }} />
       </form>
       <div className="modal__buttons">
-        <ActionButton onClick={handleSubmit}>Добавить</ActionButton>
-        <ActionButton onClick={onClose}>Отмена</ActionButton>
+        <Button onClick={onClose}>Отмена</Button>
+        <Button variant="active" onClick={handleSubmit}>Добавить</Button>
       </div>
     </Modal>
   )

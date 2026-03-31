@@ -7,6 +7,7 @@ import IconButton from '@/components/Button/IconButton'
 import { formatAmount } from '@/utils/formatters'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
 import Modal from '@/components/Modal/Modal'
+import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
 import './checks-page.scss'
 
 function formatSavedDate(ts) {
@@ -119,7 +120,7 @@ function ChecksPage() {
                     >
                       <div className="checks-page__saved-card-main">
                         <div className="checks-page__saved-card-header">
-                          <h3 className="checks-page__saved-title">{check.title}</h3>
+                          <MarqueeTitle as="h3">{check.title}</MarqueeTitle>
                           <IconButton
                             className="icon-button--danger"
                             icon={<Trash2 aria-hidden />}
