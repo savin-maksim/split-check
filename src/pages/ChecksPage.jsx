@@ -42,14 +42,8 @@ function sumCosts(costs) {
 
 function ChecksPage() {
   const navigate = useNavigate()
-  const {
-    sessionMeta,
-    startNewCheck,
-    newCheckModalNonce,
-    savedChecks,
-    deleteSavedCheck,
-    updateSavedCheckTitle,
-  } = useApp()
+  const { sessionMeta, startNewCheck, newCheckModalNonce, savedChecks, deleteSavedCheck, updateSavedCheckTitle } =
+    useApp()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [createTitle, setCreateTitle] = useState('')

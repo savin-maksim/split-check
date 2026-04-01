@@ -155,9 +155,7 @@ async function downloadFiles(files) {
 export async function captureAndExportStatShares(selectedIndices) {
   if (shareInProgress) return
   const allNodes = [...document.querySelectorAll('[data-stat-share]')]
-  const uniqueSorted = [...new Set(selectedIndices)]
-    .filter((i) => i >= 0 && i < allNodes.length)
-    .sort((a, b) => a - b)
+  const uniqueSorted = [...new Set(selectedIndices)].filter((i) => i >= 0 && i < allNodes.length).sort((a, b) => a - b)
 
   if (uniqueSorted.length === 0) {
     toast.error('Выберите хотя бы одну секцию')

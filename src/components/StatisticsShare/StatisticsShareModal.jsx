@@ -16,9 +16,7 @@ function StatisticsShareModal({ isOpen, onClose }) {
   }, [isOpen])
 
   const toggleSection = (index) => {
-    setSelectedIndices((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
-    )
+    setSelectedIndices((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
   }
 
   const handleExport = async () => {
