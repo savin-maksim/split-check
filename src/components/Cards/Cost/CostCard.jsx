@@ -1,11 +1,19 @@
-import { Pencil, Trash2, Copy, Minus, Plus, ChartPie } from 'lucide-react'
+import { Pencil, Trash2, Copy, Minus, Plus, ChartPie, ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
 import IconButton from '../../Button/IconButton'
 import Button from '../../Button/Button'
 import './cost-card.scss'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import MarqueeTitle from '../../MarqueeTitle/MarqueeTitle'
+import { StorageService } from '../../../services/storage'
 import EditPositionModal from '../../Modal/EditPositionModal'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../../utils/costDistribution'
+import { getTagGridItemClassName } from '../../../utils/tagGrid'
+
+function initialPaidByExpanded(costId, paidBy) {
+  const saved = StorageService.getCostCardPaidByExpanded()[String(costId)]
+  if (typeof saved === 'boolean') return saved
+  return paidBy.length === 0
+}
 
 function CostCard({
   id,
@@ -24,6 +32,15 @@ function CostCard({
   paymentMode,
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [paidByTagsExpanded, setPaidByTagsExpanded] = useState(() => initialPaidByExpanded(id, paidBy))
+
+  const setPaidBySectionExpanded = useCallback(
+    (expanded) => {
+      StorageService.setCostCardPaidByExpanded(id, expanded)
+      setPaidByTagsExpanded(expanded)
+    },
+    [id],
+  )
 
   const patch = (partial) => {
     onUpdate({
@@ -66,6 +83,7 @@ function CostCard({
       patch({
         paidBy: [person],
       })
+      setPaidBySectionExpanded(false)
     }
   }
 
@@ -116,9 +134,9 @@ function CostCard({
 
   return (
     <div className="cost-card">
-      <div className="cost-card__header">
+      <div className="header">
         <MarqueeTitle as="h3">{title}</MarqueeTitle>
-        <div className="cost-card__actions">
+        <div className="header__actions">
           <IconButton
             icon={<Copy />}
             className="cost-card__action-btn"
@@ -137,50 +155,73 @@ function CostCard({
             }
             title="Дублировать"
           />
-          <IconButton
-            icon={<Pencil />}
-            className="cost-card__action-btn"
-            onClick={() => setIsEditModalOpen(true)}
-            title="Редактировать"
-          />
-          <IconButton icon={<Trash2 />} className="icon-button--danger" onClick={onDelete} title="Удалить" />
+          <IconButton icon={<Pencil />} onClick={() => setIsEditModalOpen(true)} title="Редактировать" />
+          <IconButton icon={<Trash2 />} variant="danger" onClick={onDelete} title="Удалить" />
         </div>
       </div>
 
       {paymentMode === 'manual' && (
-        <div className="cost-card__section">
-          <p className="cost-card__label">Кто платил?</p>
-          <div className="cost-card__tags">
-            {people.map((person) => (
-              <Button
-                key={person.id}
-                className={`button-new ${paidBy.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
-                onClick={() => handlePaidByClick(person)}
-              >
-                {person.name}
-              </Button>
-            ))}
+        <div className="section">
+          <div className={`section__label${paidByTagsExpanded ? '' : ' section__label--collapsed'}`}>
+            <span>Кто платил?</span>
+            {!paidByTagsExpanded && paidBy.length > 0 && (
+              <span className="section__label-picked">{paidBy.map((p) => p.name)}</span>
+            )}
+            <IconButton
+              icon={paidByTagsExpanded ? <ChevronsDownUp /> : <ChevronsUpDown />}
+              onClick={() => setPaidBySectionExpanded(!paidByTagsExpanded)}
+              aria-expanded={paidByTagsExpanded}
+              aria-label={paidByTagsExpanded ? 'Скрыть список' : 'Показать список'}
+              title={paidByTagsExpanded ? 'Скрыть список' : 'Показать список'}
+            />
+          </div>
+          <div className={`section__tags-collapse${paidByTagsExpanded ? ' section__tags-collapse--open' : ''}`}>
+            <div className="section__tags-collapse-inner">
+              <div className="section__tags">
+                {people.map((person, i) => (
+                  <Button
+                    key={person.id}
+                    className={[
+                      'button',
+                      getTagGridItemClassName(i, people.length),
+                      paidBy.some((p) => p.id === person.id) ? 'button--active' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    onClick={() => handlePaidByClick(person)}
+                  >
+                    {person.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      <div className="cost-card__section">
-        <div className="cost-card__split-header">
-          <p className="cost-card__label cost-card__label--inline">На кого разделить?</p>
+      <div className="section">
+        <div className="section__label">
+          <p className="">На кого разделить?</p>
           <IconButton
             icon={<ChartPie />}
-            className={`icon-button${distributionType === 'weighted' ? ' icon-button--active' : ''}`}
+            variant={distributionType === 'weighted' ? 'active' : ''}
             onClick={toggleDistribution}
-            ariaLabel={distributionType === 'weighted' ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
+            aria-label={distributionType === 'weighted' ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
           />
         </div>
 
         {distributionType === 'equal' ? (
-          <div className="cost-card__tags">
-            {people.map((person) => (
+          <div className="section__tags">
+            {people.map((person, i) => (
               <Button
                 key={person.id}
-                className={`button-new ${splitBetween.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
+                className={[
+                  'button',
+                  getTagGridItemClassName(i, people.length),
+                  splitBetween.some((p) => p.id === person.id) ? 'button--active' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
                 onClick={() => handleSplitBetweenClick(person)}
               >
                 {person.name}
@@ -188,24 +229,24 @@ function CostCard({
             ))}
           </div>
         ) : (
-          <div className="cost-card__weights-grid">
+          <div className="section__weights-tags">
             {people.map((person) => {
               const u = Math.max(0, Math.floor(Number(weights[person.id]) || 0))
               return (
-                <div key={person.id} className={`button-new button-new--weight${u > 0 ? ' button-new--active' : ''}`}>
+                <div key={person.id} className={`button button--weight${u > 0 ? ' button--active' : ''}`}>
                   <IconButton
-                    className="icon-button--wide"
-                    icon={<Minus size={18} />}
+                    variant="wide"
+                    icon={<Minus size={16} />}
                     onClick={() => adjustWeight(person.id, -1)}
                     disabled={u <= 0}
                     aria-label="Меньше"
                   />
-                  <span className="cost-card__weight-label">
+                  <span className="button__label">
                     x{u} {person.name}
                   </span>
                   <IconButton
-                    className="icon-button--wide"
-                    icon={<Plus size={18} />}
+                    variant="wide"
+                    icon={<Plus size={16} />}
                     onClick={() => adjustWeight(person.id, 1)}
                     aria-label="Больше"
                   />
@@ -216,28 +257,28 @@ function CostCard({
         )}
       </div>
 
-      <div className="cost-card__footer">
-        <div className="cost-card__calculation">
-          <div className="cost-card__calculation-details">
-            <div className="cost-card__qty-stepper" role="group" aria-label="Количество">
+      <div className="footer">
+        <div className="footer__inner">
+          <div className="left-column">
+            <div className="qty-stepper" role="group" aria-label="Количество">
               <IconButton
-                icon={<Minus size={18} />}
+                icon={<Minus size={16} />}
                 className="icon-button--qty"
                 onClick={() => adjustQuantity(-1)}
                 disabled={!canDecreaseQty}
                 aria-label="Уменьшить количество"
               />
-              <span className="cost-card__qty-value">{qty}</span>
+              <span className="qty-stepper__value">{qty}</span>
               <IconButton
-                icon={<Plus size={18} />}
+                icon={<Plus size={16} />}
                 className="icon-button--qty"
                 onClick={() => adjustQuantity(1)}
                 aria-label="Увеличить количество"
               />
             </div>
-            <span className="cost-card__calculation-formula">× {formatAmount(pricePerUnit || 0)}</span>
+            <span className="calculation-formula">× {formatAmount(pricePerUnit || 0)}</span>
           </div>
-          <h3 className="cost-card__amount">{formatAmount(amount)}</h3>
+          <h3 className="total-amount">{formatAmount(amount)}</h3>
         </div>
       </div>
 

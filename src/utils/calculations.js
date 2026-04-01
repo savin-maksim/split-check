@@ -139,8 +139,15 @@ export const calculateStatistics = (people, costs) => {
       .filter((cost) => personParticipatesInCost(cost, person.id))
       .map((cost) => {
         const personShare = getPersonShare(cost, person.id)
-        const personQuantity = cost.quantity || 1
-        const splitCount = splitCountForDisplay(cost)
+        const q = cost.quantity || 1
+        let personQuantity = q
+        let splitCount = splitCountForDisplay(cost)
+        if (cost.distributionType === 'weighted') {
+          const w = weightForPerson(cost.weights, person.id)
+          const totalW = sumWeights(cost)
+          personQuantity = q * w
+          splitCount = q * (totalW > 0 ? totalW : 1)
+        }
 
         return {
           description: cost.title,

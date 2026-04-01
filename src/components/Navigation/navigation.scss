@@ -1,18 +1,18 @@
 .navigation {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0.5rem;
+  left: 1rem;
+  right: 1rem;
   height: var(--navigation-height);
-  background: var(--background-color);
+  border-radius: var(--border-radius-large);
+  border: var(--border);
+  background-color: rgba(var(--color-bg), 0.5);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  //   backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  background-color: var(--color-bg);
 
   a {
     display: flex;
@@ -22,8 +22,7 @@
     color: var(--color-text-active);
     padding: 0.5rem;
     border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
+    transition: all var(--transition-duration) ease;
     user-select: none;
     -webkit-user-select: none;
 

@@ -8,6 +8,8 @@ const STORAGE_KEYS = {
   SAVED_CHECKS: 'splitcheck_saved_checks',
   SESSION_META: 'splitcheck_session_meta',
   TRANSFER_MERGE_UI: 'splitcheck_transfer_merge_ui',
+  /** @type {Record<string, boolean>} costId -> секция «Кто платил?» развёрнута */
+  COST_CARD_PAID_BY_EXPANDED: 'splitcheck_cost_card_paid_by_expanded',
 }
 
 const safeParse = (key, fallback) => {
@@ -105,6 +107,17 @@ export const StorageService = {
    */
   setTransferMergeUi: (payload) => {
     localStorage.setItem(STORAGE_KEYS.TRANSFER_MERGE_UI, JSON.stringify(payload))
+  },
+
+  /** @returns {Record<string, boolean>} */
+  getCostCardPaidByExpanded: () => safeParse(STORAGE_KEYS.COST_CARD_PAID_BY_EXPANDED, {}),
+
+  /** @param {string|number} costId */
+  setCostCardPaidByExpanded: (costId, expanded) => {
+    const key = String(costId)
+    const map = { ...safeParse(STORAGE_KEYS.COST_CARD_PAID_BY_EXPANDED, {}) }
+    map[key] = expanded
+    localStorage.setItem(STORAGE_KEYS.COST_CARD_PAID_BY_EXPANDED, JSON.stringify(map))
   },
 
   getCurrentSession: () => {

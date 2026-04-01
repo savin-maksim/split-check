@@ -12,7 +12,7 @@
     color: var(--color-orange);
 
     &:not(.icon-button--qty):not(.icon-button--danger) {
-      filter: drop-shadow(0 0 8px rgba(var(--button-new-active-surface-rgb), var(--button-new-active-shadow-alpha)));
+      filter: drop-shadow(0 0 8px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha)));
     }
   }
 
@@ -30,7 +30,7 @@
 
     @include hover {
       color: var(--error-color);
-      filter: drop-shadow(0 0 8px rgba(var(--color-error), var(--button-new-danger-shadow-alpha)));
+      filter: drop-shadow(0 0 8px rgba(var(--color-error), var(--button-danger-shadow-alpha)));
     }
   }
 
@@ -72,10 +72,10 @@
 
       @include hover {
         @include button-surface;
-        --button-new-surface-rgb: var(--button-new-neutral-surface-rgb);
-        --button-new-background-alpha: var(--button-new-neutral-background-alpha);
-        --button-new-border-alpha: var(--button-new-neutral-border-alpha);
-        --button-new-box-shadow: none;
+        --button-surface-rgb: var(--button-neutral-surface-rgb);
+        --button-background-alpha: var(--button-neutral-background-alpha);
+        --button-border-alpha: var(--button-neutral-border-alpha);
+        --button-box-shadow: none;
       }
     }
   }

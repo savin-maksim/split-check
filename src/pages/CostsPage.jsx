@@ -6,12 +6,12 @@ import { useState } from 'react'
 // Import components
 import Button from '@/components/Button/Button'
 import Modal from '@/components/Modal/Modal'
-import PersonButton from '@/components/Button/PersonButton'
 import CostCard from '@/components/Cards/Cost/CostCard'
 import AddPositionModal from '@/components/Modal/AddPositionModal'
 import Arrow from '@/components/Arrow/Arrow'
 import ReceiptScanner from '@/components/ReceiptScanner/ReceiptScanner'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import { getTagGridItemClassName } from '@/utils/tagGrid'
 
 // Import styles
 import './cost-section.scss'
@@ -122,11 +122,11 @@ function CostsPage() {
   return (
     <div className="cost-section">
       <PageSectionHeader
-        icon={<Calculator size={28} aria-hidden />}
+        icon={<Calculator size={40} aria-hidden />}
         title="Расходы"
         action={
-          <Button className="button-new--danger" onClick={() => setIsClearCostsModalOpen(true)}>
-            Удалить все позиции
+          <Button variant="danger" onClick={() => setIsClearCostsModalOpen(true)}>
+            Удалить позиции
           </Button>
         }
       />
@@ -137,7 +137,7 @@ function CostsPage() {
           <Button
             icon={<User />}
             onClick={() => changePaymentMode('single')}
-            className={paymentMode === 'single' ? 'button-new--active' : ''}
+            variant={paymentMode === 'single' ? 'active' : ''}
             title="Единый плательщик"
           >
             Единственный
@@ -145,7 +145,7 @@ function CostsPage() {
           <Button
             icon={<Users />}
             onClick={() => changePaymentMode('manual')}
-            className={paymentMode === 'manual' ? 'button-new--active' : ''}
+            className={paymentMode === 'manual' ? 'button--active' : ''}
             title="Множество плательщиков"
           >
             Множество
@@ -171,14 +171,19 @@ function CostsPage() {
           <div className="payment-mode__single-payer">
             <h3>Выберите плательщика</h3>
             <div className="payment-mode__people">
-              {people.map((person) => (
-                <PersonButton
+              {people.map((person, i) => (
+                <Button
                   key={person.id}
                   onClick={() => selectSinglePayer(person)}
-                  className={singlePayer?.id === person.id ? 'button__person--active' : ''}
+                  className={[
+                    getTagGridItemClassName(i, people.length),
+                    singlePayer?.id === person.id ? 'button--active' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                 >
                   {person.name}
-                </PersonButton>
+                </Button>
               ))}
             </div>
           </div>

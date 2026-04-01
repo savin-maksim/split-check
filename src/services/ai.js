@@ -1,4 +1,9 @@
-const MODELS = ['gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-robotics-er-1.5-preview']
+const MODELS = [
+  'gemini-3.1-flash-lite-preview',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-robotics-er-1.5-preview',
+]
 
 const STORAGE_KEY = 'gemini_model_state'
 
@@ -40,6 +45,47 @@ const saveModelIndex = (index) => {
 
 let currentModelIndex = getValidModelIndex()
 
+const MAX_TITLE_LENGTH = 100
+
+const truncateTitle = (s) => {
+  const str = typeof s === 'string' ? s.trim() : String(s ?? '').trim()
+  if (str.length <= MAX_TITLE_LENGTH) return str
+  const cut = str.slice(0, MAX_TITLE_LENGTH - 1)
+  const lastSpace = cut.lastIndexOf(' ')
+  if (lastSpace > MAX_TITLE_LENGTH * 0.5) return `${cut.slice(0, lastSpace)}…`
+  return `${cut}…`
+}
+
+const priceMergeKey = (p) => {
+  const n = Number(p)
+  if (!Number.isFinite(n)) return NaN
+  return Math.round(n * 10000) / 10000
+}
+
+/** Сокращение title, слияние строк с одинаковым названием и pricePerUnit */
+export const normalizeReceiptItems = (items) => {
+  if (!Array.isArray(items)) return []
+  const map = new Map()
+  for (const item of items) {
+    const title = truncateTitle(item.title)
+    const pricePerUnit = Number(item.pricePerUnit)
+    let quantity = Number(item.quantity)
+    if (!title) continue
+    if (!Number.isFinite(pricePerUnit)) continue
+    if (!Number.isFinite(quantity) || quantity <= 0) quantity = 1
+
+    const pk = priceMergeKey(pricePerUnit)
+    const key = `${title}\0${pk}`
+    const prev = map.get(key)
+    if (prev) {
+      prev.quantity += quantity
+    } else {
+      map.set(key, { title, pricePerUnit, quantity })
+    }
+  }
+  return [...map.values()]
+}
+
 export const analyzeReceipt = async (file) => {
   // Sync index before starting (in case day changed while app was open)
   currentModelIndex = getValidModelIndex()
@@ -77,7 +123,10 @@ export const analyzeReceipt = async (file) => {
             {
               parts: [
                 {
-                  text: 'Проанализируй этот чек. Извлеки список товаров с их названиями, количеством (по умолчанию 1, если не указано) и ценой за единицу. Верни JSON объект с ключом "items", содержащим массив объектов: { title: string, pricePerUnit: number, quantity: number }. Игнорируй итоговые суммы, налоги, даты и сервисные сборы. Все числа должны быть float. Если позиция имеет нулевую стоимость (0 или бесплатно), пропусти её и не включай в результат.',
+                  text:
+                    'Проанализируй этот чек. Извлеки список товаров с их названиями, количеством (по умолчанию 1, если не указано) и ценой за единицу. Верни JSON объект с ключом "items", содержащим массив объектов: { title: string, pricePerUnit: number, quantity: number }. Игнорируй итоговые суммы, налоги, даты и сервисные сборы. Все числа должны быть float. Если позиция имеет нулевую стоимость (0 или бесплатно), пропусти её и не включай в результат. ' +
+                    'Если наименование позиции длиннее 100 символов, сократи его до не более 100 символов, сохраняя смысл (аббревиатуры, обрезка по словам, при необходимости многоточие). ' +
+                    'Если в чеке несколько отдельных строк с полностью совпадающим наименованием и одинаковой ценой за единицу (pricePerUnit), объедини их в одну позицию: просуммируй quantity. Не объединяй строки, если наименование совпадает, но pricePerUnit разная.',
                 },
                 {
                   inline_data: {
@@ -119,7 +168,7 @@ export const analyzeReceipt = async (file) => {
       throw new Error('Не удалось найти товары в чеке')
     }
 
-    return content.items
+    return normalizeReceiptItems(content.items)
   } catch (error) {
     console.error('AI Error:', error)
 

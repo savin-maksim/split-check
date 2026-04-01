@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Receipt, Users, Calculator, FolderInput, Trash2 } from 'lucide-react'
+import { Receipt, Users, Calculator, FolderInput, Trash2, Pencil } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useApp } from '@/context/AppContext'
@@ -40,14 +40,25 @@ function sumCosts(costs) {
   return costs.reduce((s, c) => s + (Number(c.amount) || 0), 0)
 }
 
-const DISCARD_DRAFT_CONFIRM = 'Начать новый чек? Текущие несохранённые данные в редакторе будут сброшены.'
-
 function ChecksPage() {
   const navigate = useNavigate()
-  const { people, costs, sessionMeta, startNewCheck, newCheckModalNonce, savedChecks, deleteSavedCheck } = useApp()
+  const {
+    sessionMeta,
+    startNewCheck,
+    newCheckModalNonce,
+    savedChecks,
+    deleteSavedCheck,
+    updateSavedCheckTitle,
+  } = useApp()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [createTitle, setCreateTitle] = useState('')
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editCheckId, setEditCheckId] = useState(null)
+  const [editTitle, setEditTitle] = useState('')
+
+  const [checkToDelete, setCheckToDelete] = useState(null)
 
   /** При ре-монте страницы nonce в контексте не сбрасывается — ref тоже должен стартовать с текущего nonce, иначе FAB снова «откроет» модалку. */
   const lastNewCheckNonce = useRef(newCheckModalNonce)
@@ -64,10 +75,29 @@ function ChecksPage() {
     }
   }, [newCheckModalNonce, openCreateModal])
 
-  const handleDelete = (id, title) => {
-    if (!window.confirm(`Удалить чек «${title}»?`)) return
-    deleteSavedCheck(id)
+  const confirmDeleteCheck = () => {
+    if (!checkToDelete) return
+    deleteSavedCheck(checkToDelete.id)
     toast.success('Удалено')
+    setCheckToDelete(null)
+  }
+
+  const handleEdit = (check) => {
+    setEditCheckId(check.id)
+    setEditTitle(check.title)
+    setIsEditModalOpen(true)
+  }
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault()
+    const trimmed = editTitle.trim()
+    if (!trimmed) {
+      toast.error('Введите название')
+      return
+    }
+    updateSavedCheckTitle(editCheckId, trimmed)
+    setIsEditModalOpen(false)
+    toast.success('Название обновлено')
   }
 
   const handleCreateSubmit = (e) => {
@@ -75,10 +105,6 @@ function ChecksPage() {
     const trimmed = createTitle.trim()
     if (!trimmed) {
       toast.error('Введите название')
-      return
-    }
-    const hasDraft = people.length > 0 || costs.length > 0
-    if (hasDraft && !window.confirm(DISCARD_DRAFT_CONFIRM)) {
       return
     }
     if (!startNewCheck(trimmed)) {
@@ -92,7 +118,7 @@ function ChecksPage() {
   return (
     <div className="checks-page">
       <div className="checks-page__container">
-        <PageSectionHeader icon={<Receipt size={28} aria-hidden />} title="Чеки" />
+        <PageSectionHeader icon={<Receipt size={40} aria-hidden />} title="Чеки" />
 
         <section className="checks-page__section">
           {savedChecks.length === 0 ? (
@@ -122,13 +148,29 @@ function ChecksPage() {
                       <div className="checks-page__saved-card-main">
                         <div className="checks-page__saved-card-header">
                           <MarqueeTitle as="h3">{check.title}</MarqueeTitle>
-                          <IconButton
-                            className="icon-button--danger"
-                            icon={<Trash2 aria-hidden />}
-                            title="Удалить чек"
-                            aria-label="Удалить чек"
-                            onClick={() => handleDelete(check.id, check.title)}
-                          />
+                          <div className="checks-page__saved-header-actions">
+                            <IconButton
+                              icon={<Pencil aria-hidden />}
+                              title="Редактировать чек"
+                              aria-label="Редактировать чек"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                handleEdit(check)
+                              }}
+                            />
+                            <IconButton
+                              variant="danger"
+                              icon={<Trash2 aria-hidden />}
+                              title="Удалить чек"
+                              aria-label="Удалить чек"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setCheckToDelete({ id: check.id, title: check.title })
+                              }}
+                            />
+                          </div>
                         </div>
 
                         <time className="checks-page__saved-date" dateTime={new Date(check.createdAt).toISOString()}>
@@ -153,7 +195,6 @@ function ChecksPage() {
                         </div>
                       </div>
                     </Link>
-                    <div className="checks-page__saved-actions"></div>
                   </li>
                 )
               })}
@@ -182,8 +223,46 @@ function ChecksPage() {
           />
           <div className="modal__buttons">
             <Button onClick={() => setIsCreateModalOpen(false)}>Отмена</Button>
-            <Button type="submit" className="button-new--active">
+            <Button type="submit" className="button--active">
               Создать
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal isOpen={checkToDelete != null} onClose={() => setCheckToDelete(null)}>
+        <h3 className="modal__title" id="delete-check-dialog-title">
+          Удалить чек?
+        </h3>
+        <p className="modal__message" id="delete-check-dialog-desc">
+          Чек «{checkToDelete?.title}» будет удалён без возможности восстановления.
+        </p>
+        <div className="modal__buttons">
+          <Button type="button" onClick={() => setCheckToDelete(null)}>
+            Отмена
+          </Button>
+          <Button type="button" variant="danger" onClick={confirmDeleteCheck}>
+            Удалить
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+        <h3 className="modal__title">Редактировать чек</h3>
+        <form className="modal__inputs" onSubmit={(e) => handleEditSubmit(e)}>
+          <input
+            type="text"
+            className="modal__input"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            placeholder="Название чека"
+            autoComplete="off"
+            autoFocus
+          />
+          <div className="modal__buttons">
+            <Button onClick={() => setIsEditModalOpen(false)}>Отмена</Button>
+            <Button type="submit" className="button--active">
+              Сохранить
             </Button>
           </div>
         </form>

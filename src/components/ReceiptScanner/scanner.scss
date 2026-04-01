@@ -11,9 +11,10 @@
 
 .scanner {
   &__preview-list {
-    max-height: 40vh;
-    overflow-y: auto;
-    border-radius: 12px;
+    display: flex;
+    text-align: start;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   &-button {
@@ -24,51 +25,78 @@
 
   &__item {
     display: flex;
-    align-items: center;
-    padding: 12px;
+    flex-direction: column;
+    padding-block: 0.5rem;
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid var(--color-glass);
+    background: var(--color-glass);
+    gap: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.2s;
-    color: var(--color-text);
+    transition:
+      background-color var(--transition-duration),
+      border-color var(--transition-duration);
+    color: var(--color-light);
 
-    &-checkbox {
-      margin-right: 12px;
+    &--selected {
+      border: var(--border-width) solid var(--color-orange);
+      background: var(--color-active);
+    }
+
+    &-divider {
+      height: 0;
+      border: none;
+      border-top: var(--border-width) solid var(--color-glass);
+      margin: 0;
+    }
+
+    &-footer {
+      padding-inline: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    &-qty {
       display: flex;
       align-items: center;
-
-      input {
-        width: 20px;
-        height: 20px;
-        accent-color: var(--color-orange);
-      }
+      gap: 0.35rem;
     }
 
-    &-details {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-      overflow: hidden;
-    }
-
-    &-title {
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 4px;
+    &-qty-value {
+      min-width: 1.25rem;
+      text-align: center;
+      font-weight: 600;
       color: var(--color-light);
     }
 
-    &-meta {
+    &-unit {
+      flex: 1;
       font-size: 0.85rem;
+      color: var(--color-light);
+      white-space: nowrap;
+    }
+
+    &-title {
+      font-weight: 700;
+      padding-inline: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       color: var(--color-light);
     }
 
     &-total {
-      // font-weight: 600;
-      margin-left: 12px;
+      font-weight: 800;
+      margin-left: 0.5rem;
       white-space: nowrap;
-      color: var(--color-orange);
+      color: var(--color-light);
+
+      &--line {
+        margin-left: auto;
+        font-style: italic;
+        font-size: 1.05rem;
+      }
     }
   }
 
@@ -76,6 +104,13 @@
     text-align: right;
     font-size: 1.1rem;
     color: var(--color-light);
+
+    &--total {
+      font-weight: 800;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+      color: var(--color-orange);
+    }
   }
 
   &__source-options {

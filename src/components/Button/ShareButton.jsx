@@ -1,23 +1,12 @@
 import { Share2 } from 'lucide-react'
 import IconButton from './IconButton'
-import { toast } from 'react-hot-toast'
+import { useApp } from '../../context/AppContext'
 
 function ShareButton() {
-  const handleShare = async () => {
-    try {
-      const currentURL = window.location.href
+  const { setStatisticsShareModalOpen } = useApp()
 
-      await navigator.share({
-        url: currentURL,
-      })
-    } catch (error) {
-      console.error('Error sharing:', error)
-
-      // Don't show error for user cancellation
-      if (error.name !== 'AbortError') {
-        toast.error('Не удалось поделиться ссылкой')
-      }
-    }
+  const handleShare = () => {
+    setStatisticsShareModalOpen(true)
   }
 
   return (

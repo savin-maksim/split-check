@@ -1,17 +1,11 @@
 @use '../styles/mixins' as *;
+@use '../styles/tag-grid' as tag-grid;
 
 .cost-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   min-height: calc(90vh - var(--navigation-height));
-
-  .page-section-header {
-    width: 100%;
-    max-width: var(--cards-width);
-    margin-inline: auto;
-    box-sizing: border-box;
-  }
 
   &__btn-clear-all {
     padding: 0.5rem 0.85rem;
@@ -83,6 +77,7 @@
     gap: 1rem;
     width: 100%;
     align-items: center;
+    margin-bottom: 5rem;
   }
 
   &__search {
@@ -141,13 +136,11 @@
 
   &__single-payer {
     text-align: center;
+    width: 100%;
   }
 
   &__people {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
+    @include tag-grid.tag-grid-container;
     margin-bottom: 1rem;
   }
 

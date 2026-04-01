@@ -6,6 +6,7 @@ import ItemsPreviewModal from './ItemsPreviewModal'
 import { toast } from 'react-hot-toast'
 import Modal from '../Modal/Modal'
 import './scanner.scss'
+import Button from '../Button/Button'
 
 const ReceiptScanner = ({ onAddCosts, paymentMode, singlePayer }) => {
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
@@ -86,7 +87,7 @@ const ReceiptScanner = ({ onAddCosts, paymentMode, singlePayer }) => {
       <IconButton
         icon={<ScanLine size={21} />}
         onClick={handleScanClick}
-        ariaLabel="Сканировать чек"
+        aria-label="Сканировать чек"
         className="icon-button--scanner"
       />
 
@@ -107,14 +108,14 @@ const ReceiptScanner = ({ onAddCosts, paymentMode, singlePayer }) => {
       <Modal isOpen={isSourceModalOpen} onClose={() => setIsSourceModalOpen(false)}>
         <h2 className="modal__title">Загрузить чек</h2>
         <div className="scanner__source-options">
-          <div className="scanner__source-btn" onClick={() => handleSourceSelect('camera')}>
+          <Button onClick={() => handleSourceSelect('camera')}>
             <Camera />
             <p>Камера</p>
-          </div>
-          <div className="scanner__source-btn" onClick={() => handleSourceSelect('gallery')}>
+          </Button>
+          <Button onClick={() => handleSourceSelect('gallery')}>
             <Image />
             <p>Галерея</p>
-          </div>
+          </Button>
         </div>
       </Modal>
 

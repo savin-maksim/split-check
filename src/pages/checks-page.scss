@@ -52,10 +52,6 @@
       color: var(--color-orange);
       flex-shrink: 0;
     }
-
-    &--sum {
-      font-weight: 700;
-    }
   }
 
   &__empty-saved {
@@ -85,6 +81,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-bottom: 3.5rem;
   }
 
   &__saved-list-item {
@@ -104,35 +101,18 @@
     flex-direction: column;
     flex: 1;
     min-width: 0;
-    gap: 0;
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-glass);
+    border: var(--border);
     border-radius: var(--border-radius-small);
-    padding: 0.9rem 1rem;
-    text-align: left;
-    transition:
-      filter 0.15s ease,
-      border-color 0.15s ease;
-
-    @include hover {
-      filter: brightness(1.06);
-    }
-
-    &:focus {
-      outline: none;
-    }
+    padding: 0.5rem;
 
     &--active {
-      border-color: rgba(255, 160, 80, 0.45);
-      box-shadow: 0 0 0 1px rgba(255, 160, 80, 0.12);
+      border-color: var(--color-active);
     }
   }
 
   &__saved-card-meta {
-    margin-top: 0.15rem;
+    margin-top: 0.5rem;
   }
 
   &__saved-card-main {
@@ -147,11 +127,16 @@
     gap: 0.5rem;
   }
 
+  &__saved-header-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
   &__saved-date {
-    display: block;
     font-size: 0.8125rem;
-    color: var(--color-text-secondary);
-    margin-bottom: 0.35rem;
+    color: var(--color-text-active);
   }
 
   &__saved-badge {

@@ -29,6 +29,7 @@ export function AppProvider({ children }) {
   const [sessionMeta, setSessionMeta] = useState(() => StorageService.getSessionMeta())
   const [newCheckModalNonce, setNewCheckModalNonce] = useState(0)
   const [savedChecks, setSavedChecks] = useState(() => StorageService.getSavedChecks())
+  const [statisticsShareModalOpen, setStatisticsShareModalOpen] = useState(false)
 
   // Save to localStorage when data changes
   useEffect(() => {
@@ -366,6 +367,16 @@ export function AppProvider({ children }) {
     [sessionMeta],
   )
 
+  const updateSavedCheckTitle = useCallback((id, title) => {
+    const existing = StorageService.getSavedChecks()
+    const idx = existing.findIndex((c) => c.id === id)
+    if (idx < 0) return
+    const trimmed = title.trim() || 'Без названия'
+    const next = existing.map((c, i) => (i === idx ? { ...c, title: trimmed } : c))
+    StorageService.setSavedChecks(next)
+    setSavedChecks(next)
+  }, [])
+
   /** Полная подстановка сессии (например, загрузка сохранённого чека). Статистика пересчитается по данным. */
   const applySessionSnapshot = useCallback((snapshot) => {
     setPeople(Array.isArray(snapshot.people) ? snapshot.people : [])
@@ -412,6 +423,8 @@ export function AppProvider({ children }) {
       setSessionMeta,
       newCheckModalNonce,
       savedChecks,
+      statisticsShareModalOpen,
+      setStatisticsShareModalOpen,
 
       // Setters
       setIsPayerModalOpen,
@@ -435,6 +448,7 @@ export function AppProvider({ children }) {
       startNewCheck,
       triggerNewCheckModal,
       deleteSavedCheck,
+      updateSavedCheckTitle,
     }),
     [
       people,
@@ -450,6 +464,8 @@ export function AppProvider({ children }) {
       setSessionMeta,
       newCheckModalNonce,
       savedChecks,
+      statisticsShareModalOpen,
+      setStatisticsShareModalOpen,
       addPerson,
       removePerson,
       removeAllPeople,
@@ -466,6 +482,7 @@ export function AppProvider({ children }) {
       startNewCheck,
       triggerNewCheckModal,
       deleteSavedCheck,
+      updateSavedCheckTitle,
     ],
   )
 

@@ -1,0 +1,21 @@
+@mixin tag-grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.tag-grid {
+  @include tag-grid-container;
+}
+
+.tag-grid-item--span-2 {
+  grid-column: span 2;
+}
+
+.tag-grid-item--span-3 {
+  grid-column: span 3;
+}
+
+.tag-grid-item--span-6 {
+  grid-column: span 6;
+}

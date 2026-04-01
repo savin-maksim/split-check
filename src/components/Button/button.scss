@@ -1,82 +1,108 @@
 @use '/src/styles/mixins' as *;
 
 .button {
-  background-color: var(--color-glass);
-  color: var(--color-light);
-  border: var(--border);
-  border-radius: var(--border-radius-small);
+  @include flex-center($isInline: true);
+  @include button-surface;
+
+  --button-surface-rgb: var(--button-neutral-surface-rgb);
+  --button-background-alpha: var(--button-neutral-background-alpha);
+  --button-border-alpha: var(--button-neutral-border-alpha);
+  --button-box-shadow: none;
+
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
-  @include flex-center();
+  margin: 0;
+  color: var(--color-light);
+  border-radius: var(--border-radius-small);
+  min-width: 0;
+  flex: 1;
+
   @include hover {
-    cursor: pointer;
-  }
-
-  &__person {
-    border-radius: var(--border-radius-person);
-    font-weight: 500;
-    min-width: 0;
-    @include fluid-text(17, 13);
-
-    &-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .button--icon-right {
-      flex-shrink: 0;
-    }
-
-    &--active {
-      border-color: var(--color-orange);
-      box-shadow: 0 0 15px var(--color-active);
-      background-color: var(--color-active);
-      color: var(--color-text-active);
+    &:not(.button--danger) {
+      @include button--active-tokens;
     }
   }
 
-  &--icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 2rem;
+  &--active:not(:disabled):not(.button--danger) {
+    --button-surface-rgb: var(--button-active-surface-rgb);
+    --button-background-alpha: var(--button-active-background-alpha);
+    --button-border-alpha: var(--button-active-border-alpha);
+    --button-box-shadow: none;
 
-    &-active {
-      background-color: var(--color-active);
-      box-shadow: 0 0 30px var(--color-active);
-      transform: scale(1.3);
-      color: var(--color-text-active);
+    @include hover {
+      --button-background-alpha: var(--button-active-hover-background-alpha);
+      --button-border-alpha: var(--button-active-hover-border-alpha);
+      --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
     }
   }
 
-  &--icon-left {
-    margin-right: 8px;
-    display: inline-flex;
-    align-items: center;
-  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 
-  &--icon-right {
-    margin-left: 8px;
-    display: inline-flex;
-    align-items: center;
+    @include hover {
+      --button-surface-rgb: var(--button-neutral-surface-rgb);
+      --button-background-alpha: var(--button-neutral-background-alpha);
+      --button-border-alpha: var(--button-neutral-border-alpha);
+      --button-box-shadow: none;
+    }
   }
-}
-
-.share-button {
-  margin-top: 20px;
-  text-align: center;
 
   &__icon {
-    background-color: var(--color-active);
-    box-shadow: 0 0 30px var(--color-active);
-    color: var(--color-text-active);
-    padding: 12px 24px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 200px;
+    @include flex-center($isInline: true);
 
-    &:hover {
-      box-shadow: 0 0 40px var(--color-active);
+    svg {
+      display: block;
     }
+  }
+
+  &__label {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--danger {
+    --button-surface-rgb: var(--color-error);
+    --button-background-alpha: var(--button-danger-background-alpha);
+    --button-border-alpha: var(--button-danger-border-alpha);
+    --button-box-shadow: none;
+
+    @include hover {
+      --button-background-alpha: var(--button-danger-hover-background-alpha);
+      --button-border-alpha: var(--button-danger-hover-border-alpha);
+      --button-box-shadow: 0 0 15px rgba(var(--color-error), var(--button-danger-shadow-alpha));
+    }
+  }
+
+  &--weight {
+    padding-inline: 0;
+
+    @include hover {
+      --button-background-alpha: var(--button-active-hover-background-alpha);
+      --button-border-alpha: var(--button-active-hover-border-alpha);
+      --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
+    }
+  }
+
+  &--wide {
+    width: 100%;
+
+    .button__label {
+      text-align: center;
+      justify-self: stretch;
+      align-self: stretch;
+      box-sizing: border-box;
+      white-space: normal;
+      line-height: 1.35;
+    }
+  }
+
+  &--full {
+    min-width: fit-content;
   }
 }

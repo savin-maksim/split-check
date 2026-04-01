@@ -7,13 +7,10 @@ import './page-section-header.scss'
  * @param {import('react').ReactNode} [props.subtitle]
  * @param {import('react').ReactNode} [props.action] — кнопка или группа элементов справа
  * @param {string} [props.className] — на корневой header
- * @param {boolean} [props.sticky=true]
  * @param {'h1' | 'h2'} [props.titleAs='h1']
  */
-function PageSectionHeader({ icon, title, subtitle, action, className = '', sticky = true, titleAs: TitleTag = 'h1' }) {
-  const rootClass = ['page-section-header', sticky && 'page-section-header--sticky', className]
-    .filter(Boolean)
-    .join(' ')
+function PageSectionHeader({ icon, title, subtitle, action, className = '', titleAs: TitleTag = 'h1' }) {
+  const rootClass = ['page-section-header', className].filter(Boolean).join(' ')
 
   const showSubtitle = subtitle != null && subtitle !== false && subtitle !== ''
 

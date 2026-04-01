@@ -18,12 +18,12 @@ function OpenCheckPage() {
     const checks = StorageService.getSavedChecks()
     const check = checks.find((c) => c.id === checkId)
     if (!check) {
-      toast.error('Чек не найден')
+      toast.error('Чек не найден', { id: `open-check-missing-${checkId}` })
       navigate('/', { replace: true })
       return
     }
     applySessionSnapshot(check)
-    toast.success(`Открыто: ${check.title}`)
+    toast.success(`Открыто: ${check.title}`, { id: `open-check-${checkId}` })
     navigate('/', { replace: true })
   }, [checkId, navigate, applySessionSnapshot])
 

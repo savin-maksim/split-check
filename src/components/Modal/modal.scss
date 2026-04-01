@@ -1,3 +1,5 @@
+@use '/src/styles/tag-grid' as tag-grid;
+
 .modal {
   border: none;
   padding: 0;
@@ -17,13 +19,20 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   &__title {
     color: var(--color-light);
+  }
+
+  &__message {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.45;
+    font-size: 0.95rem;
   }
 
   &__inputs {
@@ -104,9 +113,7 @@
   }
 
   &__tags {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-    gap: 0.5rem;
+    @include tag-grid.tag-grid-container;
   }
 
   &__tag {

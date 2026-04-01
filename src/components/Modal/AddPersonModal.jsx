@@ -41,7 +41,7 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
         />
         <div className="modal__buttons">
           <Button onClick={onClose}>Отмена</Button>
-          <Button className="button-new--active" onClick={handleSubmit}>
+          <Button className="button--active" onClick={handleSubmit}>
             Добавить
           </Button>
         </div>

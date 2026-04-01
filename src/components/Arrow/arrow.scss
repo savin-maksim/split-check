@@ -6,12 +6,12 @@
   z-index: 999;
 
   &--to-people {
-    left: calc(30%);
+    left: calc(30% + 0.5rem);
     bottom: 5rem;
   }
 
   &--to-cost {
-    left: calc(70%);
+    left: calc(70% - 0.5rem);
     bottom: 5rem;
   }
 

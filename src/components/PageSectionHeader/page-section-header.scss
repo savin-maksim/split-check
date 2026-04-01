@@ -8,13 +8,6 @@
   padding-block: 1.25rem;
   gap: 1rem;
 
-  &--sticky {
-    position: sticky;
-    top: 0;
-    background: var(--color-bg);
-    z-index: 1;
-  }
-
   &__title-block {
     display: flex;
     align-items: center;
@@ -38,17 +31,15 @@
 
   &__title {
     margin: 0;
-    font-weight: 700;
     color: var(--color-light);
     line-height: 1.2;
-    @include fluid-text(26, 20);
+    font-size: 24px;
   }
 
   &__subtitle {
-    margin: 0.25rem 0 0;
     color: var(--color-text-secondary);
     opacity: 0.9;
-    @include fluid-text(15, 12);
+    font-size: 0.875rem;
   }
 
   &__actions {

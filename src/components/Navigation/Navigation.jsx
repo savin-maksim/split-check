@@ -5,7 +5,7 @@ import ActionNavButton from '../Button/ActionNavButton'
 import './navigation.scss'
 
 function Navigation() {
-  const { setIsModalOpen, triggerNewCheckModal } = useApp()
+  const { setIsModalOpen, triggerNewCheckModal, setStatisticsShareModalOpen } = useApp()
 
   const handlePeopleAction = () => {
     setIsModalOpen('addPerson')
@@ -16,8 +16,7 @@ function Navigation() {
   }
 
   const handleShareAction = () => {
-    // TODO: Implement share functionality
-    console.log('Share action')
+    setStatisticsShareModalOpen(true)
   }
 
   return (

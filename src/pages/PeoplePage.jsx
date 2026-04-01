@@ -60,7 +60,7 @@ function PeoplePage() {
       <div className="people-section__container">
         {people.length > 0 && (
           <PageSectionHeader
-            icon={<Users size={28} aria-hidden />}
+            icon={<Users size={40} aria-hidden />}
             title="Участники"
             subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
             action={
@@ -92,7 +92,7 @@ function PeoplePage() {
                     aria-label={`Редактировать имя: ${person.name}`}
                   />
                   <IconButton
-                    className="icon-button--danger"
+                    variant="danger"
                     icon={<Trash2 />}
                     onClick={() => removePerson(person.id)}
                     aria-label={`Удалить ${person.name}`}

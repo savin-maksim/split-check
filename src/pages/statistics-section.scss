@@ -44,10 +44,11 @@
 
   &__cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    // grid-template-columns: repeat(auto-fill,minmax(min(31.25rem,100%),1fr));
     gap: 1rem;
     width: 100%;
     align-items: start;
+    margin-bottom: 3.5rem;
   }
 }
 
@@ -59,11 +60,6 @@
   border-radius: var(--border-radius);
   padding: 1rem;
   color: var(--color-light);
-
-  &--summary {
-    grid-column: 1 / -1;
-    margin-top: 1rem;
-  }
 
   &__name {
     font-size: 1.25rem;

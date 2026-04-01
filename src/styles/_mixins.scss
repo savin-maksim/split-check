@@ -43,16 +43,16 @@
 }
 
 @mixin button-surface {
-  background-color: rgba(var(--button-new-surface-rgb), var(--button-new-background-alpha));
-  border: 2px solid rgba(var(--button-new-surface-rgb), var(--button-new-border-alpha));
-  box-shadow: var(--button-new-box-shadow, none);
+  background-color: rgba(var(--button-surface-rgb), var(--button-background-alpha));
+  border: 2px solid rgba(var(--button-surface-rgb), var(--button-border-alpha));
+  box-shadow: var(--button-box-shadow, none);
 }
 
-@mixin button-new--active-tokens {
-  --button-new-surface-rgb: var(--button-new-active-surface-rgb);
-  --button-new-background-alpha: var(--button-new-active-background-alpha);
-  --button-new-border-alpha: var(--button-new-active-border-alpha);
-  --button-new-box-shadow: 0 0 15px rgba(var(--button-new-active-surface-rgb), var(--button-new-active-shadow-alpha));
+@mixin button--active-tokens {
+  --button-surface-rgb: var(--button-active-surface-rgb);
+  --button-background-alpha: var(--button-active-background-alpha);
+  --button-border-alpha: var(--button-active-border-alpha);
+  --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
 }
 
 @mixin no-animation {

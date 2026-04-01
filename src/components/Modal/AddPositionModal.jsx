@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { Minus, Plus, ChartPie } from 'lucide-react'
 import Button from '../Button/Button'
-import PersonButton from '../Button/PersonButton'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
 import Modal from './Modal'
 import IconButton from '../Button/IconButton'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../utils/costDistribution'
+import { getTagGridItemClassName } from '../../utils/tagGrid'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
   const [purchase, setPurchase] = useState('')
@@ -204,10 +204,15 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
           <div className="modal__section">
             <p className="modal__label">Кто платил?</p>
             <div className="modal__tags">
-              {people?.map((person) => (
+              {people?.map((person, i) => (
                 <Button
                   key={person.id}
-                  className={`button-new ${paidBy.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
+                  className={[
+                    getTagGridItemClassName(i, people.length),
+                    paidBy.some((p) => p.id === person.id) ? 'button--active' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   onClick={() => handlePaidByClick(person)}
                 >
                   {person.name}
@@ -220,14 +225,23 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         <div className="modal__section">
           <div className="modal__split-header">
             <p className="modal__label">На кого разделить?</p>
-            <IconButton icon={<ChartPie />} onClick={toggleDistribution} className={`icon-button${distributionType === 'weighted' ? ' icon-button--active' : ''}`}/>
+            <IconButton
+              icon={<ChartPie />}
+              onClick={toggleDistribution}
+              variant={distributionType === 'weighted' ? 'active' : ''}
+            />
           </div>
           {distributionType === 'equal' ? (
             <div className="modal__tags">
-              {people?.map((person) => (
+              {people?.map((person, i) => (
                 <Button
                   key={person.id}
-                  className={`button-new ${splitBetween.some((p) => p.id === person.id) ? 'button-new--active' : ''}`}
+                  className={[
+                    getTagGridItemClassName(i, people.length),
+                    splitBetween.some((p) => p.id === person.id) ? 'button--active' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   onClick={() => handleSplitBetweenClick(person)}
                 >
                   {person.name}
@@ -239,22 +253,22 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
               {people?.map((person) => {
                 const u = Math.max(0, Math.floor(Number(weights[person.id]) || 0))
                 return (
-                  <div key={person.id} className={`button-new button-new--weight${u > 0 ? ' button-new--active' : ''}`}>
+                  <div key={person.id} className={`button button--weight${u > 0 ? ' button--active' : ''}`}>
                     <IconButton
-                      className="icon-button--wide"
+                      variant="wide"
                       onClick={() => adjustWeight(person.id, -1)}
                       disabled={u <= 0}
                       aria-label="Меньше"
-                      icon={<Minus size={18} />}
+                      icon={<Minus size={16} />}
                     />
                     <span className="modal__weight-label">
                       x{u} {person.name}
                     </span>
                     <IconButton
-                      className="icon-button--wide"
+                      variant="wide"
                       onClick={() => adjustWeight(person.id, 1)}
                       aria-label="Больше"
-                      icon={<Plus size={18} />}
+                      icon={<Plus size={16} />}
                     />
                   </div>
                 )

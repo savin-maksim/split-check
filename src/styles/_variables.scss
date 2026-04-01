@@ -10,34 +10,35 @@
   --color-orange: rgb(255, 115, 0);
   --color-glass: rgba(255, 255, 255, 0.2);
   --color-text-active: #ffffff;
-  --color-bg: #1f1f1f;
+  --color-bg: 31, 31, 31;
 
-  --border: 1px solid var(--color-glass);
+  --border-width: 2px;
+  --border: var(--border-width) solid var(--color-glass);
   --border-radius-person: 10rem;
   --border-radius: 10px;
   --border-radius-small: 7px;
   --border-radius-large: 45px;
 
-  --button-new-icon-size: 1.15rem;
+  --button-icon-size: 1.15rem;
 
-  --button-new-neutral-surface-rgb: 255, 255, 255;
-  --button-new-neutral-background-alpha: 0.2;
-  --button-new-neutral-border-alpha: 0.38;
+  --button-neutral-surface-rgb: 255, 255, 255;
+  --button-neutral-background-alpha: 0.2;
+  --button-neutral-border-alpha: 0.38;
 
-  --button-new-active-surface-rgb: 255, 94, 0;
-  --button-new-active-background-alpha: 0.5;
-  --button-new-active-border-alpha: 0.72;
-  --button-new-active-shadow-alpha: 0.5;
+  --button-active-surface-rgb: 255, 94, 0;
+  --button-active-background-alpha: 0.5;
+  --button-active-border-alpha: 0.72;
+  --button-active-shadow-alpha: 0.5;
 
-  --button-new-active-hover-background-alpha: 0.6;
-  --button-new-active-hover-border-alpha: 0.8;
-  --button-new-active-hover-shadow-alpha: 0.6;
+  --button-active-hover-background-alpha: 0.6;
+  --button-active-hover-border-alpha: 0.8;
+  --button-active-hover-shadow-alpha: 0.6;
 
-  --button-new-danger-background-alpha: 0.3;
-  --button-new-danger-border-alpha: 0.45;
-  --button-new-danger-hover-background-alpha: 0.5;
-  --button-new-danger-hover-border-alpha: 0.58;
-  --button-new-danger-shadow-alpha: 0.5;
+  --button-danger-background-alpha: 0.3;
+  --button-danger-border-alpha: 0.45;
+  --button-danger-hover-background-alpha: 0.5;
+  --button-danger-hover-border-alpha: 0.58;
+  --button-danger-shadow-alpha: 0.5;
 
   --container-width: 800px;
   --container-padding-x: 20px;

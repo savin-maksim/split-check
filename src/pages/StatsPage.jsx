@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { Users, Calculator, BarChart3 } from 'lucide-react'
 import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
 import Arrow from '../components/Arrow/Arrow'
+import { personIncludedInStatShare } from '../utils/statsShareCapture'
 
 // Import styles
 import './statistics-section.scss'
@@ -74,7 +75,7 @@ function StatsPage() {
   return (
     <>
       <div className="transfer-section">
-        <PageSectionHeader sticky={false} icon={<BarChart3 size={28} aria-hidden />} title="Статистика" />
+        <PageSectionHeader icon={<BarChart3 size={40} aria-hidden />} title="Статистика" />
         <div className="transfer-section__cards">
           <TransferCard transfers={transfers} isLoading={false} />
         </div>
@@ -82,7 +83,7 @@ function StatsPage() {
 
       <div className="statistics-section">
         <div className="statistics-section__cards">
-          <div className="statistics-card statistics-card--summary">
+          <div className="statistics-card statistics-card--summary" data-stat-share="summary">
             <div className="statistics-card__header">
               <h3 className="statistics-card__name">Общая сумма</h3>
             </div>
@@ -111,8 +112,20 @@ function StatsPage() {
             </div>
           </div>
 
-          {statistics.peopleStats.map((person) => (
-            <div key={person.id} className="statistics-card">
+          {statistics.peopleStats.map((person) => {
+            const shareCapture = personIncludedInStatShare(person)
+            return (
+              <div
+                key={person.id}
+                className="statistics-card"
+                {...(shareCapture
+                  ? {
+                      'data-stat-share': 'person',
+                      'data-stat-share-label': person.name,
+                      'data-stat-share-id': String(person.id),
+                    }
+                  : {})}
+              >
               <div className="statistics-card__header">
                 <h3 className="statistics-card__name">{person.name}</h3>
               </div>
@@ -167,8 +180,9 @@ function StatsPage() {
                   </div>
                 </div>
               )}
-            </div>
-          ))}
+              </div>
+            )
+          })}
         </div>
       </div>
     </>
