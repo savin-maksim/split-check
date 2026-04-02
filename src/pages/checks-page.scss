@@ -18,7 +18,7 @@
       flex: 1;
       min-width: 0;
     }
-    
+
     &-header {
       display: flex;
       align-items: center;
@@ -48,15 +48,15 @@
 
   &__current {
     &-meta {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-content: space-between;
-    align-items: center;
-    margin-top: var(--space);
-    padding: var(--space);
-    border-top: var(--border-width) solid var(--color-glass);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space);
+      padding: var(--space);
+      border-top: var(--border-width) solid var(--color-glass);
+    }
   }
-}
 
   &__empty-saved {
     text-align: center;

@@ -3,13 +3,7 @@ import IconButton from '@/components/Button/IconButton'
 import PersonGrid from '@/components/Cards/Cost/PersonGrid/PersonGrid'
 import './who-paid-section.scss'
 
-export default function WhoPaidSection({
-  people,
-  paidBy,
-  expanded,
-  onToggle,
-  onPersonToggle,
-}) {
+export default function WhoPaidSection({ people, paidBy, expanded, onToggle, onPersonToggle }) {
   return (
     <div className="who-paid-section">
       <div className={`who-paid-section__label${expanded ? '' : ' who-paid-section__label--collapsed'}`}>
@@ -27,11 +21,7 @@ export default function WhoPaidSection({
       </div>
       <div className={`who-paid-section__collapse${expanded ? ' who-paid-section__collapse--open' : ''}`}>
         <div className="who-paid-section__collapse-inner">
-          <PersonGrid
-            people={people}
-            selected={paidBy}
-            onToggle={onPersonToggle}
-          />
+          <PersonGrid people={people} selected={paidBy} onToggle={onPersonToggle} />
         </div>
       </div>
     </div>

@@ -170,11 +170,7 @@ function CostsPage() {
         {paymentMode === 'single' && (
           <div className="payment-mode__single-payer">
             <h3>Выберите плательщика</h3>
-            <PersonGrid
-              people={people}
-              selected={singlePayer ? [singlePayer] : []}
-              onToggle={selectSinglePayer}
-            />
+            <PersonGrid people={people} selected={singlePayer ? [singlePayer] : []} onToggle={selectSinglePayer} />
           </div>
         )}
       </div>

@@ -5,14 +5,7 @@ const variantClass = {
   weights: 'person-grid--weights',
 }
 
-export default function PersonGrid({
-  people,
-  selected = [],
-  onToggle,
-  children,
-  variant,
-  ...rest
-}) {
+export default function PersonGrid({ people, selected = [], onToggle, children, variant, ...rest }) {
   if (children) {
     return (
       <div className={['person-grid', variantClass[variant]].filter(Boolean).join(' ')} {...rest}>

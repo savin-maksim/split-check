@@ -16,21 +16,11 @@ export default function CardHeader({
   const hasActions = onDuplicate || onEdit || onDelete
   return (
     <div className="card-header">
-      <MarqueeTitle
-        as={as}
-        className={classNameTitle}
-        textClassName={classNameText}
-        {...rest}
-      >
+      <MarqueeTitle as={as} className={classNameTitle} textClassName={classNameText} {...rest}>
         {title}
       </MarqueeTitle>
       {hasActions && (
-        <CardHeaderActions
-          onDuplicate={onDuplicate}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          variant={variantActions}
-        />
+        <CardHeaderActions onDuplicate={onDuplicate} onEdit={onEdit} onDelete={onDelete} variant={variantActions} />
       )}
     </div>
   )

@@ -15,12 +15,7 @@ export default function ButtonWeight({ value, label, onDecrease, onIncrease, dis
       <span className="button__label">
         x{value} {label}
       </span>
-      <IconButton
-        variant="wide"
-        icon={<Plus size={16} />}
-        onClick={onIncrease}
-        aria-label="Больше"
-      />
+      <IconButton variant="wide" icon={<Plus size={16} />} onClick={onIncrease} aria-label="Больше" />
     </div>
   )
 }

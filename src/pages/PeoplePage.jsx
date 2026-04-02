@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Pencil, UserPlus, Trash2, Users } from 'lucide-react'
+import { UserPlus, Users } from 'lucide-react'
 import { useApp } from '@/context/AppContext'
 
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
@@ -10,8 +10,6 @@ import Arrow from '@/components/Arrow/Arrow'
 
 import './people-section.scss'
 import Button from '@/components/Button/Button'
-import IconButton from '@/components/Button/IconButton'
-import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
 import Card from '@/components/Cards/Cost/Card'
 import CardHeader from '@/components/Cards/Cost/CardHeader'
 
@@ -83,12 +81,12 @@ function PeoplePage() {
         <ul className="list-layout" role="list">
           {people.map((person) => (
             <Card as="li" key={person.id}>
-              <CardHeader 
-                as='h3'
+              <CardHeader
+                as="h3"
                 title={person.name}
                 onEdit={() => setEditingPerson(person)}
                 onDelete={() => removePerson(person.id)}
-                variantActions='largeGap'
+                variantActions="largeGap"
               />
             </Card>
           ))}
