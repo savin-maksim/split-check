@@ -1,11 +1,10 @@
-@use '/src/styles/tag-grid' as tag-grid;
-
 .modal {
   border: none;
   padding: 0;
   background: none;
   width: 100%;
   max-width: var(--cards-width);
+  color: var(--color-light);
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
@@ -113,7 +112,9 @@
   }
 
   &__tags {
-    @include tag-grid.tag-grid-container;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 100px), 1fr));
+    gap: var(--space);
   }
 
   &__tag {

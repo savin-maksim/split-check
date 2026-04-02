@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
-import { Minus, Plus, ChartPie } from 'lucide-react'
 import Button from '../Button/Button'
 import './modal.scss'
 import { toast } from 'react-hot-toast'
 import Modal from './Modal'
-import IconButton from '../Button/IconButton'
+import WhoPaidSection from '@/components/Cards/Cost/WhoPaidSection/WhoPaidSection'
+import SplitBetweenSection from '@/components/Cards/Cost/SplitBetweenSection/SplitBetweenSection'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../utils/costDistribution'
-import { getTagGridItemClassName } from '../../utils/tagGrid'
+import { togglePaidByManual } from '../../utils/togglePaidBy'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
   const [purchase, setPurchase] = useState('')
@@ -22,20 +22,24 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   const priceInputRef = useRef(null)
 
   useEffect(() => {
-    setPaidBy([])
-    setSplitBetween([])
-    setDistributionType('equal')
-    setWeights({})
+    resetPeopleState()
   }, [paymentMode])
 
   useEffect(() => {
     if (isOpen) {
-      setPaidBy([])
-      setSplitBetween([])
-      setDistributionType('equal')
-      setWeights({})
+      resetPeopleState()
     }
   }, [isOpen])
+
+  const [paidByExpanded, setPaidByExpanded] = useState(true)
+
+  const resetPeopleState = () => {
+    setPaidBy([])
+    setSplitBetween([])
+    setDistributionType('equal')
+    setWeights({})
+    setPaidByExpanded(true)
+  }
 
   const formatTitle = (text) => {
     if (!text) return ''
@@ -43,9 +47,11 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   }
 
   const handlePaidByClick = (person) => {
-    if (paymentMode === 'manual') {
-      setPaidBy((prev) => (prev.some((p) => p.id === person.id) ? [] : [person]))
-    }
+    togglePaidByManual({
+      person,
+      onPick: (selected) => setPaidBy(selected),
+      onCollapse: () => setPaidByExpanded(false),
+    })
   }
 
   const handleSplitBetweenClick = (person) => {
@@ -67,9 +73,10 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
   }
 
   const adjustWeight = (personId, delta) => {
-    const cur = Math.max(0, Math.floor(Number(weights[personId]) || 0))
-    const nextVal = Math.max(0, cur + delta)
-    setWeights((prev) => ({ ...prev, [personId]: nextVal }))
+    setWeights((prev) => {
+      const cur = Math.max(0, Math.floor(Number(prev[personId]) || 0))
+      return { ...prev, [personId]: Math.max(0, cur + delta) }
+    })
   }
 
   const handleSubmit = () => {
@@ -110,10 +117,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       setPurchase('')
       setQuantity('1')
       setPricePerUnit('')
-      setPaidBy([])
-      setSplitBetween([])
-      setDistributionType('equal')
-      setWeights({})
+      resetPeopleState()
       setError('')
       purchaseInputRef.current?.focus()
 
@@ -201,81 +205,24 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         </div>
 
         {paymentMode === 'manual' && (
-          <div className="modal__section">
-            <p className="modal__label">Кто платил?</p>
-            <div className="modal__tags">
-              {people?.map((person, i) => (
-                <Button
-                  key={person.id}
-                  className={[
-                    getTagGridItemClassName(i, people.length),
-                    paidBy.some((p) => p.id === person.id) ? 'button--active' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={() => handlePaidByClick(person)}
-                >
-                  {person.name}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <WhoPaidSection
+            people={people}
+            paidBy={paidBy}
+            expanded={paidByExpanded}
+            onToggle={() => setPaidByExpanded((p) => !p)}
+            onPersonToggle={handlePaidByClick}
+          />
         )}
 
-        <div className="modal__section">
-          <div className="modal__split-header">
-            <p className="modal__label">На кого разделить?</p>
-            <IconButton
-              icon={<ChartPie />}
-              onClick={toggleDistribution}
-              variant={distributionType === 'weighted' ? 'active' : ''}
-            />
-          </div>
-          {distributionType === 'equal' ? (
-            <div className="modal__tags">
-              {people?.map((person, i) => (
-                <Button
-                  key={person.id}
-                  className={[
-                    getTagGridItemClassName(i, people.length),
-                    splitBetween.some((p) => p.id === person.id) ? 'button--active' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={() => handleSplitBetweenClick(person)}
-                >
-                  {person.name}
-                </Button>
-              ))}
-            </div>
-          ) : (
-            <div className="modal__weights-grid">
-              {people?.map((person) => {
-                const u = Math.max(0, Math.floor(Number(weights[person.id]) || 0))
-                return (
-                  <div key={person.id} className={`button button--weight${u > 0 ? ' button--active' : ''}`}>
-                    <IconButton
-                      variant="wide"
-                      onClick={() => adjustWeight(person.id, -1)}
-                      disabled={u <= 0}
-                      aria-label="Меньше"
-                      icon={<Minus size={16} />}
-                    />
-                    <span className="modal__weight-label">
-                      x{u} {person.name}
-                    </span>
-                    <IconButton
-                      variant="wide"
-                      onClick={() => adjustWeight(person.id, 1)}
-                      aria-label="Больше"
-                      icon={<Plus size={16} />}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
+        <SplitBetweenSection
+          people={people}
+          distributionType={distributionType}
+          splitBetween={splitBetween}
+          weights={weights}
+          onToggle={handleSplitBetweenClick}
+          onToggleDistribution={toggleDistribution}
+          onAdjustWeight={adjustWeight}
+        />
 
         <button type="submit" style={{ display: 'none' }} />
       </form>

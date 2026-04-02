@@ -367,15 +367,21 @@ export function AppProvider({ children }) {
     [sessionMeta],
   )
 
-  const updateSavedCheckTitle = useCallback((id, title) => {
-    const existing = StorageService.getSavedChecks()
-    const idx = existing.findIndex((c) => c.id === id)
-    if (idx < 0) return
-    const trimmed = title.trim() || 'Без названия'
-    const next = existing.map((c, i) => (i === idx ? { ...c, title: trimmed } : c))
-    StorageService.setSavedChecks(next)
-    setSavedChecks(next)
-  }, [])
+  const updateSavedCheckTitle = useCallback(
+    (id, title) => {
+      const trimmed = title.trim() || 'Без названия'
+      const existing = StorageService.getSavedChecks()
+      const idx = existing.findIndex((c) => c.id === id)
+      if (idx < 0) return
+      const next = existing.map((c, i) => (i === idx ? { ...c, title: trimmed } : c))
+      StorageService.setSavedChecks(next)
+      setSavedChecks(next)
+      if (sessionMeta?.id === id) {
+        setSessionMeta({ ...sessionMeta, title: trimmed })
+      }
+    },
+    [sessionMeta],
+  )
 
   /** Полная подстановка сессии (например, загрузка сохранённого чека). Статистика пересчитается по данным. */
   const applySessionSnapshot = useCallback((snapshot) => {

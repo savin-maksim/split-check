@@ -12,6 +12,8 @@ import './people-section.scss'
 import Button from '@/components/Button/Button'
 import IconButton from '@/components/Button/IconButton'
 import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
+import Card from '@/components/Cards/Cost/Card'
+import CardHeader from '@/components/Cards/Cost/CardHeader'
 
 /** 1 человек, 2 человека, 5 человек, 11 человек */
 function pluralizeParticipants(n) {
@@ -56,53 +58,42 @@ function PeoplePage() {
   }
 
   return (
-    <div className="people-section">
-      <div className="people-section__container">
-        {people.length > 0 && (
-          <PageSectionHeader
-            icon={<Users size={40} aria-hidden />}
-            title="Участники"
-            subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
-            action={
-              <Button variant="danger" onClick={() => setIsClearAllModalOpen(true)}>
-                Удалить всех
-              </Button>
-            }
-          />
-        )}
+    <section className="people-section">
+      {people.length > 0 && (
+        <PageSectionHeader
+          icon={<Users size={40} aria-hidden />}
+          title="Участники"
+          subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
+          action={
+            <Button variant="danger" onClick={() => setIsClearAllModalOpen(true)}>
+              Удалить всех
+            </Button>
+          }
+        />
+      )}
 
-        {people.length === 0 ? (
-          <div className="people-section__empty">
-            <UserPlus size={48} />
-            <h2>Добавьте участников</h2>
-            <p>
-              Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы
-            </p>
-            <Arrow />
-          </div>
-        ) : (
-          <ul className="people-section__grid" role="list">
-            {people.map((person) => (
-              <li key={person.id} className="people-section__row">
-                <MarqueeTitle as="h3">{person.name}</MarqueeTitle>
-                <div className="people-section__row-actions">
-                  <IconButton
-                    icon={<Pencil />}
-                    onClick={() => setEditingPerson(person)}
-                    aria-label={`Редактировать имя: ${person.name}`}
-                  />
-                  <IconButton
-                    variant="danger"
-                    icon={<Trash2 />}
-                    onClick={() => removePerson(person.id)}
-                    aria-label={`Удалить ${person.name}`}
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {people.length === 0 ? (
+        <div className="people-section__empty">
+          <UserPlus size={48} />
+          <h2>Добавьте участников</h2>
+          <p>Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы</p>
+          <Arrow />
+        </div>
+      ) : (
+        <ul className="list-layout" role="list">
+          {people.map((person) => (
+            <Card as="li" key={person.id}>
+              <CardHeader 
+                as='h3'
+                title={person.name}
+                onEdit={() => setEditingPerson(person)}
+                onDelete={() => removePerson(person.id)}
+                variantActions='largeGap'
+              />
+            </Card>
+          ))}
+        </ul>
+      )}
 
       <AddPersonModal
         isOpen={isModalOpen === 'addPerson'}
@@ -131,7 +122,7 @@ function PeoplePage() {
           </Button>
         </div>
       </Modal>
-    </div>
+    </section>
   )
 }
 

@@ -43,6 +43,17 @@ body {
   @include visually-hidden;
 }
 
+.list-layout {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: var(--cards-width);
+  margin-inline: auto;
+}
+
 a,
 button,
 input,

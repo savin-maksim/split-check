@@ -1,0 +1,18 @@
+.card-stats {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-small);
+  color: var(--color-light);
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+
+  svg {
+    color: var(--color-orange);
+  }
+
+  &--sum {
+    font-weight: 800;
+    font-style: italic;
+  }
+}

@@ -1,0 +1,16 @@
+.card {
+  width: 100%;
+  max-width: var(--cards-width);
+  color: var(--color-light);
+  background: var(--color-glass);
+  border: var(--border);
+  border-radius: var(--border-radius);
+
+  &--active {
+    border-color: var(--color-orange);
+
+    .footer {
+      border-color: var(--color-orange);
+    }
+  }
+}

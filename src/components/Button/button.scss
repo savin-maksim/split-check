@@ -18,7 +18,7 @@
   flex: 1;
 
   @include hover {
-    &:not(.button--danger) {
+    &:not(.button--danger):not(.button--weight) {
       @include button--active-tokens;
     }
   }
@@ -30,9 +30,11 @@
     --button-box-shadow: none;
 
     @include hover {
-      --button-background-alpha: var(--button-active-hover-background-alpha);
-      --button-border-alpha: var(--button-active-hover-border-alpha);
-      --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
+      &:not(.button--weight) {
+        --button-background-alpha: var(--button-active-hover-background-alpha);
+        --button-border-alpha: var(--button-active-hover-border-alpha);
+        --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
+      }
     }
   }
 
@@ -80,12 +82,11 @@
   }
 
   &--weight {
-    padding-inline: 0;
+    padding: 0;
+    gap: 0;
 
-    @include hover {
-      --button-background-alpha: var(--button-active-hover-background-alpha);
-      --button-border-alpha: var(--button-active-hover-border-alpha);
-      --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
+    .button__label {
+      margin-block: var(--space);
     }
   }
 

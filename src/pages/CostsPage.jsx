@@ -11,10 +11,10 @@ import AddPositionModal from '@/components/Modal/AddPositionModal'
 import Arrow from '@/components/Arrow/Arrow'
 import ReceiptScanner from '@/components/ReceiptScanner/ReceiptScanner'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
-import { getTagGridItemClassName } from '@/utils/tagGrid'
 
 // Import styles
 import './cost-section.scss'
+import PersonGrid from '@/components/Cards/Cost/PersonGrid/PersonGrid'
 
 function CostsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -170,22 +170,11 @@ function CostsPage() {
         {paymentMode === 'single' && (
           <div className="payment-mode__single-payer">
             <h3>Выберите плательщика</h3>
-            <div className="payment-mode__people">
-              {people.map((person, i) => (
-                <Button
-                  key={person.id}
-                  onClick={() => selectSinglePayer(person)}
-                  className={[
-                    getTagGridItemClassName(i, people.length),
-                    singlePayer?.id === person.id ? 'button--active' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
-                  {person.name}
-                </Button>
-              ))}
-            </div>
+            <PersonGrid
+              people={people}
+              selected={singlePayer ? [singlePayer] : []}
+              onToggle={selectSinglePayer}
+            />
           </div>
         )}
       </div>

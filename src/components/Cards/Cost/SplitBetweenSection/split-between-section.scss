@@ -1,0 +1,19 @@
+@use '@/styles/mixins' as *;
+
+.split-between-section {
+  padding-inline: 0.5rem;
+
+  &__label {
+    @include flex-center();
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    font-size: 14px;
+  }
+
+  &__weights-tags {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+}

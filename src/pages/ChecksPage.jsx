@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Receipt, Users, Calculator, FolderInput, Trash2, Pencil } from 'lucide-react'
+import { Receipt, Users, Calculator, FolderInput } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useApp } from '@/context/AppContext'
-import IconButton from '@/components/Button/IconButton'
 import { formatAmount } from '@/utils/formatters'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
 import Modal from '@/components/Modal/Modal'
-import MarqueeTitle from '@/components/MarqueeTitle/MarqueeTitle'
 import Button from '@/components/Button/Button'
 import './checks-page.scss'
+import Card from '@/components/Cards/Cost/Card'
+import CardHeader from '@/components/Cards/Cost/CardHeader'
+import CardFooter from '@/components/Cards/Cost/CardFooter'
+import CardStats from '@/components/Cards/Cost/CardStats'
 
 function formatSavedDate(ts) {
   return new Intl.DateTimeFormat('ru-RU', {
@@ -111,91 +113,71 @@ function ChecksPage() {
 
   return (
     <div className="checks-page">
-      <div className="checks-page__container">
-        <PageSectionHeader icon={<Receipt size={40} aria-hidden />} title="Чеки" />
+      <PageSectionHeader icon={<Receipt size={40} aria-hidden />} title="Чеки" />
 
-        <section className="checks-page__section">
-          {savedChecks.length === 0 ? (
-            <div className="checks-page__empty-saved">
-              <FolderInput size={40} aria-hidden />
-              <p>Пока нет чеков — нажмите «Новый чек», задайте название и переходите к участникам.</p>
-            </div>
-          ) : (
-            <ul className="checks-page__saved-list">
-              {savedChecks.map((check) => {
-                const sum = sumCosts(check.costs || [])
-                const pCount = (check.people || []).length
-                const cCount = (check.costs || []).length
-                const isActive = sessionMeta?.id === check.id
-                return (
-                  <li key={check.id} className="checks-page__saved-list-item">
-                    <Link
-                      to={`/check/${check.id}`}
-                      className={`checks-page__saved-card${isActive ? ' checks-page__saved-card--active' : ''}`}
-                      onClick={(e) => {
-                        if (sessionMeta?.id === check.id) {
-                          e.preventDefault()
-                          toast('Этот чек уже открыт')
-                        }
-                      }}
-                    >
-                      <div className="checks-page__saved-card-main">
-                        <div className="checks-page__saved-card-header">
-                          <MarqueeTitle as="h3">{check.title}</MarqueeTitle>
-                          <div className="checks-page__saved-header-actions">
-                            <IconButton
-                              icon={<Pencil aria-hidden />}
-                              title="Редактировать чек"
-                              aria-label="Редактировать чек"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                handleEdit(check)
-                              }}
-                            />
-                            <IconButton
-                              variant="danger"
-                              icon={<Trash2 aria-hidden />}
-                              title="Удалить чек"
-                              aria-label="Удалить чек"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setCheckToDelete({ id: check.id, title: check.title })
-                              }}
-                            />
-                          </div>
-                        </div>
+      <section className="checks-page__section">
+        {savedChecks.length === 0 ? (
+          <div className="checks-page__empty-saved">
+            <FolderInput size={40} aria-hidden />
+            <p>Пока нет чеков — нажмите «Новый чек», задайте название и переходите к участникам.</p>
+          </div>
+        ) : (
+          <ul className="list-layout">
+            {savedChecks.map((check) => {
+              const sum = sumCosts(check.costs || [])
+              const pCount = (check.people || []).length
+              const cCount = (check.costs || []).length
+              const isActive = sessionMeta?.id === check.id
+              return (
+                <Card as="li" key={check.id} className={isActive ? 'card--active' : ''}>
+                  <Link
+                    to={`/check/${check.id}`}
+                    onClick={(e) => {
+                      if (sessionMeta?.id === check.id) {
+                        e.preventDefault()
+                        toast('Этот чек уже открыт')
+                      }
+                    }}
+                  >
+                    <article className="checks-page__saved-card-main">
+                      <CardHeader
+                        title={check.title}
+                        as="h3"
+                        onEdit={() => handleEdit(check)}
+                        onDelete={() => setCheckToDelete({ id: check.id, title: check.title })}
+                        variantActions="largeGap"
+                      />
 
-                        <time className="checks-page__saved-date" dateTime={new Date(check.createdAt).toISOString()}>
-                          {formatSavedDate(check.createdAt)}
-                        </time>
-                        <div className="checks-page__current-meta checks-page__saved-card-meta">
-                          <span className="checks-page__current-stat">
-                            <Users size={18} aria-hidden />
-                            {pCount} {pluralizeParticipants(pCount)}
-                          </span>
-                          <span className="checks-page__current-stat">
-                            <Calculator size={18} aria-hidden />
-                            {cCount} {pluralizePositions(cCount)}
-                          </span>
-                          <span className="checks-page__current-stat checks-page__current-stat--sum">
-                            <Receipt size={18} aria-hidden />
-                            {formatAmount(sum)} ₽
-                          </span>
-                          {check.paymentMode === 'single' && (
-                            <span className="checks-page__saved-badge">Один плательщик</span>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </section>
-      </div>
+                      <time className="checks-page__saved-date" dateTime={new Date(check.createdAt).toISOString()}>
+                        {formatSavedDate(check.createdAt)}
+                      </time>
+
+                      <CardFooter variant="grid">
+                        <CardStats
+                          icon={<Users size={18} aria-hidden />}
+                          value={pCount}
+                          label={pluralizeParticipants(pCount)}
+                        />
+                        <CardStats
+                          icon={<Calculator size={18} aria-hidden />}
+                          value={cCount}
+                          label={pluralizePositions(cCount)}
+                        />
+                        <CardStats
+                          className="card-stats--sum"
+                          icon={<Receipt size={18} aria-hidden />}
+                          value={formatAmount(sum)}
+                          label="₽"
+                        />
+                      </CardFooter>
+                    </article>
+                  </Link>
+                </Card>
+              )
+            })}
+          </ul>
+        )}
+      </section>
 
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
         <h3 className="modal__title">Новый чек</h3>

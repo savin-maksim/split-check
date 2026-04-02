@@ -18,13 +18,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
     color: var(--color-text-active);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    padding: var(--space);
+    border-radius: var(--border-radius-small);
     transition: all var(--transition-duration) ease;
-    user-select: none;
-    -webkit-user-select: none;
 
     &.active {
       color: var(--color-orange);

@@ -2,57 +2,61 @@
 
 .checks-page {
   width: 100%;
-  max-width: var(--cards-width);
-  margin-inline: auto;
-  min-height: calc(90vh - var(--navigation-height));
-
-  &__container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
 
   &__section {
-    margin-top: 0.5rem;
+    margin-bottom: calc(var(--navigation-height) - var(--space));
   }
 
-  &__section-title {
-    margin: 0 0 0.75rem;
-    font-weight: 700;
-    color: var(--color-text-secondary);
-    @include fluid-text(18, 15);
-  }
-
-  &__new-check-btn {
-    flex-shrink: 0;
-  }
-
-  &__create-lead {
-    margin: 0 0 1rem;
-    color: var(--color-text-secondary);
-    line-height: 1.45;
-    font-size: 0.9375rem;
-  }
-
-  &__current-meta {
+  &__saved-card {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
-    align-items: center;
-  }
+    min-width: 0;
+    background: var(--color-glass);
+    border: var(--border);
+    border-radius: var(--border-radius-small);
 
-  &__current-stat {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--color-light);
-    @include fluid-text(16, 14);
+    &-main {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space);
+      margin: var(--space);
 
-    svg {
-      color: var(--color-orange);
-      flex-shrink: 0;
+      &-actions {
+        display: flex;
+        gap: var(--space);
+      }
+    }
+
+    &--active {
+      border-color: var(--color-orange);
+
+      .checks-page__current-meta {
+        border-color: var(--color-orange);
+      }
     }
   }
+
+  &__saved-date {
+    margin-left: var(--space);
+    font-size: 0.875rem;
+  }
+
+  &__current {
+    &-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space);
+    padding: var(--space);
+    border-top: var(--border-width) solid var(--color-glass);
+  }
+}
 
   &__empty-saved {
     text-align: center;
@@ -71,117 +75,6 @@
       line-height: 1.5;
       max-width: 22rem;
       margin-inline: auto;
-    }
-  }
-
-  &__saved-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 3.5rem;
-  }
-
-  &__saved-list-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-
-    @media (min-width: 480px) {
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
-    }
-  }
-
-  &__saved-card {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-    background: var(--color-glass);
-    border: var(--border);
-    border-radius: var(--border-radius-small);
-    padding: 0.5rem;
-
-    &--active {
-      border-color: var(--color-active);
-    }
-  }
-
-  &__saved-card-meta {
-    margin-top: 0.5rem;
-  }
-
-  &__saved-card-main {
-    min-width: 0;
-    flex: 1;
-  }
-
-  &__saved-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
-  &__saved-header-actions {
-    display: flex;
-    flex-shrink: 0;
-    gap: 0.75rem;
-    align-items: center;
-  }
-
-  &__saved-date {
-    font-size: 0.8125rem;
-    color: var(--color-text-active);
-  }
-
-  &__saved-badge {
-    font-size: 0.75rem;
-    padding: 0.15rem 0.45rem;
-    border-radius: 999px;
-    background: rgba(255, 160, 80, 0.2);
-    color: var(--color-orange);
-    border: 1px solid rgba(255, 160, 80, 0.35);
-  }
-
-  &__saved-actions {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 0.5rem;
-
-    @media (min-width: 480px) {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  }
-
-  &__icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--border-radius-small);
-    border: var(--border);
-    background: var(--color-glass);
-    color: var(--color-light);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-
-    @include hover {
-      filter: brightness(1.08);
-    }
-
-    &--delete {
-      padding: 0.5rem;
-      color: rgba(255, 140, 140, 0.95);
-      border-color: rgba(255, 100, 100, 0.35);
     }
   }
 }

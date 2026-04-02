@@ -5,12 +5,17 @@
   --font-p-min: 10;
 
   --color-light: #ffffff;
+  --color-text-secondary: #b1b1b1;
   --color-dark: #000000;
   --color-active: rgba(255, 94, 0, 0.5);
   --color-orange: rgb(255, 115, 0);
   --color-glass: rgba(255, 255, 255, 0.2);
   --color-text-active: #ffffff;
   --color-bg: 31, 31, 31;
+
+  --space: 0.5rem;
+  --space-small: 0.25rem;
+  --space-large: 1rem;
 
   --border-width: 2px;
   --border: var(--border-width) solid var(--color-glass);

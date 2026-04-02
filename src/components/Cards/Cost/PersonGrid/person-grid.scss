@@ -1,0 +1,9 @@
+.person-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 100px), 1fr));
+  gap: var(--space);
+
+  &--weights {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

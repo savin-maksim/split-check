@@ -1,0 +1,8 @@
+@use '@/styles/mixins' as *;
+
+.total-amount {
+  display: flex;
+  justify-content: end;
+  margin: 0;
+  @include fluid-text(30, 18);
+}
