@@ -3,7 +3,7 @@ import { Receipt, Users, Calculator, FolderInput } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useApp } from '@/context/AppContext'
-import { formatAmount } from '@/utils/formatters'
+import formatters from '@/utils/formatters'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
 import Modal from '@/components/Modal/Modal'
 import Button from '@/components/Button/Button'
@@ -18,24 +18,6 @@ function formatSavedDate(ts) {
     dateStyle: 'short',
     timeStyle: 'short',
   }).format(ts)
-}
-
-function pluralizePositions(n) {
-  const n100 = n % 100
-  if (n100 >= 11 && n100 <= 14) return 'позиций'
-  const n10 = n % 10
-  if (n10 === 1) return 'позиция'
-  if (n10 >= 2 && n10 <= 4) return 'позиции'
-  return 'позиций'
-}
-
-function pluralizeParticipants(n) {
-  const n100 = n % 100
-  if (n100 >= 11 && n100 <= 14) return 'участников'
-  const n10 = n % 10
-  if (n10 === 1) return 'участник'
-  if (n10 >= 2 && n10 <= 4) return 'участника'
-  return 'участников'
 }
 
 function sumCosts(costs) {
@@ -156,17 +138,17 @@ function ChecksPage() {
                         <CardStats
                           icon={<Users size={18} aria-hidden />}
                           value={pCount}
-                          label={pluralizeParticipants(pCount)}
+                          label={formatters.pluralize(pCount, ['участник', 'участника', 'участников'])}
                         />
                         <CardStats
                           icon={<Calculator size={18} aria-hidden />}
                           value={cCount}
-                          label={pluralizePositions(cCount)}
+                          label={formatters.pluralize(cCount, ['позиция', 'позиции', 'позиций'])}
                         />
                         <CardStats
                           className="card-stats--sum"
                           icon={<Receipt size={18} aria-hidden />}
-                          value={formatAmount(sum)}
+                          value={formatters.formatAmount(sum)}
                           label="₽"
                         />
                       </CardFooter>

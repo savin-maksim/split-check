@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useStatsPageSnapshot } from '../hooks/useStatsPageSnapshot'
 import TransferCard from '../components/Cards/Transfer/TransferCard'
 import Spinner from '../components/Spinner/Spinner'
-import { formatAmount, formatQuantity, formatTotalQuantity } from '../utils/formatters.js'
+import formatters from '../utils/formatters.js'
 import { Link } from 'react-router-dom'
 import { Users, Calculator, BarChart3 } from 'lucide-react'
 import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
@@ -89,7 +89,7 @@ function StatsPage() {
             </div>
 
             <div className="statistics-card__total">
-              <h3 className="">{formatAmount(statistics.totalStats.totalAmount)} ₽</h3>
+              <h3 className="">{formatters.formatAmount(statistics.totalStats.totalAmount)} ₽</h3>
             </div>
 
             <div className="statistics-card__expenses">
