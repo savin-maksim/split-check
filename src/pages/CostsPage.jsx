@@ -175,7 +175,7 @@ function CostsPage() {
         )}
       </div>
 
-      <div className="cost-section__cards">
+      <div className="list-layout">
         {filteredCosts.map((cost) => (
           <CostCard
             key={cost.id}

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { StorageService } from '../services/storage'
 import { validatePerson, validateCost } from '../utils/validation'
 import { toast } from 'react-hot-toast'
+import formatters from '@/utils/formatters'
 
 const AppContext = createContext()
 
@@ -104,20 +105,23 @@ export function AppProvider({ children }) {
 
             // Show success notification
             if (uniqueNames.length === 1) {
-              toast.success(`Участник ${uniqueNames[0].name} добавлен`)
+              toast.success(`${formatters.formatPersonName(uniqueNames[0].name)} добавлен`)
             } else {
-              toast.success(`Добавлено ${uniqueNames.length} участников`)
+              toast.success(
+                `Добавлено ${uniqueNames.length} ${formatters.pluralize(uniqueNames.length, ['человек', 'человека', 'человек'])}`,
+              )
             }
           }
 
           // If there were duplicates, show warning
           if (duplicates.length > 0) {
             toast.error(`${duplicates.join(', ')} уже в списке`)
+            return
           }
         } else {
           validatePerson(newPerson)
           setPeople((prev) => [...prev, newPerson])
-          toast.success(`Участник ${newPerson.name} добавлен`)
+          toast.success(`${formatters.formatPersonName(newPerson.name)} добавлен`)
         }
       } catch (error) {
         toast.error(error.message)

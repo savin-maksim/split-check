@@ -13,13 +13,6 @@ import CardHeader from '@/components/Cards/Cost/CardHeader'
 import CardFooter from '@/components/Cards/Cost/CardFooter'
 import CardStats from '@/components/Cards/Cost/CardStats'
 
-function formatSavedDate(ts) {
-  return new Intl.DateTimeFormat('ru-RU', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  }).format(ts)
-}
-
 function sumCosts(costs) {
   return costs.reduce((s, c) => s + (Number(c.amount) || 0), 0)
 }
@@ -131,14 +124,14 @@ function ChecksPage() {
                       />
 
                       <time className="checks-page__saved-date" dateTime={new Date(check.createdAt).toISOString()}>
-                        {formatSavedDate(check.createdAt)}
+                        {formatters.formatSavedDate(check.createdAt)}
                       </time>
 
                       <CardFooter variant="grid">
                         <CardStats
                           icon={<Users size={18} aria-hidden />}
                           value={pCount}
-                          label={formatters.pluralize(pCount, ['участник', 'участника', 'участников'])}
+                          label={formatters.pluralize(pCount, ['человек', 'человека', 'человек'])}
                         />
                         <CardStats
                           icon={<Calculator size={18} aria-hidden />}
@@ -149,7 +142,6 @@ function ChecksPage() {
                           className="card-stats--sum"
                           icon={<Receipt size={18} aria-hidden />}
                           value={formatters.formatAmount(sum)}
-                          label="₽"
                         />
                       </CardFooter>
                     </article>

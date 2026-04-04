@@ -1,6 +1,8 @@
 .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
-  max-width: var(--cards-width);
   color: var(--color-light);
   background: var(--color-glass);
   border: var(--border);

@@ -12,16 +12,7 @@ import './people-section.scss'
 import Button from '@/components/Button/Button'
 import Card from '@/components/Cards/Cost/Card'
 import CardHeader from '@/components/Cards/Cost/CardHeader'
-
-/** 1 человек, 2 человека, 5 человек, 11 человек */
-function pluralizeParticipants(n) {
-  const n100 = n % 100
-  if (n100 >= 11 && n100 <= 14) return 'человек'
-  const n10 = n % 10
-  if (n10 === 1) return 'человек'
-  if (n10 >= 2 && n10 <= 4) return 'человека'
-  return 'человек'
-}
+import formatters from '@/utils/formatters'
 
 function PeoplePage() {
   const { people, addPerson, removePerson, removeAllPeople, updatePerson, isModalOpen, setIsModalOpen } = useApp()
@@ -61,7 +52,7 @@ function PeoplePage() {
         <PageSectionHeader
           icon={<Users size={40} aria-hidden />}
           title="Участники"
-          subtitle={`${people.length} ${pluralizeParticipants(people.length)}`}
+          subtitle={`${people.length} ${formatters.pluralize(people.length, ['человек', 'человека', 'человек'])}`}
           action={
             <Button variant="danger" onClick={() => setIsClearAllModalOpen(true)}>
               Удалить всех

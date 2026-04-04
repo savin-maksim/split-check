@@ -82,19 +82,19 @@ function StatsPage() {
       </div>
 
       <div className="statistics-section">
-        <div className="statistics-section__cards">
+        <div className="list-layout">
           <div className="statistics-card statistics-card--summary" data-stat-share="summary">
             <div className="statistics-card__header">
               <h3 className="statistics-card__name">Общая сумма</h3>
             </div>
 
             <div className="statistics-card__total">
-              <h3 className="">{formatters.formatAmount(statistics.totalStats.totalAmount)} ₽</h3>
+              <h3 className="">{formatters.formatAmount(statistics.totalStats.totalAmount)}</h3>
             </div>
 
             <div className="statistics-card__expenses">
               <div className="statistics-card__expenses-title statistics-card__expenses-title--columns">
-                <h4 className="">Наим.</h4>
+                <h4 className="statistics-card__expense-info">Наим.</h4>
                 <h4 className="statistics-card__expense-quantity statistics-card__expense-quantity--white">Кол-во</h4>
                 <h4 className="statistics-card__expense-amount">Сумма</h4>
               </div>
@@ -104,15 +104,17 @@ function StatsPage() {
                     <span className="statistics-card__expense-title">{expense.title}</span>
                   </div>
                   <div className="statistics-card__expense-quantity">
-                    <span>{formatTotalQuantity(expense.quantity)} шт</span>
+                    <span>{formatters.formatTotalQuantity(expense.quantity)} шт</span>
                   </div>
-                  <h4 className="statistics-card__expense-amount">{formatAmount(expense.amount)} ₽</h4>
+                  <h4 className="statistics-card__expense-amount">{formatters.formatAmount(expense.amount)}</h4>
                 </div>
               ))}
             </div>
           </div>
 
           {statistics.peopleStats.map((person) => {
+            if (person.expenses.length === 0) return null
+
             const shareCapture = personIncludedInStatShare(person)
             return (
               <div
@@ -126,60 +128,48 @@ function StatsPage() {
                     }
                   : {})}
               >
-                <div className="statistics-card__header">
-                  <h3 className="statistics-card__name">{person.name}</h3>
-                </div>
-
-                {paymentMode === 'single' ? (
-                  <div className="statistics-card__info">
-                    <span>Потратил:</span>
-                    <h4 className="">{formatAmount(person.totalAmount)} ₽</h4>
+                <div className="statistics-card__top">
+                  <div className="statistics-card__header">
+                    <h3 className="statistics-card__name">{person.name}</h3>
                   </div>
-                ) : (
                   <div className="statistics-card__info">
                     <span>Потратил(а):</span>
-                    <h4 className="">{formatAmount(person.totalAmount)} ₽</h4>
+                    <h4 className="">{formatters.formatAmount(person.totalAmount)}</h4>
                   </div>
-                )}
-
-                {person.expenses.length > 0 && (
-                  <div className="statistics-card__expenses">
-                    <h4 className="statistics-card__expenses-title">Детализация расходов:</h4>
-                    <div className="statistics-card__expense-items">
-                      {person.expenses.map((expense, index) => (
-                        <div
-                          key={index}
-                          className="statistics-card__expense-item statistics-card__expense-item--detailed"
-                        >
-                          <div className="statistics-card__expense-info">
-                            <span className="statistics-card__expense-title">{expense.description}</span>
-                          </div>
-                          <div className="statistics-card__expense-quantity">
-                            <span>{formatQuantity(expense.quantity, expense.splitCount)} шт</span>
-                          </div>
-                          <h4 className="statistics-card__expense-amount">{formatAmount(expense.amount)} ₽</h4>
+                  <h4 className="statistics-card__expenses-title">Детализация расходов:</h4>
+                  <div className="statistics-card__expense-items">
+                    {person.expenses.map((expense, index) => (
+                      <div
+                        key={index}
+                        className="statistics-card__expense-item statistics-card__expense-item--detailed"
+                      >
+                        <div className="statistics-card__expense-info">
+                          <span className="statistics-card__expense-title">{expense.description}</span>
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="statistics-card__summary">
-                      <div className="statistics-card__summary-item">
-                        <h4 className="">Итог:</h4>
-                        <h4 className="statistics-card__expense-amount">
-                          {formatAmount(person.expenses.reduce((sum, exp) => sum + exp.amount, 0))} ₽
-                        </h4>
+                        <div className="statistics-card__expense-quantity">
+                          <span>{formatters.formatQuantity(expense.quantity, expense.splitCount)} шт</span>
+                        </div>
+                        <h4 className="statistics-card__expense-amount">{formatters.formatAmount(expense.amount)}</h4>
                       </div>
-                      <div className="statistics-card__summary-item">
-                        <h4 className="">Баланс:</h4>
-                        <h4
-                          className={`statistics-card__expense-amount ${person.balance > 0 ? 'positive' : person.balance < 0 ? 'negative' : ''}`}
-                        >
-                          {formatAmount(person.balance)} ₽
-                        </h4>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                )}
+                </div>
+                <div className="statistics-card__summary">
+                  <div className="statistics-card__summary-item">
+                    <h4 className="">Итог:</h4>
+                    <h4 className="statistics-card__expense-amount">
+                      {formatters.formatAmount(person.expenses.reduce((sum, exp) => sum + exp.amount, 0))}
+                    </h4>
+                  </div>
+                  <div className="statistics-card__summary-item">
+                    <h4 className="">Баланс:</h4>
+                    <h4
+                      className={`statistics-card__expense-amount ${person.balance > 0 ? 'positive' : person.balance < 0 ? 'negative' : ''}`}
+                    >
+                      {formatters.formatAmount(person.balance)}
+                    </h4>
+                  </div>
+                </div>
               </div>
             )
           })}

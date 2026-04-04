@@ -13,6 +13,6 @@ export default function CardStats({ icon, value, label, className, ...rest }) {
 CardStats.propTypes = {
   icon: PropTypes.element.isRequired,
   value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   className: PropTypes.string,
 }

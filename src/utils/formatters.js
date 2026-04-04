@@ -2,7 +2,8 @@ const formatters = {
   formatAmount(amount) {
     return new Intl.NumberFormat('ru-RU', {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      style: 'currency',
+      currency: 'RUB',
     }).format(amount)
   },
 
@@ -34,6 +35,13 @@ const formatters = {
     if (n10 === 1) return one
     if (n10 >= 2 && n10 <= 4) return few
     return many
+  },
+
+  formatSavedDate(ts) {
+    return new Intl.DateTimeFormat('ru-RU', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(ts)
   },
 }
 
