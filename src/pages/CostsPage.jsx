@@ -78,14 +78,6 @@ function CostsPage() {
           </p>
           <Arrow className="arrow--to-people" />
         </div>
-        <AddPositionModal
-          isOpen={isModalOpen === 'addCost'}
-          onClose={() => setIsModalOpen(null)}
-          onSubmit={handleAddPosition}
-          title="Добавить расход"
-          people={people}
-          paymentMode={paymentMode}
-        />
       </div>
     )
   }

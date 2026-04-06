@@ -11,8 +11,8 @@ import InputField from '../Input/InputField'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
   const [purchase, setPurchase] = useState('')
-  const [quantity, setQuantity] = useState()
-  const [pricePerUnit, setPricePerUnit] = useState(0)
+  const [quantity, setQuantity] = useState(1)
+  const [pricePerUnit, setPricePerUnit] = useState()
   const [paidBy, setPaidBy] = useState([])
   const [splitBetween, setSplitBetween] = useState([])
   const [distributionType, setDistributionType] = useState('equal')
@@ -161,30 +161,33 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       >
         <div className="modal__inputs">
           <InputField
-            // ref={purchaseInputRef}
+            ref={purchaseInputRef}
             value={purchase}
             onChange={(e) => setPurchase(e.target.value)}
-            // onKeyDown={(e) => handleKeyDown(e, 'purchase')}
+            onKeyDown={(e) => handleKeyDown(e, 'purchase')}
             autoComplete="off"
             label="Название покупки"
             autoFocus
-            // required
+            enterKeyHint="next"
           />
           <div className="modal__price-inputs">
             <InputField
-              type="number"
-              // ref={quantityInputRef}
+              ref={quantityInputRef}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              // onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+              onKeyDown={(e) => handleKeyDown(e, 'quantity')}
               autoComplete="off"
               label="Количество"
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              enterKeyHint="next"
             />
             <InputField
-              // ref={priceInputRef}
+              ref={priceInputRef}
               value={pricePerUnit}
               onChange={(e) => setPricePerUnit(e.target.value)}
-              // onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+              onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
               autoComplete="off"
               label="Цена за единицу"
               type="number"

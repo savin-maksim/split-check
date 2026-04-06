@@ -1,24 +1,8 @@
-import React, { useState } from 'react'
+import { forwardRef, useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import './input-field.scss'
 
-const InputField = (props) => {
-  const {
-    className,
-    type = 'text',
-    id,
-    name,
-    value,
-    onChange,
-    placeholder,
-    label,
-    isLabelHidden = false,
-    required = false,
-    autoComplete,
-    error,
-    extraAttrs,
-  } = props
-
+const InputField = forwardRef(({ className, type = 'text', label, isLabelHidden = false, error, placeholder, ...rest }, ref) => {
   const [showPassword, setShowPassword] = useState(false)
   const isPasswordType = type === 'password'
 
@@ -31,20 +15,15 @@ const InputField = (props) => {
   return (
     <div className={['input-field', className].filter(Boolean).join(' ')}>
       <input
+        ref={ref}
         className="input-field__input"
         type={inputType}
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
         placeholder={placeholder || label}
-        autoComplete={autoComplete}
-        required={required}
-        {...extraAttrs}
+        {...rest}
       />
 
       {!isLabelHidden && (
-        <label className="input-field__label" htmlFor={id}>
+        <label className="input-field__label" htmlFor={rest.id}>
           {label}
         </label>
       )}
@@ -58,6 +37,8 @@ const InputField = (props) => {
       {error && <div className="input-field__error">{error}</div>}
     </div>
   )
-}
+})
+
+InputField.displayName = 'InputField'
 
 export default InputField
