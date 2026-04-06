@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Button from '../Button/Button'
 import Modal from './Modal'
 import './modal.scss'
+import InputField from '../Input/InputField'
 
 function EditPersonModal({ isOpen, onClose, onSubmit, title = 'Редактировать имя', initialName = '' }) {
   const [name, setName] = useState(initialName)
@@ -29,24 +30,24 @@ function EditPersonModal({ isOpen, onClose, onSubmit, title = 'Редактир�
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="modal__title">{title}</h2>
       <form
-        className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault()
           handleSubmit()
         }}
       >
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Имя участника"
-          className="modal__input"
-          autoFocus
-        />
+        <div className="modal__inputs">
+          <InputField
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            label={'Имя участника'}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            required
+          />
+        </div>
         <div className="modal__buttons">
           <Button onClick={onClose}>Отмена</Button>
-          <Button variant="active" onClick={handleSubmit}>
+          <Button type="submit" variant="active" onClick={handleSubmit}>
             Сохранить
           </Button>
         </div>

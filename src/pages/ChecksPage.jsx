@@ -12,6 +12,7 @@ import Card from '@/components/Cards/Cost/Card'
 import CardHeader from '@/components/Cards/Cost/CardHeader'
 import CardFooter from '@/components/Cards/Cost/CardFooter'
 import CardStats from '@/components/Cards/Cost/CardStats'
+import InputField from '@/components/Input/InputField'
 
 function sumCosts(costs) {
   return costs.reduce((s, c) => s + (Number(c.amount) || 0), 0)
@@ -156,21 +157,21 @@ function ChecksPage() {
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
         <h3 className="modal__title">Новый чек</h3>
         <form
-          className="modal__inputs"
           onSubmit={(e) => {
             e.preventDefault()
             handleCreateSubmit(e)
           }}
         >
-          <input
-            type="text"
-            className="modal__input"
-            value={createTitle}
-            onChange={(e) => setCreateTitle(e.target.value)}
-            placeholder="Например: Ужин в пятницу"
-            autoComplete="off"
-            autoFocus
-          />
+          <div className="modal__inputs">
+            <InputField
+              value={createTitle}
+              onChange={(e) => setCreateTitle(e.target.value)}
+              label={'Наименование чека'}
+              autoComplete="off"
+              autoFocus
+              required
+            />
+          </div>
           <div className="modal__buttons">
             <Button onClick={() => setIsCreateModalOpen(false)}>Отмена</Button>
             <Button type="submit" className="button--active">
@@ -199,16 +200,17 @@ function ChecksPage() {
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
         <h3 className="modal__title">Редактировать чек</h3>
-        <form className="modal__inputs" onSubmit={(e) => handleEditSubmit(e)}>
-          <input
-            type="text"
-            className="modal__input"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            placeholder="Название чека"
-            autoComplete="off"
-            autoFocus
-          />
+        <form onSubmit={(e) => handleEditSubmit(e)}>
+          <div className="modal__inputs">
+            <InputField
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              label={'Название чека'}
+              autoComplete="off"
+              autoFocus
+              required
+            />
+          </div>
           <div className="modal__buttons">
             <Button onClick={() => setIsEditModalOpen(false)}>Отмена</Button>
             <Button type="submit" className="button--active">

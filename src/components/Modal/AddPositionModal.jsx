@@ -7,11 +7,12 @@ import WhoPaidSection from '@/components/Cards/Cost/WhoPaidSection/WhoPaidSectio
 import SplitBetweenSection from '@/components/Cards/Cost/SplitBetweenSection/SplitBetweenSection'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../utils/costDistribution'
 import { togglePaidByManual } from '../../utils/togglePaidBy'
+import InputField from '../Input/InputField'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
   const [purchase, setPurchase] = useState('')
-  const [quantity, setQuantity] = useState('1')
-  const [pricePerUnit, setPricePerUnit] = useState('')
+  const [quantity, setQuantity] = useState()
+  const [pricePerUnit, setPricePerUnit] = useState(0)
   const [paidBy, setPaidBy] = useState([])
   const [splitBetween, setSplitBetween] = useState([])
   const [distributionType, setDistributionType] = useState('equal')
@@ -25,11 +26,11 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
     resetPeopleState()
   }, [paymentMode])
 
-  useEffect(() => {
-    if (isOpen) {
-      resetPeopleState()
-    }
-  }, [isOpen])
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     resetPeopleState()
+  //   }
+  // }, [isOpen])
 
   const [paidByExpanded, setPaidByExpanded] = useState(true)
 
@@ -115,7 +116,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       })
 
       setPurchase('')
-      setQuantity('1')
+      setQuantity(1)
       setPricePerUnit('')
       resetPeopleState()
       setError('')
@@ -146,62 +147,52 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
     }
   }
 
-  if (!isOpen) return null
+  // if (!isOpen) return null
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="modal__title">{title}</h2>
-      {error && <p className="modal__error">{error}</p>}
+      {/* {error && <p className="modal__error">{error}</p>} */}
       <form
-        className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault()
           handleSubmit()
         }}
       >
-        <input
-          ref={purchaseInputRef}
-          type="text"
-          value={purchase}
-          onChange={(e) => setPurchase(e.target.value)}
-          onKeyDown={(e) => handleKeyDown(e, 'purchase')}
-          placeholder="Название покупки"
-          className="modal__input"
-          autoFocus
-        />
-        <div className="modal__price-inputs">
-          <input
-            ref={quantityInputRef}
-            type="text"
-            inputMode="numeric"
-            enterKeyHint="next"
-            pattern="[0-9]*"
-            value={quantity}
-            onChange={(e) => {
-              const value = e.target.value.replace(/,/g, '.').replace(/\.+/g, '.')
-              setQuantity(value)
-              setError('')
-            }}
-            onKeyDown={(e) => handleKeyDown(e, 'quantity')}
-            placeholder="Количество"
-            className="modal__input modal__input--half"
+        <div className="modal__inputs">
+          <InputField
+            // ref={purchaseInputRef}
+            value={purchase}
+            onChange={(e) => setPurchase(e.target.value)}
+            // onKeyDown={(e) => handleKeyDown(e, 'purchase')}
+            autoComplete="off"
+            label="Название покупки"
+            autoFocus
+            // required
           />
-          <input
-            ref={priceInputRef}
-            type="text"
-            inputMode="numeric"
-            enterKeyHint="done"
-            pattern="[0-9]*"
-            value={pricePerUnit}
-            onChange={(e) => {
-              const value = e.target.value.replace(/,/g, '.').replace(/\.+/g, '.')
-              setPricePerUnit(value)
-              setError('')
-            }}
-            onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
-            placeholder="Цена за единицу"
-            className="modal__input"
-          />
+          <div className="modal__price-inputs">
+            <InputField
+              type="number"
+              // ref={quantityInputRef}
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              // onKeyDown={(e) => handleKeyDown(e, 'quantity')}
+              autoComplete="off"
+              label="Количество"
+            />
+            <InputField
+              // ref={priceInputRef}
+              value={pricePerUnit}
+              onChange={(e) => setPricePerUnit(e.target.value)}
+              // onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
+              autoComplete="off"
+              label="Цена за единицу"
+              type="number"
+              inputMode="numeric"
+              enterKeyHint="done"
+              pattern="[0-9]*"
+            />
+          </div>
         </div>
 
         {paymentMode === 'manual' && (

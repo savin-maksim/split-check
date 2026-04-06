@@ -1,0 +1,88 @@
+.input-field {
+  position: relative;
+
+  &__input {
+    background-color: var(--color-glass);
+    border: var(--border);
+    border-radius: var(--border-radius-small);
+    width: 100%;
+    padding: 0.75rem;
+    color: var(--color-light);
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-orange);
+    }
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    &:focus + label,
+    &:not(:placeholder-shown) + label {
+      transform: translateY(-130%);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0 var(--space);
+      color: var(--color-dark);
+    }
+
+    &:not(:placeholder-shown) + label {
+      background-color: var(--color-text-secondary);
+      border-radius: var(--border-radius-small);
+      color: var(--color-dark);
+    }
+
+    &:focus + label {
+      background-color: var(--color-orange);
+      border-radius: var(--border-radius-small);
+      color: var(--color-dark);
+    }
+
+    &:required:user-invalid {
+      border-color: var(--error-color);
+
+      &:focus + label {
+        background-color: var(--error-color);
+        border-radius: var(--border-radius-small);
+        border-color: var(--error-color);
+        color: var(--color-light);
+      }
+    }
+  }
+
+  &__label {
+    position: absolute;
+    top: calc(0.75rem + 0.15rem);
+    left: 0.75rem;
+    color: var(--color-light);
+    pointer-events: none;
+    transition: var(--transition-duration) cubic-bezier(0.01, 0.01, 0.13, 0.96);
+  }
+
+  &__password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-orange);
+    cursor: pointer;
+    padding: 2px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__error {
+    background-color: rgba(247, 73, 73, 0.15);
+    color: var(--error-color);
+    padding: var(--space);
+    margin-top: var(--space);
+    border-radius: var(--border-radius-small);
+    font-size: 0.875rem;
+    border: 1px solid rgba(247, 73, 73, 0.3);
+  }
+}

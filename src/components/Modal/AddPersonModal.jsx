@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../Button/Button'
 import Modal from './Modal'
 import './modal.scss'
+import InputField from '../Input/InputField'
 
 function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
   const [newPersonName, setNewPersonName] = useState('')
@@ -24,24 +25,25 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="modal__title">{title}</h2>
       <form
-        className="modal__inputs"
         onSubmit={(e) => {
           e.preventDefault()
           handleSubmit()
         }}
       >
-        <input
-          type="text"
-          value={newPersonName}
-          onChange={(e) => setNewPersonName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Введите имена через запятую"
-          className="modal__input"
-          autoFocus
-        />
+        <div className="modal__inputs">
+          <InputField
+            value={newPersonName}
+            onChange={(e) => setNewPersonName(e.target.value)}
+            label={'Имена участников (через запятую)'}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
+            autoFocus
+            required
+          />
+        </div>
         <div className="modal__buttons">
           <Button onClick={onClose}>Отмена</Button>
-          <Button className="button--active" onClick={handleSubmit}>
+          <Button type="submit" className="button--active" onClick={handleSubmit}>
             Добавить
           </Button>
         </div>
