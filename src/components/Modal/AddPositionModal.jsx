@@ -191,8 +191,8 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
               autoComplete="off"
               label="Цена за единицу"
               type="number"
-              inputMode="numeric"
-              enterKeyHint="done"
+              inputMode="decimal"
+              enterKeyHint="send"
               pattern="[0-9]*"
             />
           </div>
