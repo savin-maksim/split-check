@@ -7,6 +7,7 @@ import formatters from '../utils/formatters.js'
 import { Link } from 'react-router-dom'
 import { Users, Calculator, BarChart3 } from 'lucide-react'
 import PageSectionHeader from '../components/PageSectionHeader/PageSectionHeader'
+import PageEmptyState from '@/components/PageEmptyState/PageEmptyState'
 import Arrow from '../components/Arrow/Arrow'
 import { personIncludedInStatShare } from '../utils/statsShareCapture'
 
@@ -20,54 +21,56 @@ function StatsPage() {
 
   if (!people.length) {
     return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <Users size={48} />
-          <h2>Добавьте участников</h2>
+      <div className="statistics-section statistics-section--standalone">
+        <PageEmptyState
+          muted
+          className="statistics-section__empty-surface"
+          icon={<Users size={48} aria-hidden />}
+          title="Добавьте участников"
+          actions={<Arrow className="arrow--to-people" />}
+        >
           <p>
             Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить
             расходы
           </p>
-          <Arrow className="arrow--to-people" />
-        </div>
+        </PageEmptyState>
       </div>
     )
   }
 
   if (!costs.length) {
     return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <Calculator size={48} />
-          <h2>Добавьте расходы</h2>
+      <div className="statistics-section statistics-section--standalone">
+        <PageEmptyState
+          muted
+          className="statistics-section__empty-surface"
+          icon={<Calculator size={48} aria-hidden />}
+          title="Добавьте расходы"
+          actions={<Arrow className="arrow--to-cost" />}
+        >
           <p>
             Перейдите на <Link to="/costs">страницу расходов</Link> и добавьте расходы, которые нужно разделить между
             участниками
           </p>
-          <Arrow className="arrow--to-cost" />
-        </div>
+        </PageEmptyState>
       </div>
     )
   }
 
   if (!ready || !statistics) {
     return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <Spinner size={48} />
-        </div>
+      <div className="statistics-section statistics-section--standalone">
+        <PageEmptyState muted className="statistics-section__empty-surface" icon={<Spinner />} />
       </div>
     )
   }
 
   if (!transfers.length) {
     return (
-      <div className="statistics-section">
-        <div className="statistics-section__empty">
-          <Spinner size={48} />
-          <h3>Проверьте позиции</h3>
+      <div className="statistics-section statistics-section--standalone">
+        <PageEmptyState muted icon={<Spinner />} title="Проверьте позиции">
           <p>Вероятно в одной из них не выбран плательщик и/или участник</p>
-        </div>
+        </PageEmptyState>
       </div>
     )
   }

@@ -7,6 +7,7 @@ import WhoPaidSection from '@/components/Cards/Cost/WhoPaidSection/WhoPaidSectio
 import SplitBetweenSection from '@/components/Cards/Cost/SplitBetweenSection/SplitBetweenSection'
 import { buildWeightsFromSplit, splitBetweenFromWeights } from '../../utils/costDistribution'
 import { togglePaidByManual } from '../../utils/togglePaidBy'
+import formatters from '@/utils/formatters'
 import InputField from '../Input/InputField'
 
 function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMode = 'manual' }) {
@@ -87,8 +88,13 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
         return
       }
 
+      const priceNormalized = formatters.normalizeDecimalInput(pricePerUnit)
+      if (priceNormalized !== String(pricePerUnit ?? '')) {
+        setPricePerUnit(priceNormalized)
+      }
+
       const qtyValue = parseFloat(quantity)
-      const priceValue = parseFloat(pricePerUnit)
+      const priceValue = parseFloat(priceNormalized)
 
       if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
         setError('Введите корректные значения')
@@ -98,10 +104,7 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
       const id = Date.now()
       const formattedTitle = formatTitle(purchase.trim())
       const total = qtyValue * priceValue
-      const formattedPrice = new Intl.NumberFormat('ru-RU', {
-        style: 'currency',
-        currency: 'RUB',
-      }).format(total)
+      const formattedPrice = formatters.formatAmount(total)
 
       onSubmit({
         id,
@@ -190,10 +193,10 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
               onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
               autoComplete="off"
               label="Цена за единицу"
-              type="number"
+              type="text"
               inputMode="decimal"
-              enterKeyHint="send"
-              pattern="[0-9]*"
+              enterKeyHint="done"
+              pattern="[0-9.,]*"
             />
           </div>
         </div>
@@ -217,8 +220,6 @@ function AddPositionModal({ isOpen, onClose, onSubmit, title, people, paymentMod
           onToggleDistribution={toggleDistribution}
           onAdjustWeight={adjustWeight}
         />
-
-        <button type="submit" style={{ display: 'none' }} />
       </form>
       <div className="modal__buttons">
         <Button onClick={onClose}>Отмена</Button>

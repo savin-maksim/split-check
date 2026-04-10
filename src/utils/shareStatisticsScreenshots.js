@@ -3,33 +3,39 @@ import { toast } from 'react-hot-toast'
 
 const CAPTURE_BG = '#1f1f1f'
 
-/** Виртуальный «экран» для вёрстки перед снимком (innerWidth изменить нельзя). */
-const CAPTURE_VIEWPORT_W = 600
-const CAPTURE_VIEWPORT_H = 1080
+function getCaptureViewportSize() {
+  if (typeof window === 'undefined') {
+    return { width: 600, height: 1080 }
+  }
+  return {
+    width: Math.max(1, Math.round(window.innerWidth)),
+    height: Math.max(1, Math.round(window.innerHeight)),
+  }
+}
 
-function installStatShareViewport() {
+function installStatShareViewport(width, height) {
   const html = document.documentElement
   const style = document.createElement('style')
   style.id = 'stat-share-viewport'
   style.setAttribute('data-stat-share-viewport', '')
   style.textContent = `
     html.stat-share-capture {
-      --container-width: ${CAPTURE_VIEWPORT_W}px;
+      --container-width: ${width}px;
     }
     html.stat-share-capture body {
-      min-height: ${CAPTURE_VIEWPORT_H}px;
+      min-height: ${height}px;
     }
     html.stat-share-capture .layout {
-      width: ${CAPTURE_VIEWPORT_W}px;
-      max-width: ${CAPTURE_VIEWPORT_W}px;
-      min-height: ${CAPTURE_VIEWPORT_H}px;
+      width: ${width}px;
+      max-width: ${width}px;
+      min-height: ${height}px;
       margin-left: auto;
       margin-right: auto;
       box-sizing: border-box;
     }
     html.stat-share-capture .layout__content {
       width: 100%;
-      max-width: ${CAPTURE_VIEWPORT_W}px;
+      max-width: ${width}px;
     }
     .stat-share-blur-overlay {
       position: fixed;
@@ -98,7 +104,6 @@ function sanitizeFilenameSegment(s) {
   return cleaned.replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 80).trim() || 'x'
 }
 
-/** Стабильные имена без порядкового номера — повторный экспорт перезаписывает те же файлы в «Загрузках». */
 function buildFilenameFromNode(node) {
   const kind = node.getAttribute('data-stat-share')
   const label = node.getAttribute('data-stat-share-label') || ''
@@ -116,15 +121,16 @@ export function sectionTitleFromStatShareNode(node) {
   return node.getAttribute('data-stat-share-label') || 'Участник'
 }
 
-/**
- * Список секций на странице (порядок как в DOM).
- */
 export function collectStatShareSections() {
   const nodes = [...document.querySelectorAll('[data-stat-share]')]
   return nodes.map((node, index) => ({
     index,
     title: sectionTitleFromStatShareNode(node),
   }))
+}
+
+function getSortedSelectionIndices(selectedIndices, allNodes) {
+  return [...new Set(selectedIndices)].filter((i) => i >= 0 && i < allNodes.length).sort((a, b) => a - b)
 }
 
 async function dataUrlToFile(dataUrl, filename) {
@@ -150,34 +156,25 @@ async function downloadFiles(files) {
 }
 
 /**
- * @param {number[]} selectedIndices — индексы узлов `[data-stat-share]` в порядке DOM
+ * PNG-файлы выбранных секций (индексы в порядке DOM).
  */
-export async function captureAndExportStatShares(selectedIndices) {
-  if (shareInProgress) return
+async function captureStatShareFiles(uniqueSorted) {
   const allNodes = [...document.querySelectorAll('[data-stat-share]')]
-  const uniqueSorted = [...new Set(selectedIndices)].filter((i) => i >= 0 && i < allNodes.length).sort((a, b) => a - b)
+  const fontEmbedCSS = await getMontserratFontEmbedCSS()
+  const { width: viewportW, height: viewportH } = getCaptureViewportSize()
 
-  if (uniqueSorted.length === 0) {
-    toast.error('Выберите хотя бы одну секцию')
-    return
+  const pngOptions = {
+    pixelRatio: capturePixelRatio(),
+    backgroundColor: CAPTURE_BG,
+    cacheBust: true,
+    preferredFontFormat: 'woff2',
+    ...(fontEmbedCSS ? { fontEmbedCSS } : { skipFonts: true }),
   }
-
-  shareInProgress = true
-  const toastId = toast.loading('Готовим скриншоты…')
 
   let removeStatShareViewport = () => {}
 
   try {
-    const fontEmbedCSS = await getMontserratFontEmbedCSS()
-    const pngOptions = {
-      pixelRatio: capturePixelRatio(),
-      backgroundColor: CAPTURE_BG,
-      cacheBust: true,
-      preferredFontFormat: 'woff2',
-      ...(fontEmbedCSS ? { fontEmbedCSS } : { skipFonts: true }),
-    }
-
-    removeStatShareViewport = installStatShareViewport()
+    removeStatShareViewport = installStatShareViewport(viewportW, viewportH)
     await settleLayoutAfterViewportChange()
 
     const files = []
@@ -187,46 +184,91 @@ export async function captureAndExportStatShares(selectedIndices) {
       const dataUrl = await toPng(node, pngOptions)
       files.push(await dataUrlToFile(dataUrl, filename))
     }
+    return files
+  } finally {
+    removeStatShareViewport()
+  }
+}
 
+/**
+ * Нативный шеринг файлов (Web Share API).
+ */
+export async function shareStatShareScreenshots(selectedIndices) {
+  if (shareInProgress) return
+  const allNodes = [...document.querySelectorAll('[data-stat-share]')]
+  const uniqueSorted = getSortedSelectionIndices(selectedIndices, allNodes)
+
+  if (uniqueSorted.length === 0) {
+    toast.error('Выберите хотя бы одну секцию')
+    return
+  }
+
+  shareInProgress = true
+  const toastId = toast.loading('Готовим скриншоты…')
+
+  try {
+    const files = await captureStatShareFiles(uniqueSorted)
     const shareData = {
       files,
       title: 'Статистика Split Check',
       text: 'Скриншоты статистики',
     }
 
+    if (typeof navigator === 'undefined' || !navigator.share) {
+      toast.error('Шеринг не поддерживается. Используйте «Сохранить».', { id: toastId })
+      return
+    }
+
     let canShareFiles = false
     try {
-      canShareFiles = Boolean(typeof navigator !== 'undefined' && navigator.canShare?.(shareData))
+      canShareFiles = Boolean(navigator.canShare?.(shareData))
     } catch {
       canShareFiles = false
     }
 
-    if (typeof navigator !== 'undefined' && navigator.share && canShareFiles) {
-      try {
-        await navigator.share(shareData)
-        toast.success('Готово', { id: toastId })
-      } catch (shareErr) {
-        if (shareErr?.name === 'AbortError') {
-          toast.dismiss(toastId)
-        } else {
-          console.warn('navigator.share failed, fallback download', shareErr)
-          await downloadFiles(files)
-          toast.success(`Шеринг недоступен — скачано ${files.length} файлов`, { id: toastId })
-        }
-      }
-    } else {
-      await downloadFiles(files)
-      toast.success(`Сохранено ${files.length} файлов`, { id: toastId })
+    if (!canShareFiles) {
+      toast.error('Нельзя поделиться файлами из этого браузера. Используйте «Сохранить».', { id: toastId })
+      return
     }
+
+    await navigator.share(shareData)
+    toast.success('Готово', { id: toastId })
   } catch (error) {
     if (error?.name === 'AbortError') {
       toast.dismiss(toastId)
     } else {
-      console.error('captureAndExportStatShares:', error)
-      toast.error(error?.message || 'Не удалось подготовить скриншоты', { id: toastId })
+      console.error('shareStatShareScreenshots:', error)
+      toast.error(error?.message || 'Не удалось поделиться', { id: toastId })
     }
   } finally {
-    removeStatShareViewport()
+    shareInProgress = false
+  }
+}
+
+/**
+ * Сохранение PNG на устройство (загрузки).
+ */
+export async function saveStatShareScreenshots(selectedIndices) {
+  if (shareInProgress) return
+  const allNodes = [...document.querySelectorAll('[data-stat-share]')]
+  const uniqueSorted = getSortedSelectionIndices(selectedIndices, allNodes)
+
+  if (uniqueSorted.length === 0) {
+    toast.error('Выберите хотя бы одну секцию')
+    return
+  }
+
+  shareInProgress = true
+  const toastId = toast.loading('Готовим скриншоты…')
+
+  try {
+    const files = await captureStatShareFiles(uniqueSorted)
+    await downloadFiles(files)
+    toast.success(`Сохранено ${files.length} файлов`, { id: toastId })
+  } catch (error) {
+    console.error('saveStatShareScreenshots:', error)
+    toast.error(error?.message || 'Не удалось сохранить скриншоты', { id: toastId })
+  } finally {
     shareInProgress = false
   }
 }

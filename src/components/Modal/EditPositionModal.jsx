@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react'
 import Button from '../Button/Button'
+import InputField from '../Input/InputField'
 import Modal from './Modal'
 import { toast } from 'react-hot-toast'
+import formatters from '@/utils/formatters'
 
 function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
   const [purchase, setPurchase] = useState(initialData?.title || '')
@@ -31,8 +33,13 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       return
     }
 
+    const priceNormalized = formatters.normalizeDecimalInput(pricePerUnit)
+    if (priceNormalized !== String(pricePerUnit ?? '')) {
+      setPricePerUnit(priceNormalized)
+    }
+
     const qtyValue = parseFloat(quantity)
-    const priceValue = parseFloat(pricePerUnit)
+    const priceValue = parseFloat(priceNormalized)
 
     if (isNaN(qtyValue) || isNaN(priceValue) || qtyValue <= 0 || priceValue <= 0) {
       setError('Введите корректные значения')
@@ -40,10 +47,7 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
     }
 
     const total = qtyValue * priceValue
-    const formattedPrice = new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-    }).format(total)
+    const formattedPrice = formatters.formatAmount(total)
 
     onSubmit({
       ...initialData,
@@ -75,18 +79,18 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
       <h2 className="modal__title">{title}</h2>
       {error && <p className="modal__error">{error}</p>}
       <div className="modal__inputs">
-        <input
+        <InputField
           ref={purchaseInputRef}
           type="text"
           value={purchase}
           onChange={(e) => setPurchase(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, 'purchase')}
-          placeholder="Введите название покупки"
-          className="modal__input"
+          label="Введите название покупки"
           autoFocus
         />
+
         <div className="modal__price-inputs">
-          <input
+          <InputField
             ref={quantityInputRef}
             type="text"
             value={quantity}
@@ -96,24 +100,19 @@ function EditPositionModal({ isOpen, onClose, onSubmit, title, initialData }) {
               setError('')
             }}
             onKeyDown={(e) => handleKeyDown(e, 'quantity')}
-            placeholder="Количество"
-            className="modal__input modal__input--half"
+            label="Количество"
           />
-          <input
+          <InputField
             ref={priceInputRef}
             type="text"
-            inputMode="numeric"
+            inputMode="decimal"
             enterKeyHint="done"
-            pattern="[0-9]*"
+            pattern="[0-9.,]*"
+            autoComplete="off"
             value={pricePerUnit}
-            onChange={(e) => {
-              const value = e.target.value.replace(/,/g, '.').replace(/\.+/g, '.')
-              setPricePerUnit(value)
-              setError('')
-            }}
+            onChange={(e) => setPricePerUnit(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e, 'pricePerUnit')}
-            placeholder="Цена за единицу"
-            className="modal__input"
+            label="Цена за единицу"
           />
         </div>
       </div>

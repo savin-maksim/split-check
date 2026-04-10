@@ -1,9 +1,14 @@
 .input-field {
   position: relative;
+  width: 100%;
+
+  --input-field-icon-offset: 2.75rem;
+  --input-field-suffix-one: 2.5rem;
+  --input-field-suffix-two: 4.35rem;
 
   &__input {
     background-color: var(--color-glass);
-    border: var(--border);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.38);
     border-radius: var(--border-radius-small);
     width: 100%;
     padding: 0.75rem;
@@ -51,6 +56,22 @@
     }
   }
 
+  &--with-icon .input-field__input {
+    padding-left: var(--input-field-icon-offset);
+  }
+
+  &--with-clear .input-field__input {
+    padding-right: var(--input-field-suffix-one);
+  }
+
+  &--with-password .input-field__input {
+    padding-right: var(--input-field-suffix-one);
+  }
+
+  &--with-clear.input-field--with-password .input-field__input {
+    padding-right: var(--input-field-suffix-two);
+  }
+
   &__label {
     position: absolute;
     top: calc(0.75rem + 0.15rem);
@@ -60,9 +81,31 @@
     transition: var(--transition-duration) cubic-bezier(0.01, 0.01, 0.13, 0.96);
   }
 
-  &__password-toggle {
+  &--with-icon .input-field__label {
+    left: var(--input-field-icon-offset);
+  }
+
+  &__icon {
     position: absolute;
-    right: 10px;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-light);
+    opacity: 0.85;
+    pointer-events: none;
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  &__password-toggle,
+  &__clear {
+    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -74,6 +117,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &__password-toggle {
+    right: 10px;
+  }
+
+  &__clear {
+    right: 10px;
+  }
+
+  &--with-clear.input-field--with-password .input-field__clear {
+    right: 2.5rem;
+  }
+
+  &--with-clear.input-field--with-password .input-field__password-toggle {
+    right: 10px;
   }
 
   &__error {

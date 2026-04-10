@@ -3,6 +3,7 @@ import { UserPlus, Users } from 'lucide-react'
 import { useApp } from '@/context/AppContext'
 
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import PageEmptyState from '@/components/PageEmptyState/PageEmptyState'
 import AddPersonModal from '@/components/Modal/AddPersonModal'
 import EditPersonModal from '@/components/Modal/EditPersonModal'
 import Modal from '@/components/Modal/Modal'
@@ -62,12 +63,15 @@ function PeoplePage() {
       )}
 
       {people.length === 0 ? (
-        <div className="people-section__empty">
-          <UserPlus size={48} />
-          <h2>Добавьте участников</h2>
+        <PageEmptyState
+          muted
+          className="people-section__empty-state"
+          icon={<UserPlus size={48} aria-hidden />}
+          title="Добавьте участников"
+          actions={<Arrow />}
+        >
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы</p>
-          <Arrow />
-        </div>
+        </PageEmptyState>
       ) : (
         <ul className="list-layout" role="list">
           {people.map((person) => (

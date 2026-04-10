@@ -17,7 +17,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.3);
-    overflow-y: hidden;
+    overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
     border-radius: var(--border-radius);
@@ -83,6 +83,15 @@
     padding: var(--space);
     backdrop-filter: blur(10px);
     border-top: var(--border);
+  }
+
+  &__buttons--triple {
+    flex-wrap: wrap;
+
+    .button {
+      flex: 1 1 auto;
+      min-width: min(100%, 6.5rem);
+    }
   }
 
   &__error {

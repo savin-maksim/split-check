@@ -6,6 +6,6 @@
   &__content {
     flex: 1;
     padding: 0 0.5rem 1rem 0.5rem;
-    margin-bottom: calc(var(--navigation-height) + var(--space));
+    margin-bottom: calc(var(--navigation-height) + var(--space) + 3rem);
   }
 }

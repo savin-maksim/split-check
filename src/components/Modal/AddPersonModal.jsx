@@ -37,6 +37,7 @@ function AddPersonModal({ isOpen, onClose, onSubmit, title }) {
             label={'Имена участников (через запятую)'}
             onKeyDown={handleKeyDown}
             autoComplete="off"
+            enterKeyHint="done"
             autoFocus
             required
           />

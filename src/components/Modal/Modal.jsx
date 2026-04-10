@@ -1,16 +1,34 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import './modal.scss'
+
+const focusFirstField = (dialog) => {
+  const root = dialog?.querySelector('.modal__content')
+  if (!root) return
+  const fromAttr = root.querySelector('[autofocus]') || root.querySelector('input[autofocus]')
+  const firstInteractive = root.querySelector(
+    'input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), select:not([disabled])',
+  )
+  const target = fromAttr ?? firstInteractive
+  target?.focus({ preventScroll: false })
+}
 
 function Modal({ isOpen, onClose, children }) {
   const dialogRef = useRef(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = dialogRef.current
+    if (!dialog) return
+
     if (isOpen) {
-      dialog?.showModal()
+      if (!dialog.open) {
+        dialog.showModal()
+      }
       document.body.style.overflow = 'hidden'
+      focusFirstField(dialog)
+      queueMicrotask(() => focusFirstField(dialog))
     } else {
-      dialog?.close()
+      dialog.close()
+      document.body.style.overflow = 'unset'
     }
 
     return () => {

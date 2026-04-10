@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import { useApp } from '@/context/AppContext'
 import formatters from '@/utils/formatters'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import PageEmptyState from '@/components/PageEmptyState/PageEmptyState'
 import Modal from '@/components/Modal/Modal'
 import Button from '@/components/Button/Button'
 import './checks-page.scss'
@@ -93,10 +94,9 @@ function ChecksPage() {
 
       <section className="checks-page__section">
         {savedChecks.length === 0 ? (
-          <div className="checks-page__empty-saved">
-            <FolderInput size={40} aria-hidden />
+          <PageEmptyState muted className="checks-page__empty-saved" icon={<FolderInput size={40} aria-hidden />}>
             <p>Пока нет чеков — нажмите «Новый чек», задайте название и переходите к участникам.</p>
-          </div>
+          </PageEmptyState>
         ) : (
           <ul className="list-layout">
             {savedChecks.map((check) => {
@@ -168,6 +168,7 @@ function ChecksPage() {
               onChange={(e) => setCreateTitle(e.target.value)}
               label={'Наименование чека'}
               autoComplete="off"
+              enterKeyHint="done"
               autoFocus
               required
             />

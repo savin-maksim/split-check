@@ -15,6 +15,7 @@
     text-align: start;
     flex-direction: column;
     gap: 0.5rem;
+    margin-inline: var(--space);
   }
 
   &-button {
@@ -104,6 +105,7 @@
     text-align: right;
     font-size: 1.1rem;
     color: var(--color-light);
+    margin: var(--space) var(--space) 0 var(--space);
 
     &--total {
       font-weight: 800;
@@ -118,6 +120,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     color: var(--color-light);
+    margin: var(--space);
   }
 
   &__source-btn {
@@ -156,7 +159,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    // padding: 40px;
+    padding: var(--space);
     text-align: center;
 
     p {

@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
 import Modal from '../Modal/Modal'
 import Button from '../Button/Button'
-import { collectStatShareSections, captureAndExportStatShares } from '../../utils/shareStatisticsScreenshots'
+import {
+  collectStatShareSections,
+  shareStatShareScreenshots,
+  saveStatShareScreenshots,
+} from '../../utils/shareStatisticsScreenshots'
 import '../ReceiptScanner/scanner.scss'
 
 function StatisticsShareModal({ isOpen, onClose }) {
@@ -19,10 +23,18 @@ function StatisticsShareModal({ isOpen, onClose }) {
     setSelectedIndices((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
   }
 
-  const handleExport = async () => {
+  const handleShare = async () => {
     if (selectedIndices.length === 0) return
+    const indices = [...selectedIndices]
     onClose()
-    await captureAndExportStatShares(selectedIndices)
+    await shareStatShareScreenshots(indices)
+  }
+
+  const handleSave = async () => {
+    if (selectedIndices.length === 0) return
+    const indices = [...selectedIndices]
+    onClose()
+    await saveStatShareScreenshots(indices)
   }
 
   if (!isOpen) return null
@@ -54,10 +66,13 @@ function StatisticsShareModal({ isOpen, onClose }) {
         Выбрано: <strong className="scanner__summary--total">{selectedIndices.length}</strong> из {sections.length}
       </div>
 
-      <div className="modal__buttons">
+      <div className="modal__buttons modal__buttons--triple">
         <Button onClick={onClose}>Отмена</Button>
-        <Button className="button--active" onClick={handleExport} disabled={selectedIndices.length === 0}>
-          Поделиться или скачать ({selectedIndices.length})
+        <Button variant="active" onClick={handleShare} disabled={selectedIndices.length === 0}>
+          Поделиться
+        </Button>
+        <Button onClick={handleSave} disabled={selectedIndices.length === 0}>
+          Сохранить
         </Button>
       </div>
     </Modal>

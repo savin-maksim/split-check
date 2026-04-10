@@ -11,10 +11,12 @@ import AddPositionModal from '@/components/Modal/AddPositionModal'
 import Arrow from '@/components/Arrow/Arrow'
 import ReceiptScanner from '@/components/ReceiptScanner/ReceiptScanner'
 import PageSectionHeader from '@/components/PageSectionHeader/PageSectionHeader'
+import PageEmptyState from '@/components/PageEmptyState/PageEmptyState'
 
 // Import styles
 import './cost-section.scss'
 import PersonGrid from '@/components/Cards/Cost/PersonGrid/PersonGrid'
+import InputField from '@/components/Input/InputField'
 
 function CostsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -69,15 +71,16 @@ function CostsPage() {
   if (!people.length) {
     return (
       <div className="cost-section">
-        <div className="cost-section__empty">
-          <Users size={48} />
-          <h2>Добавьте участников</h2>
+        <PageEmptyState
+          icon={<Users size={48} aria-hidden />}
+          title="Добавьте участников"
+          actions={<Arrow className="arrow--to-people" />}
+        >
           <p>
             Перейдите на <Link to="/people">страницу участников</Link> и добавьте людей, между которыми нужно разделить
             расходы
           </p>
-          <Arrow className="arrow--to-people" />
-        </div>
+        </PageEmptyState>
       </div>
     )
   }
@@ -85,20 +88,23 @@ function CostsPage() {
   if (!costs.length) {
     return (
       <div className="cost-section">
-        <div className="cost-section__empty">
-          <Calculator size={48} />
-          <h2>Добавьте расходы</h2>
+        <PageEmptyState
+          icon={<Calculator size={48} aria-hidden />}
+          title="Добавьте расходы"
+          actions={
+            <>
+              <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
+              {people.length > 0 ? <Arrow /> : null}
+            </>
+          }
+        >
           <p>
             Нажмите на кнопку в навигационной панели, чтобы добавить расходы, которые нужно разделить между участниками
           </p>
           <p>
             Или воспользуйтесь <span className="gemini-text-span">ИИ распознаванием</span>
           </p>
-          <div style={{ marginTop: '20px' }}>
-            <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
-          </div>
-          {people.length > 0 && <Arrow />}
-        </div>
+        </PageEmptyState>
         <AddPositionModal
           isOpen={isModalOpen === 'addCost'}
           onClose={() => setIsModalOpen(null)}
@@ -145,18 +151,16 @@ function CostsPage() {
         </div>
 
         <div className="cost-section__search">
-          <div className="search-container">
-            <div className="search-input">
-              <Search size={20} />
-              <input
-                type="text"
-                placeholder="Поиск наименование/имя"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
-          </div>
+          <InputField
+            type="text"
+            icon={<Search size={20} aria-hidden />}
+            clearable
+            label="Поиск наименование/имя"
+            enterKeyHint="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <ReceiptScanner onAddCosts={addCosts} paymentMode={paymentMode} singlePayer={singlePayer} />
         </div>
 
         {paymentMode === 'single' && (

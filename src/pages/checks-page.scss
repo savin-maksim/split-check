@@ -59,20 +59,19 @@
   }
 
   &__empty-saved {
-    text-align: center;
+    flex: 0 1 auto;
+    min-height: auto;
+    max-width: 28rem;
     padding: 2rem 1rem;
-    color: var(--color-text-secondary);
     border: 1px dashed rgba(255, 255, 255, 0.15);
     border-radius: var(--border-radius-small);
 
-    svg {
-      color: var(--color-orange);
+    .page-empty-state__icon {
       margin-bottom: 0.75rem;
     }
 
     p {
       margin: 0;
-      line-height: 1.5;
       max-width: 22rem;
       margin-inline: auto;
     }

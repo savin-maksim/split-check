@@ -1,4 +1,9 @@
 const formatters = {
+  /** Строка для parseFloat: запятые как десятичный разделитель → точки */
+  normalizeDecimalInput(raw) {
+    return String(raw ?? '').replace(/,/g, '.')
+  },
+
   formatAmount(amount) {
     return new Intl.NumberFormat('ru-RU', {
       minimumFractionDigits: 2,
