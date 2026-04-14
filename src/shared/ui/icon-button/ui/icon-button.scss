@@ -1,0 +1,83 @@
+.icon-button {
+  @include flex-center;
+
+  background-color: transparent;
+  color: var(--color-light);
+  border: none;
+  border-radius: 0;
+  padding: 0;
+
+  @include hover {
+    color: var(--color-orange);
+
+    &:not(.icon-button--qty):not(.icon-button--danger) {
+      filter: drop-shadow(0 0 8px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha)));
+    }
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  &--active {
+    color: var(--color-orange);
+  }
+
+  &--danger {
+    color: rgb(var(--color-error));
+
+    @include hover {
+      color: rgb(var(--color-error));
+      filter: drop-shadow(0 0 8px rgba(var(--color-error), var(--button-danger-shadow-alpha)));
+    }
+  }
+
+  &--scanner {
+    padding: 0.75rem 2rem;
+    background-color: transparent;
+    border: 2px solid var(--color-active);
+    border-radius: var(--border-radius-small);
+    color: var(--color-orange);
+
+    @include hover {
+      background-color: var(--color-active);
+      color: var(--color-light);
+      box-shadow: 0 0 15px var(--color-active);
+    }
+  }
+
+  &--wide {
+    width: 20%;
+    height: 100%;
+  }
+
+  &--qty {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-glass);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--border-radius-small);
+
+    @include hover {
+      color: var(--color-light);
+      border-color: var(--color-orange);
+      background-color: var(--color-active);
+      box-shadow: 0 0 15px var(--color-active);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+
+      @include hover {
+        @include button-surface;
+
+        --button-surface-rgb: var(--button-neutral-surface-rgb);
+        --button-background-alpha: var(--button-neutral-background-alpha);
+        --button-border-alpha: var(--button-neutral-border-alpha);
+        --button-box-shadow: none;
+      }
+    }
+  }
+}

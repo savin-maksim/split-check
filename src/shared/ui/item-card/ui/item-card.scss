@@ -1,0 +1,14 @@
+.item-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  color: var(--color-light);
+  background: var(--color-glass);
+  border: var(--border);
+  border-radius: var(--border-radius);
+
+  &--active {
+    border-color: var(--color-orange);
+  }
+}

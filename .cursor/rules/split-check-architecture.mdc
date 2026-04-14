@@ -1,0 +1,337 @@
+---
+description: Архитектура, паттерны и конвенции проекта Split Check — React + FSD
+alwaysApply: true
+---
+
+# Split Check — Архитектура проекта
+
+## Стек
+
+React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), mathjs, lucide-react.
+Без SSR — чистый SPA. Пакетный менеджер: npm.
+
+## Алиасы и глобальные стили
+
+- `@/*` → `src/*` (настроен в `vite.config.ts` и `tsconfig.app.json`)
+- Так же сделать алиасы для всех слоев
+- SCSS: `@use "@/app/styles/shared" as *` автоматически инжектится во все `.scss` через `additionalData`
+- Дизайн-токены: CSS custom properties в `app/styles/_variables.scss`
+
+## Точка входа
+
+`src/main.tsx` → `<App />` → `<RouterProvider />` → `<AppLayout />` (общий layout с `<Outlet />`, `<BottomNav />`, `<ScrollTopButton />`).
+
+---
+
+## Feature-Sliced Design (FSD)
+
+### Слои (сверху вниз)
+
+```
+app → pages → widgets → features → entities → shared
+```
+
+Каждый слой импортирует ТОЛЬКО из нижестоящих. Импорт вышестоящего слоя запрещён.
+
+### 1. `src/app/` — инициализация
+
+| Файл / Папка | Назначение                                                                             |
+| ------------ | -------------------------------------------------------------------------------------- |
+| `App.tsx`    | Корневой компонент, рендерит `RouterProvider`                                          |
+| `router.tsx` | `createBrowserRouter` с lazy-загрузкой страниц                                         |
+| `layout.tsx` | `AppLayout` — общая обёртка (Outlet + навигация)                                       |
+| `styles/`    | Глобальные стили: `_reset.scss`, `_variables.scss`, `_mixins.scss`, `_typography.scss` |
+
+### 2. `src/pages/` — страницы
+
+Собирают виджеты и фичи. Структура слайса:
+
+```
+pages/<slice>/
+  index.ts              — barrel export
+  ui/p-<name>/
+    p-<name>.tsx
+    p-<name>.scss
+```
+
+Текущие: `checks-list` → `PChecksList`, `people` → `PPeople`, `items` → `PItems`, `stats` → `PStats`.
+
+### 3. `src/widgets/` — композитные блоки
+
+Крупные UI-блоки, используемые в pages/layout. Структура:
+
+```
+widgets/w-<name>/
+  index.ts
+  ui/
+    w-<name>.tsx
+    w-<name>.scss
+    sections/           — вложенные секции (sub-units), если нужны
+```
+
+Текущие: `w-check-card`, `w-cost-card` (с sections: `who-paid-section`, `split-between-section`), `w-person-card`, `w-person-detail-card`, `w-total-card`, `w-transfers-card`.
+
+### 4. `src/features/` — бизнес-действия
+
+Формы, интерактивные блоки. Структура:
+
+```
+features/f-<name>/
+  index.ts
+  ui/
+    f-<name>.tsx
+    f-<name>.scss        — опционально
+```
+
+Текущие: `f-create-check`, `f-edit-check`, `f-manage-person`, `f-manage-item`, `f-confirm-delete`, `f-payment-mode`.
+
+### 5. `src/entities/` — бизнес-сущности
+
+Store, типы, composables, чистые функции. Структура:
+
+```
+entities/<slice>/
+  index.ts
+  model/
+    index.ts
+    types.ts
+    store.ts
+  lib/
+    index.ts
+    use-<name>.ts
+    <pure-fn>.ts
+```
+
+Текущий: `entities/check/` — единственная сущность (чек с участниками, позициями, балансами).
+
+### 6. `src/shared/` — переиспользуемый код
+
+| Папка        | Содержимое                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| `constants/` | `routes.ts`, `labels.ts`, `limits.ts`, `storage-keys.ts`                                        |
+| `lib/`       | Утилиты: `cn`, `math`, `format-money`, `format-date`, `generate-id`, `pluralize`, `parse-names` |
+| `types/`     | Общие типы: `TPropsWithClassName`, `TPropsWithChildren`, `TPolymorphicProps`                    |
+| `ui/`        | UI-компоненты (barrel в `ui/index.ts`)                                                          |
+
+---
+
+## UI-компоненты (`shared/ui/`)
+
+Каждый компонент — отдельная папка:
+
+```
+shared/ui/<name>/
+  index.ts              — barrel export компонента + enum/типы
+  ui/
+    <name>.tsx
+    <name>.scss
+```
+
+### Текущие компоненты
+
+| Компонент                           | Назначение                                                          |
+| ----------------------------------- | ------------------------------------------------------------------- |
+| `Button` + `EButtonVariant`         | Кнопка (Default, Danger, Active, Wide, Full, Weight)                |
+| `IconButton` + `EIconButtonVariant` | Кнопка-иконка (Default, Danger, Active, Qty, Wide)                  |
+| `Input`                             | Текстовое поле с floating label, clear, password toggle             |
+| `Modal`                             | Диалоговое окно (overlay + ESC + body lock)                         |
+| `BottomNav`                         | Нижняя навигация (фиксированная, 5 табов с center +)                |
+| `PageHeader`                        | Заголовок страницы с иконкой, subtitle, actions                     |
+| `EmptyState`                        | Пустое состояние с иконкой, заголовком, описанием                   |
+| `ItemCard`                          | Универсальная карточка (title, subtitle, actions, footer, children) |
+| `StatsCard`                         | Карточка статистики (title + children)                              |
+| `TransferCard`                      | Карточка переводов (from → to, amount)                              |
+| `CardStats`                         | Компактная метрика (icon + value + label)                           |
+| `ToggleGroup`                       | Radio-кнопки (generic `<T extends string>`)                         |
+| `PersonGrid`                        | Grid-контейнер для кнопок/бейджей участников                        |
+| `PersonBadge`                       | Бейдж участника с increment/decrement веса                          |
+| `QtyStepper`                        | Stepper количества (−/+, формула, итого)                            |
+| `MarqueeTitle`                      | Заголовок с marquee-анимацией при overflow                          |
+| `ScrollTopButton`                   | Кнопка "наверх" (появляется после scroll)                           |
+| `Spinner`                           | SVG-спиннер загрузки                                                |
+
+---
+
+## State Management (Zustand)
+
+Единый store `useCheckStore` с `persist` → `localStorage`.
+
+### Паттерны store
+
+```tsx
+// Селекторы: одно значение — один вызов
+const checks = useCheckStore((s) => s.checks)
+
+// Хелпер для immutable обновления чека
+const updateCheck = (checks, checkId, updater) => checks.map((c) => (c.id === checkId ? updater(c) : c))
+```
+
+### Схема данных
+
+```
+TCheck { id, title, createdAt, paymentMode, singlePayer, nextPersonId, nextItemId, people: TPerson[], items: TItem[] }
+TPerson { id: number, name }
+TItem { id: number, title, qty, price (в копейках), paidBy, split: Record<personId, weight> }
+TTransfer { from, to, amount }
+```
+
+Цены хранятся в **копейках** (number). Форматирование: `formatMoney(kopecks)` → `Intl.NumberFormat('ru-RU', { currency: 'RUB' })`.
+
+---
+
+## Маршрутизация
+
+```
+/                           → PChecksList
+/check/:checkId/people      → PPeople
+/check/:checkId/items       → PItems
+/check/:checkId/stats       → PStats
+```
+
+Lazy-загрузка: `lazy: () => import('@/pages/...').then(m => ({ Component: m.PXxx }))`.
+Хелпер `buildRoute.people(checkId)` для генерации путей.
+
+---
+
+## Стилевые конвенции
+
+### BEM
+
+CSS-классы: `block__element--modifier`. Корневой класс = имя компонента в kebab-case.
+
+```scss
+.item-card {
+  &__header { ... }
+  &__title { ... }
+  &--active { ... }
+  &--clickable { ... }
+}
+```
+
+### SCSS миксины (через `shared.scss`)
+
+- `flex-center($isInline)` — flex + center
+- `card-base` — bg + border + radius
+- `button-reset` — сброс стилей кнопки
+- `transition($properties...)` — transition с CSS-переменными
+- `hover` — `@media (hover: hover) { &:hover:not(:disabled) }`
+- `text-ellipsis` — overflow: hidden + ellipsis
+- `text-accent-bold` — accent color + bold
+
+### Дизайн-токены
+
+Все через CSS custom properties: `--color-*`, `--font-*`, `--spacing-*`, `--radius-*`, `--size-*`, `--duration-*`, `--shadow-*`, `--border-*`.
+
+---
+
+## Именование
+
+| Что                  | Конвенция                         | Пример                                           |
+| -------------------- | --------------------------------- | ------------------------------------------------ |
+| Файлы/папки          | kebab-case                        | `f-manage-item`, `use-check-balances`            |
+| Компоненты (export)  | PascalCase с префиксом слоя       | `PChecksList`, `FCreateCheck`, `WCostCard`       |
+| Префиксы компонентов | `P` page, `F` feature, `W` widget | —                                                |
+| Типы                 | `T<Name>`                         | `TCheck`, `TItem`, `TButtonProps`                |
+| Enums                | `E<Name>`                         | `ERoutes`, `EButtonVariant`, `EPaymentMode`      |
+| Хуки                 | `use<Name>`                       | `useCurrentCheck`, `useCheckBalances`            |
+| Обработчики событий  | `handle<Action>`                  | `handleSubmit`, `handleClick`, `handleDecrement` |
+| CSS-классы           | BEM kebab-case                    | `item-card__header--active`                      |
+| Barrel-файлы         | `index.ts` на каждом уровне       | —                                                |
+
+### TypeScript-конвенции
+
+- `type` предпочтительнее `interface` (кроме расширяемых контрактов)
+- `type imports`: `import type { TCheck } from '...'` — обязательно через `consistent-type-imports`
+- `no-explicit-any` — запрещён (ESLint error)
+- Без точек с запятой (`semi: false` в Prettier)
+- `verbatimModuleSyntax: true` в tsconfig
+
+### Порядок импортов
+
+1. React / react-dom
+2. Внешние библиотеки (react-router-dom, lucide-react, zustand, mathjs)
+3. Внутренние по FSD сверху вниз: `@/pages/` → `@/widgets/` → `@/features/` → `@/entities/` → `@/shared/ui` → `@/shared/lib` → `@/shared/constants` → `@/shared/types`
+4. Relative imports (стили `./name.scss`)
+
+---
+
+## Паттерны и правила
+
+### Barrel exports
+
+Каждый слайс экспортирует через `index.ts`. Импорт внутренних файлов напрямую **запрещён**.
+
+```tsx
+// ✅ Правильно
+import { useCheckStore, useCurrentCheck } from '@/entities/check'
+import { Button, Modal } from '@/shared/ui'
+
+// ❌ Неправильно
+import { useCheckStore } from '@/entities/check/model/store'
+import { Button } from '@/shared/ui/button/ui/button'
+```
+
+### Модалки в feature-слое
+
+Модалки открываются через `useState<boolean>` в родителе и передаются как `isOpen` + `onClose`:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false)
+<FCreateCheck isOpen={isOpen} onClose={() => setIsOpen(false)} />
+```
+
+### Чистые функции в `entities/*/lib/`
+
+Бизнес-логика расчётов — чистые функции, вынесенные из store:
+
+```tsx
+calculateBalances(check) // → Map<personId, balance>
+generateTransfers(balances) // → TTransfer[]
+```
+
+Хуки-обёртки мемоизируют результат: `useCheckBalances`, `useCheckSummary`.
+
+### Компонент = папка
+
+Даже простой компонент — всегда отдельная папка с `index.ts` + `ui/<name>.tsx` + `ui/<name>.scss`.
+
+### Accessibility
+
+- Все интерактивные элементы имеют `aria-label`
+- Кликабельные `div` получают `role="button"`, `tabIndex={0}`, `onKeyDown` (Enter/Space)
+- Декоративные иконки: `aria-hidden="true"`
+- `ToggleGroup` использует `role="radiogroup"` + `role="radio"` + `aria-checked`
+- `Modal` имеет `role="dialog"`, `aria-modal="true"`
+
+---
+
+## Известные проблемы и направления улучшения
+
+При рефакторинге или добавлении нового функционала учитывай:
+
+### Рекомендуется
+
+7. **Разделить монолитный store** → Zustand slices (check, person, item, payment)
+8. **`React.memo`** → обернуть `WCostCard`, `WCheckCard`, `WPersonCard`, `ItemCard`, `Button`
+9. **`useShallow`** → объединять множественные селекторы Zustand в один вызов
+10. **Убрать магические строки** `'__all__'` / `'all'` → discriminated union `{ type: 'single', id } | { type: 'all' }`
+11. **Вынести модалки из layout** → отдельный виджет или modal manager
+12. **z-index в дизайн-токены** → `--z-index-nav`, `--z-index-modal`, `--z-index-overlay`
+13. **Тесты** → Vitest для `shared/lib/` и `entities/check/lib/` (чистые функции)
+14. **Дублирование `item.price * item.qty`** → вынести в helper `getItemTotal(item)`
+
+### Чек-лист создания нового слайса
+
+1. Папка с kebab-case именем и префиксом слоя
+2. `index.ts` с barrel export
+3. `ui/<prefix>-<name>/<prefix>-<name>.tsx` + `.scss`
+4. Типы → `model/types.ts` + `model/index.ts` (если есть store/типы)
+5. Store → `model/store.ts` (если нужен)
+6. Composables → `lib/use-<name>.ts`
+7. Route → запись в `app/router.tsx` с lazy-загрузкой
+8. Реэкспорт в barrel вышестоящего уровня
+
+### Коммиты
+
+Conventional Commits: `<type>[scope]: <description>` (императив, без точки, без semicolons).
+Типы: `feat`, `fix`, `refactor`, `chore`, `docs`, `style`, `perf`, `test`.

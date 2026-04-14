@@ -1,0 +1,13 @@
+.w-total-card {
+  &__amount {
+    @include fluid-text(30, 20);
+    margin: 0 0 var(--space);
+    text-align: center;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-small);
+  }
+}

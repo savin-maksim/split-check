@@ -1,0 +1,19 @@
+.f-receipt-scan {
+  display: inline-flex;
+
+  &__input {
+    display: none;
+  }
+
+  &__preview-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-small) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: var(--space);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

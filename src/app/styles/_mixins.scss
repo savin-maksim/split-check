@@ -1,0 +1,110 @@
+@mixin fluid-text($max: 48, $min: 16) {
+  font-size: clamp(#{$min}px, #{calc($max / 1080) * 100}vw, #{$max}px);
+}
+
+@mixin flex-center($isInline: false) {
+  @if $isInline {
+    display: inline-flex;
+  } @else {
+    display: flex;
+  }
+
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin card-base {
+  background-color: rgba(var(--button-neutral-surface-rgb), 0.08);
+  border: var(--border);
+  border-radius: var(--border-radius);
+}
+
+@mixin button-reset {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@mixin transition($properties...) {
+  transition-property: $properties;
+  transition-duration: var(--transition-duration);
+}
+
+@mixin hover {
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      @content;
+    }
+  }
+
+  @media (hover: none) {
+    &:active:not(:disabled) {
+      @content;
+    }
+  }
+}
+
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-accent-bold {
+  color: var(--color-orange);
+  font-weight: 700;
+}
+
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  border: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  clip-path: inset(100%) !important;
+  clip: rect(0 0 0 0) !important;
+  overflow: hidden !important;
+}
+
+@mixin button-surface {
+  background-color: rgba(var(--button-surface-rgb), var(--button-background-alpha));
+  border: 2px solid rgba(var(--button-surface-rgb), var(--button-border-alpha));
+  box-shadow: var(--button-box-shadow, none);
+}
+
+@mixin button--active-tokens {
+  --button-surface-rgb: var(--button-active-surface-rgb);
+  --button-background-alpha: var(--button-active-background-alpha);
+  --button-border-alpha: var(--button-active-border-alpha);
+  --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
+}
+
+@mixin no-animation {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+
+  &:hover,
+  &:active,
+  &::before,
+  &::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+@mixin tag-grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}

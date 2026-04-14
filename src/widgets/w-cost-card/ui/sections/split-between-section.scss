@@ -1,0 +1,11 @@
+.split-between-section {
+  padding-inline: 0.5rem;
+
+  &__label {
+    @include flex-center();
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    font-size: 14px;
+  }
+}

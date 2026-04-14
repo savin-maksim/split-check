@@ -1,0 +1,28 @@
+.toggle-group {
+  display: flex;
+  gap: var(--space);
+
+  &__option {
+    @include button-surface;
+
+    --button-surface-rgb: var(--button-neutral-surface-rgb);
+    --button-background-alpha: var(--button-neutral-background-alpha);
+    --button-border-alpha: var(--button-neutral-border-alpha);
+
+    flex: 1;
+    padding: 0.5rem 1rem;
+    color: var(--color-light);
+    border-radius: var(--border-radius-small);
+    font-size: 0.875rem;
+
+    @include hover {
+      @include button--active-tokens;
+    }
+
+    &--active {
+      --button-surface-rgb: var(--button-active-surface-rgb);
+      --button-background-alpha: var(--button-active-background-alpha);
+      --button-border-alpha: var(--button-active-border-alpha);
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.stats-card {
+  @include card-base;
+  padding: var(--space-large);
+
+  &__title {
+    margin: 0 0 var(--space);
+    font-size: 1.1rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+  }
+}

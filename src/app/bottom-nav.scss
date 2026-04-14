@@ -1,0 +1,68 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0.5rem;
+  left: 1rem;
+  right: 1rem;
+  height: var(--navigation-height);
+  border-radius: var(--border-radius-large);
+  border: var(--border);
+  background-color: rgba(var(--color-bg), 0.5);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  &__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-active);
+    padding: var(--space);
+    border-radius: var(--border-radius-small);
+    @include transition(all);
+
+    &--active {
+      color: var(--color-orange);
+      background: var(--color-glass);
+    }
+
+    @include hover {
+      background: var(--color-glass);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__action {
+    @include button-reset;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-orange);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    @include transition(all);
+
+    @include hover {
+      transform: scale(1.05);
+      background-color: var(--color-active);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__action-placeholder {
+    width: 40px;
+    height: 40px;
+  }
+}

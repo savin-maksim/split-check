@@ -1,0 +1,28 @@
+.f-statistics-share {
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+  }
+
+  &__section {
+    @include button-surface;
+
+    --button-surface-rgb: var(--button-neutral-surface-rgb);
+    --button-background-alpha: var(--button-neutral-background-alpha);
+    --button-border-alpha: var(--button-neutral-border-alpha);
+
+    padding: var(--space);
+    border-radius: var(--border-radius-small);
+    color: var(--color-light);
+    text-align: left;
+
+    @include hover {
+      @include button--active-tokens;
+    }
+
+    &--active {
+      @include button--active-tokens;
+    }
+  }
+}

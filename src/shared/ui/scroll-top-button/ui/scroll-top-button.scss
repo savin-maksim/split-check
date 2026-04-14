@@ -1,0 +1,16 @@
+.scroll-top-button {
+  @include flex-center;
+
+  position: fixed;
+  bottom: 4.5rem;
+  right: calc(10% - 0.6rem);
+  width: 3rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--color-active);
+  border: var(--border-width) solid var(--color-orange);
+  color: var(--color-light);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: var(--z-index-overlay);
+}

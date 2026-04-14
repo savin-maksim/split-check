@@ -1,0 +1,17 @@
+.w-person-card {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space);
+    min-width: 0;
+    margin: var(--space);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-large);
+    flex-shrink: 0;
+  }
+}
