@@ -135,6 +135,7 @@ export const FManageItem = ({
       <h3 className="modal__title">{modalTitle}</h3>
       <div className="modal__inputs">
         <Input
+          name="title"
           label="Название"
           value={title}
           onChange={handleTitleChange}
@@ -144,6 +145,7 @@ export const FManageItem = ({
         />
         <div className="modal__price-inputs">
           <Input
+            name="qty"
             label="Кол-во"
             type="number"
             inputMode="numeric"
@@ -152,6 +154,7 @@ export const FManageItem = ({
             onKeyDown={handleKeyDown}
           />
           <Input
+            name="price"
             label="Цена"
             type="text"
             inputMode="decimal"

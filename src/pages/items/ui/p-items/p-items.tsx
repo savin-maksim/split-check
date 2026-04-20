@@ -98,12 +98,13 @@ const ItemsContent = memo(
 
         <div className="p-items__toolbar">
           <Input
+            name="search"
             icon={<Search size={20} aria-hidden="true" />}
             clearable
-            label="Поиск наименование/имя"
-            enterKeyHint="search"
+            label="Поиск по названию/имени"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            enterKeyHint="search"
           />
           <FReceiptScan
             people={people}
@@ -239,6 +240,7 @@ export const PItems = () => {
   if (people.length === 0) {
     return (
       <div className="p-items">
+        <PageHeader icon={<Users size={40} aria-hidden="true" />} title="Расходы" />
         <EmptyState icon={<Users size={48} aria-hidden="true" />} title="Добавьте участников">
           <p>
             Перейдите на <Link to={buildRoute.people(checkId)}>страницу участников</Link> и добавьте людей
@@ -251,6 +253,7 @@ export const PItems = () => {
   if (items.length === 0) {
     return (
       <div className="p-items">
+        <PageHeader icon={<Calculator size={40} aria-hidden="true" />} title="Расходы" />
         <EmptyState
           icon={<Calculator size={48} aria-hidden="true" />}
           title="Добавьте расходы"

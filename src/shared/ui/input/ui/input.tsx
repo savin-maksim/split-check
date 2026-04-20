@@ -1,4 +1,4 @@
-import { forwardRef, memo, useState, useRef, useCallback } from 'react'
+import { forwardRef, memo, useState, useRef, useCallback, useId } from 'react'
 import type { ChangeEvent, InputHTMLAttributes, MouseEvent, MutableRefObject, ReactNode } from 'react'
 
 import { Eye, EyeOff, X } from 'lucide-react'
@@ -31,10 +31,15 @@ export const Input = memo(
         value,
         defaultValue,
         onChange,
+        name,
+        id,
         ...rest
       },
       ref,
     ) => {
+      const generatedId = useId()
+      const inputId = id ?? name ?? generatedId
+
       const [showPassword, setShowPassword] = useState(false)
       const [hasUncontrolledValue, setHasUncontrolledValue] = useState(
         () => defaultValue != null && String(defaultValue).length > 0,
@@ -95,7 +100,7 @@ export const Input = memo(
         <div
           className={cn(
             'input-field',
-            icon && 'input-field--with-icon',
+            icon ? 'input-field--with-icon' : null,
             showClear && 'input-field--with-clear',
             isPasswordType && 'input-field--with-password',
             className,
@@ -109,9 +114,11 @@ export const Input = memo(
 
           <input
             ref={setRefs}
+            id={inputId}
             className="input-field__input"
             type={inputType}
             placeholder={label}
+            name={name}
             value={value}
             defaultValue={defaultValue}
             onChange={handleChange}
@@ -119,7 +126,7 @@ export const Input = memo(
           />
 
           {!isLabelHidden && (
-            <label className="input-field__label" htmlFor={rest.id}>
+            <label className="input-field__label" htmlFor={inputId} title={label}>
               {label}
             </label>
           )}

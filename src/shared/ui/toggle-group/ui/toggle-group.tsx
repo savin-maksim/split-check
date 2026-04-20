@@ -1,10 +1,12 @@
 import { cn } from '@/shared/lib'
+import type { ReactNode } from 'react'
 
 import './toggle-group.scss'
 
 type TToggleGroupOption<T extends string> = {
   value: T
   label: string
+  icon?: ReactNode
 }
 
 type TToggleGroupProps<T extends string> = {
@@ -27,6 +29,9 @@ export const ToggleGroup = <T extends string>({ options, value, onChange, classN
           className={cn('toggle-group__option', value === option.value && 'toggle-group__option--active')}
           onClick={() => onChange(option.value)}
         >
+          <span className="toggle-group__option-icon" aria-hidden="true">
+            {option.icon}
+          </span>
           {option.label}
         </button>
       ))}

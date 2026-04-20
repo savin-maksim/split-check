@@ -50,6 +50,7 @@ export const FCreateCheck = ({ isOpen, onClose, onSubmit }: TFCreateCheckProps) 
       <h3 className="modal__title">Новый чек</h3>
       <div className="modal__inputs">
         <Input
+          name="title"
           label="Название чека"
           value={title}
           onChange={handleChange}

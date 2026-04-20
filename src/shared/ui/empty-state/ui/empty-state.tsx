@@ -9,24 +9,15 @@ type TEmptyStateProps = {
   icon?: ReactNode
   title?: string
   titleAs?: 'h2' | 'h3'
-  muted?: boolean
   children?: ReactNode
   actions?: ReactNode
 }
 
-export const EmptyState = ({
-  className,
-  icon,
-  title,
-  titleAs = 'h2',
-  muted = false,
-  children,
-  actions,
-}: TEmptyStateProps) => {
+export const EmptyState = ({ className, icon, title, titleAs = 'h2', children, actions }: TEmptyStateProps) => {
   const TitleTag: ElementType = titleAs
 
   return (
-    <div className={cn('empty-state', muted && 'empty-state--muted', className)}>
+    <div className={cn('empty-state', className)}>
       {icon ? (
         <div className="empty-state__icon" aria-hidden="true">
           {icon}

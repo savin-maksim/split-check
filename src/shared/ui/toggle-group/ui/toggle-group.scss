@@ -9,11 +9,12 @@
     --button-background-alpha: var(--button-neutral-background-alpha);
     --button-border-alpha: var(--button-neutral-border-alpha);
 
+    @include flex-center($isInline: true);
+    gap: var(--space);
     flex: 1;
-    padding: 0.5rem 1rem;
+    padding: var(--space-medium) var(--space-large);
     color: var(--color-light);
     border-radius: var(--border-radius-small);
-    font-size: 0.875rem;
 
     @include hover {
       @include button--active-tokens;
@@ -23,6 +24,10 @@
       --button-surface-rgb: var(--button-active-surface-rgb);
       --button-background-alpha: var(--button-active-background-alpha);
       --button-border-alpha: var(--button-active-border-alpha);
+    }
+
+    &-icon {
+      @include flex-center($isInline: true);
     }
   }
 }

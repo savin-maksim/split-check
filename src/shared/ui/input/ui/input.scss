@@ -6,6 +6,22 @@
   --input-field-suffix-one: 2.5rem;
   --input-field-suffix-two: 4.35rem;
 
+  --input-field-label-left-inset: 0.75rem;
+  --input-field-label-right-inset: 0.75rem;
+
+  &--with-icon {
+    --input-field-label-left-inset: var(--input-field-icon-offset);
+  }
+
+  &--with-clear,
+  &--with-password {
+    --input-field-label-right-inset: var(--input-field-suffix-one);
+  }
+
+  &--with-clear.input-field--with-password {
+    --input-field-label-right-inset: var(--input-field-suffix-two);
+  }
+
   &__input {
     background-color: var(--color-glass);
     border: var(--border-width) solid rgba(255, 255, 255, 0.38);
@@ -75,14 +91,14 @@
   &__label {
     position: absolute;
     top: calc(0.75rem + 0.15rem);
-    left: 0.75rem;
+    left: var(--input-field-label-left-inset);
+    box-sizing: border-box;
+    display: block;
+    max-width: calc(100% - var(--input-field-label-left-inset) - var(--input-field-label-right-inset));
     color: var(--color-light);
     pointer-events: none;
     transition: var(--transition-duration) cubic-bezier(0.01, 0.01, 0.13, 0.96);
-  }
-
-  &--with-icon .input-field__label {
-    left: var(--input-field-icon-offset);
+    @include text-ellipsis;
   }
 
   &__icon {

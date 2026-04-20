@@ -104,7 +104,7 @@ export const PChecksList = () => {
 
       <section className="p-checks-list__section">
         {checks.length === 0 ? (
-          <EmptyState muted className="p-checks-list__empty" icon={<FolderInput size={40} aria-hidden="true" />}>
+          <EmptyState className="p-checks-list__empty" icon={<FolderInput size={40} aria-hidden="true" />}>
             <p>Пока нет чеков — нажмите «+», задайте название и переходите к участникам.</p>
           </EmptyState>
         ) : (

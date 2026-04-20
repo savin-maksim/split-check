@@ -1,7 +1,7 @@
 .p-items {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space);
   min-height: calc(90vh - var(--navigation-height));
 
   &__toolbar {

@@ -116,12 +116,7 @@ export const PPeople = () => {
       {people.length === 0 ? (
         <>
           <PageHeader icon={<Users size={40} aria-hidden="true" />} title="Участники" />
-          <EmptyState
-            muted
-            className="p-people__empty-state"
-            icon={<UserPlus size={48} aria-hidden="true" />}
-            title="Добавьте участников"
-          >
+          <EmptyState icon={<UserPlus size={48} aria-hidden="true" />} title="Добавьте участников">
             <p>
               Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы
             </p>

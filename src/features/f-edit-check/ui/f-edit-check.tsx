@@ -51,6 +51,7 @@ export const FEditCheck = ({ isOpen, onClose, initialTitle, onSubmit }: TFEditCh
       <h3 className="modal__title">Изменить название</h3>
       <div className="modal__inputs">
         <Input
+          name="title"
           label="Название чека"
           value={title}
           onChange={handleChange}

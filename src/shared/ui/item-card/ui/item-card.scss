@@ -10,5 +10,8 @@
 
   &--active {
     border-color: var(--color-orange);
+    .w-check-card__footer {
+      border-color: var(--color-orange);
+    }
   }
 }

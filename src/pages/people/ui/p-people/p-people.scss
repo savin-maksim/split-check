@@ -1,13 +1,3 @@
 .p-people {
-  width: 100%;
-  margin-bottom: calc(var(--navigation-height) - var(--space));
-
-  &__empty-state {
-    min-height: 50vh;
-    padding: 2rem 1rem;
-
-    p {
-      max-width: 22rem;
-    }
-  }
+  min-height: calc(100svh - var(--navigation-height));
 }

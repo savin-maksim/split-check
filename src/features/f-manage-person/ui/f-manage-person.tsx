@@ -60,6 +60,7 @@ export const FManagePerson = ({ isOpen, onClose, mode, initialName = '', onSubmi
       <div className="modal__inputs">
         <Input
           ref={inputRef}
+          name="name"
           label="Имя"
           value={name}
           onChange={handleChange}
