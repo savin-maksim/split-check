@@ -27,7 +27,7 @@ export const PersonBadge = ({
     <div className={cn('person-badge', value > 0 && 'person-badge--active', className)} {...rest}>
       <IconButton
         variant={EIconButtonVariant.Wide}
-        icon={<Minus size={16} />}
+        icon={<Minus size={'var(--button-icon-size)'} />}
         onClick={onDecrease}
         disabled={disabled}
         aria-label="Меньше"
@@ -37,7 +37,7 @@ export const PersonBadge = ({
       </span>
       <IconButton
         variant={EIconButtonVariant.Wide}
-        icon={<Plus size={16} />}
+        icon={<Plus size={'var(--button-icon-size)'} />}
         onClick={onIncrease}
         aria-label="Больше"
       />

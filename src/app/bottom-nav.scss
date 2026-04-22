@@ -1,27 +1,25 @@
 .bottom-nav {
   position: fixed;
-  bottom: 0.5rem;
-  left: 1rem;
-  right: 1rem;
-  height: var(--navigation-height);
-  border-radius: var(--border-radius-large);
-  border: var(--border);
-  background-color: rgba(var(--color-bg), 0.5);
+  bottom: var(--space);
+  left: var(--space-large);
+  right: var(--space-large);
   display: flex;
   justify-content: space-around;
   align-items: center;
+  height: var(--navigation-height);
+  border: var(--border);
+  border-radius: var(--border-radius-large);
+  background-color: rgba(var(--color-bg), 0.5);
+
   z-index: 100;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
   &__link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     color: var(--color-text-active);
     padding: var(--space);
     border-radius: var(--border-radius-small);
-    @include transition(all);
 
     &--active {
       color: var(--color-orange);
@@ -49,7 +47,6 @@
     justify-content: center;
     color: white;
     cursor: pointer;
-    @include transition(all);
 
     @include hover {
       transform: scale(1.05);

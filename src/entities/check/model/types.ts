@@ -10,6 +10,8 @@ export type TItem = {
   price: number
   paidBy: number[]
   split: Record<number, number>
+  paidBySectionExpanded?: boolean
+  splitDistributionWeighted?: boolean
 }
 
 export enum EPaymentMode {
@@ -51,7 +53,7 @@ export type TCheckStore = {
   removeAllPeople: (checkId: string) => void
   updatePerson: (checkId: string, personId: number, name: string) => boolean
 
-  addItem: (checkId: string, item: Omit<TItem, 'id'>) => void
+  addItem: (checkId: string, item: Omit<TItem, 'id'>) => number | null
   removeItem: (checkId: string, itemId: number) => void
   removeAllItems: (checkId: string) => void
   updateItem: (checkId: string, itemId: number, item: Partial<TItem>) => void

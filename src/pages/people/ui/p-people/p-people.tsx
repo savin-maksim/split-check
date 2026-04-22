@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, memo } from 'react'
-import { UserPlus, Users } from 'lucide-react'
+import { Trash2, UserPlus, Users } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 import { useCurrentCheck, useCheckStore } from '@/entities/check'
@@ -33,13 +33,16 @@ const PeopleContent = memo(({ checkId, people, onEdit, onOpenClearAll }: TPeople
   return (
     <>
       <PageHeader
-        icon={<Users size={40} aria-hidden="true" />}
+        icon={<Users size={'var(--header-icon-size)'} aria-hidden="true" />}
         title="Участники"
         subtitle={`${people.length} ${pluralize(people.length, ['человек', 'человека', 'человек'])}`}
         action={
-          <Button variant={EButtonVariant.Danger} onClick={onOpenClearAll}>
-            Удалить всех
-          </Button>
+          <Button
+            variant={EButtonVariant.Danger}
+            onClick={onOpenClearAll}
+            title="Удалить всех участников"
+            icon={<Trash2 size={'var(--button-icon-size)'} aria-hidden="true" />}
+          />
         }
       />
 
@@ -112,11 +115,14 @@ export const PPeople = () => {
   if (!check) return null
 
   return (
-    <section className="p-people">
+    <>
       {people.length === 0 ? (
         <>
-          <PageHeader icon={<Users size={40} aria-hidden="true" />} title="Участники" />
-          <EmptyState icon={<UserPlus size={48} aria-hidden="true" />} title="Добавьте участников">
+          <PageHeader icon={<Users size={'var(--header-icon-size)'} aria-hidden="true" />} title="Участники" />
+          <EmptyState
+            icon={<UserPlus size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
+            title="Добавьте участников"
+          >
             <p>
               Нажмите на кнопку в навигационной панели, чтобы добавить людей, между которыми нужно разделить расходы
             </p>
@@ -155,6 +161,6 @@ export const PPeople = () => {
         title="Удалить всех участников?"
         message="Будут удалены все участники и все расходы. Это действие нельзя отменить."
       />
-    </section>
+    </>
   )
 }

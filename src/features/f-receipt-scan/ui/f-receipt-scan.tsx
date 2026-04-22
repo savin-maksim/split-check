@@ -144,7 +144,7 @@ export const FReceiptScan = ({ people, paymentMode, singlePayerId, onAddItems, c
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange} className="f-receipt-scan__input" />
       <IconButton
         variant={EIconButtonVariant.Scanner}
-        icon={<ScanLine size={20} />}
+        icon={<ScanLine size={'var(--button-icon-size)'} />}
         onClick={() => fileRef.current?.click()}
         disabled={isLoading}
         aria-label="Сканировать чек"

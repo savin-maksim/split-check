@@ -19,6 +19,7 @@
   --space: 0.5rem;
   --space-medium: 0.75rem;
   --space-large: 1rem;
+  --space-x-large: 1.5rem;
 
   --border-width: 2px;
   --border: var(--border-width) solid var(--color-glass);
@@ -58,6 +59,12 @@
   --transition-duration: 0.2s;
 
   --navigation-height: 3.5rem;
+
+  --bottom-nav-icon-size: 24;
+  --header-icon-size: 40;
+  --empty-state-icon-size: 48;
+  --transfer-card-icon-size: 40;
+  --button-icon-size: 20;
 
   --z-index-nav: 100;
   --z-index-overlay: 200;

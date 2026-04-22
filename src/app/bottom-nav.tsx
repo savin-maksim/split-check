@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { NavLink, useLocation, useParams } from 'react-router-dom'
 import { Receipt, Users, Calculator, BarChart3, FilePlus, UserPlus, Plus, Share2 } from 'lucide-react'
 
+import { useCheckStore } from '@/entities/check'
 import { cn } from '@/shared/lib'
 import { useNavActionStore } from '@/shared/lib/use-nav-action'
 import { buildRoute } from '@/shared/constants'
@@ -10,10 +11,10 @@ import { buildRoute } from '@/shared/constants'
 import './bottom-nav.scss'
 
 const ACTION_ICONS: Record<string, { icon: ReactNode; title: string }> = {
-  '/': { icon: <FilePlus size={24} />, title: 'Новый чек' },
-  'people': { icon: <UserPlus size={24} />, title: 'Добавить людей' },
-  'items': { icon: <Plus size={24} />, title: 'Добавить расход' },
-  'stats': { icon: <Share2 size={24} />, title: 'Поделиться' },
+  '/': { icon: <FilePlus size={'var(--bottom-nav-icon-size)'} />, title: 'Новый чек' },
+  'people': { icon: <UserPlus size={'var(--bottom-nav-icon-size)'} />, title: 'Добавить людей' },
+  'items': { icon: <Plus size={'var(--bottom-nav-icon-size)'} />, title: 'Добавить расход' },
+  'stats': { icon: <Share2 size={'var(--bottom-nav-icon-size)'} />, title: 'Поделиться' },
 }
 
 const getActionKey = (path: string): string => {
@@ -26,24 +27,37 @@ const getActionKey = (path: string): string => {
 
 export const BottomNav = () => {
   const location = useLocation()
-  const { checkId } = useParams<{ checkId: string }>()
+  const { checkId: paramCheckId } = useParams<{ checkId: string }>()
+  const checks = useCheckStore((s) => s.checks)
+  const currentCheckId = useCheckStore((s) => s.currentCheckId)
   const onAction = useNavActionStore((s) => s.onAction)
 
+  const isHome = location.pathname === '/'
+
+  const contextCheckId = useMemo(() => {
+    if (paramCheckId) return paramCheckId
+    if (!isHome) return null
+    if (currentCheckId && checks.some((c) => c.id === currentCheckId)) {
+      return currentCheckId
+    }
+    return null
+  }, [paramCheckId, isHome, currentCheckId, checks])
+
   const navItems = useMemo(() => {
-    if (!checkId) {
-      return [{ to: '/', icon: <Receipt size={24} />, label: 'Чеки' }]
+    if (!contextCheckId) {
+      return [{ to: '/', icon: <Receipt size={'var(--bottom-nav-icon-size)'} />, label: 'Чеки' }]
     }
     return [
-      { to: '/', icon: <Receipt size={24} />, label: 'Чеки' },
-      { to: buildRoute.people(checkId), icon: <Users size={24} />, label: 'Люди' },
-      { to: buildRoute.items(checkId), icon: <Calculator size={24} />, label: 'Расходы' },
-      { to: buildRoute.stats(checkId), icon: <BarChart3 size={24} />, label: 'Статистика' },
+      { to: '/', icon: <Receipt size={'var(--bottom-nav-icon-size)'} />, label: 'Чеки' },
+      { to: buildRoute.people(contextCheckId), icon: <Users size={'var(--bottom-nav-icon-size)'} />, label: 'Люди' },
+      { to: buildRoute.items(contextCheckId), icon: <Calculator size={'var(--bottom-nav-icon-size)'} />, label: 'Расходы' },
+      { to: buildRoute.stats(contextCheckId), icon: <BarChart3 size={'var(--bottom-nav-icon-size)'} />, label: 'Статистика' },
     ]
-  }, [checkId])
+  }, [contextCheckId])
 
   const actionKey = getActionKey(location.pathname)
   const actionConfig = actionKey ? ACTION_ICONS[actionKey] : null
-  const midIndex = checkId ? 2 : 1
+  const midIndex = contextCheckId ? 2 : 1
 
   return (
     <nav className="bottom-nav" aria-label="Основная навигация">

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Receipt, FolderInput } from 'lucide-react'
+import { Receipt, FilePlus } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 import { useCheckStore } from '@/entities/check'
@@ -93,19 +93,22 @@ export const PChecksList = () => {
   )
 
   return (
-    <div className="p-checks-list">
+    <>
       <PageHeader
-        icon={<Receipt size={40} aria-hidden="true" />}
+        icon={<Receipt size={'var(--header-icon-size)'} aria-hidden="true" />}
         title="Чеки"
         subtitle={
           checks.length > 0 ? `${checks.length} ${pluralize(checks.length, ['чек', 'чека', 'чеков'])}` : undefined
         }
       />
 
-      <section className="p-checks-list__section">
+      <>
         {checks.length === 0 ? (
-          <EmptyState className="p-checks-list__empty" icon={<FolderInput size={40} aria-hidden="true" />}>
-            <p>Пока нет чеков — нажмите «+», задайте название и переходите к участникам.</p>
+          <EmptyState
+            icon={<FilePlus size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
+            title="Создайте первый чек"
+          >
+            <p>Нажмите на кнопку в навигационной панели, чтобы создать чек</p>
           </EmptyState>
         ) : (
           <ChecksContent
@@ -116,7 +119,7 @@ export const PChecksList = () => {
             onDelete={setDeleteCheck}
           />
         )}
-      </section>
+      </>
 
       <FCreateCheck isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSubmit={handleCreate} />
 
@@ -134,6 +137,6 @@ export const PChecksList = () => {
         title="Удалить чек?"
         message={`Чек «${deleteCheck?.title}» будет удалён без возможности восстановления.`}
       />
-    </div>
+    </>
   )
 }

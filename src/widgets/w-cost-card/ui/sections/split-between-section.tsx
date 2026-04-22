@@ -27,15 +27,18 @@ export const SplitBetweenSection = ({
 
   return (
     <div className="split-between-section">
-      <div className="split-between-section__label">
+      <button
+        type="button"
+        className="split-between-section__label"
+        onClick={onToggleDistribution}
+        title={isWeighted ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
+      >
         <p>На кого разделить?</p>
         <IconButton
-          icon={<ChartPie />}
+          icon={<ChartPie size={'var(--bottom-nav-icon-size)'} />}
           variant={isWeighted ? EIconButtonVariant.Active : undefined}
-          onClick={onToggleDistribution}
-          aria-label={isWeighted ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
         />
-      </div>
+      </button>
 
       {isWeighted ? (
         <PersonGrid variant="weights">

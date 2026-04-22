@@ -1,5 +1,11 @@
 @use 'mixins' as *;
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   @include fluid-text(18, 16);
 
@@ -23,6 +29,11 @@ body {
     pointer-events: none;
     z-index: -1;
   }
+}
+
+:focus-visible {
+  outline: 2px dashed var(--color-orange);
+  outline-offset: 2px;
 }
 
 .visually-hidden {
@@ -59,25 +70,20 @@ button {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-
-  &:focus-visible {
-    outline: 2px dashed var(--color-orange);
-    outline-offset: 2px;
-  }
 }
 
-.tag-grid {
+.grid {
   @include tag-grid-container;
 }
 
-.tag-grid-item--span-2 {
+.grid--span-2 {
   grid-column: span 2;
 }
 
-.tag-grid-item--span-3 {
+.grid--span-3 {
   grid-column: span 3;
 }
 
-.tag-grid-item--span-6 {
-  grid-column: span 6;
+.grid--span-4 {
+  grid-column: span 4;
 }

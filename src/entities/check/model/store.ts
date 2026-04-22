@@ -149,13 +149,25 @@ export const useCheckStore = create<TCheckStore>()(
       },
 
       addItem: (checkId: string, item: Omit<TItem, 'id'>) => {
+        const check = get().checks.find((c) => c.id === checkId)
+        if (!check) return null
+        const newId = check.nextItemId
         set((s) => ({
           checks: updateCheck(s.checks, checkId, (c) => ({
             ...c,
-            items: [...c.items, { ...item, id: c.nextItemId }],
+            items: [
+              ...c.items,
+              {
+                ...item,
+                id: c.nextItemId,
+                paidBySectionExpanded: item.paidBySectionExpanded ?? false,
+                splitDistributionWeighted: item.splitDistributionWeighted ?? false,
+              },
+            ],
             nextItemId: c.nextItemId + 1,
           })),
         }))
+        return newId
       },
 
       removeItem: (checkId: string, itemId: number) => {
@@ -204,13 +216,6 @@ export const useCheckStore = create<TCheckStore>()(
         set((s) => ({
           checks: updateCheck(s.checks, checkId, (c) => {
             if (c.paymentMode === mode) return c
-            if (mode === EPaymentMode.Single && c.singlePayer != null) {
-              return {
-                ...c,
-                paymentMode: mode,
-                items: c.items.map((item) => ({ ...item, paidBy: [c.singlePayer!] })),
-              }
-            }
             return { ...c, paymentMode: mode, singlePayer: mode === EPaymentMode.Manual ? null : c.singlePayer }
           }),
         }))
@@ -221,7 +226,6 @@ export const useCheckStore = create<TCheckStore>()(
           checks: updateCheck(s.checks, checkId, (c) => ({
             ...c,
             singlePayer: personId,
-            items: personId != null ? c.items.map((item) => ({ ...item, paidBy: [personId] })) : c.items,
           })),
         }))
       },

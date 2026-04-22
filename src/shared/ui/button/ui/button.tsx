@@ -54,7 +54,7 @@ export const Button = memo(
             {icon}
           </span>
         )}
-        <span className="button__label">{children}</span>
+        {children != null && children !== false && <span className="button__label">{children}</span>}
       </button>
     )
   },

@@ -24,7 +24,7 @@ export const ScrollTopButton = () => {
 
   return (
     <button className="scroll-top-button" onClick={handleClick} title="Наверх" aria-label="Прокрутить наверх">
-      <ArrowUp size={24} aria-hidden="true" />
+      <ArrowUp size={'var(--button-icon-size)'} aria-hidden="true" />
     </button>
   )
 }

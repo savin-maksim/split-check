@@ -57,6 +57,7 @@
   }
 
   &__label {
+    @include flex-center($isInline: true);
     flex: 1;
     text-align: center;
     min-width: 0;

@@ -16,8 +16,18 @@ import {
 } from '@/shared/lib/math'
 import type { BigNumber } from '@/shared/lib/math'
 
-import type { TCheck, TTransfer } from '../model/types'
+import type { TCheck, TItem, TTransfer } from '../model/types'
+import { EPaymentMode } from '../model/types'
 import { getItemTotal } from './get-item-total'
+
+/** Плательщик для расчётов: в режиме single — `singlePayer`, иначе — первый из `people` в `item.paidBy` */
+export const getEffectivePayerId = (check: TCheck, item: TItem): number | null => {
+  if (check.paymentMode === EPaymentMode.Single && check.singlePayer != null) {
+    return check.singlePayer
+  }
+  const found = check.people.find((p) => item.paidBy.includes(p.id))
+  return found?.id ?? null
+}
 
 type TDistribution =
   | { type: 'equal'; participants: string[] }
@@ -44,7 +54,8 @@ const readWeight = (split: Record<number, number>, personId: number): number => 
 export const checkToProducts = (check: TCheck): TProduct[] => {
   return check.items.map((item) => {
     const amount = getItemTotal(item)
-    const payerPerson = check.people.find((p) => item.paidBy.includes(p.id))
+    const effectivePayerId = getEffectivePayerId(check, item)
+    const payerPerson = check.people.find((p) => p.id === effectivePayerId)
     const payer = payerPerson?.name ?? ''
 
     const totalWeight = Object.values(item.split).reduce((s, w) => s + Math.max(0, Math.floor(Number(w) || 0)), 0)

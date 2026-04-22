@@ -1,9 +1,9 @@
-import { useState, useCallback, useMemo, useEffect, useRef, memo } from 'react'
+import { useState, useCallback, useMemo, useEffect, memo } from 'react'
 import { Link } from 'react-router-dom'
-import { Calculator, Users, Search } from 'lucide-react'
+import { Calculator, Users, Search, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
-import { useCurrentCheck, useCheckStore, EPaymentMode } from '@/entities/check'
+import { useCurrentCheck, useCheckStore, EPaymentMode, isSplitDistributionWeightedView } from '@/entities/check'
 import type { TItem, TPerson } from '@/entities/check'
 import { WCostCard } from '@/widgets/w-cost-card'
 import { FManageItem } from '@/features/f-manage-item'
@@ -23,6 +23,7 @@ type TItemsContentProps = {
   paymentMode: EPaymentMode
   singlePayer: number | null
   onEdit: (item: TItem) => void
+  onRequestDelete: (item: TItem) => void
   onOpenClearAll: () => void
   onAddBulkItems: (items: Omit<TItem, 'id'>[]) => void
 }
@@ -35,18 +36,16 @@ const ItemsContent = memo(
     paymentMode,
     singlePayer,
     onEdit,
+    onRequestDelete,
     onOpenClearAll,
     onAddBulkItems,
   }: TItemsContentProps) => {
     const updateItem = useCheckStore((s) => s.updateItem)
-    const removeItem = useCheckStore((s) => s.removeItem)
     const duplicateItem = useCheckStore((s) => s.duplicateItem)
     const setPaymentMode = useCheckStore((s) => s.setPaymentMode)
     const setSinglePayer = useCheckStore((s) => s.setSinglePayer)
 
     const [searchQuery, setSearchQuery] = useState('')
-    const [expandedPaidBy, setExpandedPaidBy] = useState<Set<number>>(() => new Set())
-    const [weightedView, setWeightedView] = useState<Set<number>>(() => new Set())
 
     const filteredItems = useMemo(() => {
       if (!searchQuery.trim()) return items
@@ -73,33 +72,28 @@ const ItemsContent = memo(
       [setSinglePayer, checkId, singlePayer],
     )
 
-    const togglePaidByExpanded = useCallback((itemId: number) => {
-      setExpandedPaidBy((prev) => {
-        const next = new Set(prev)
-        if (next.has(itemId)) next.delete(itemId)
-        else next.add(itemId)
-        return next
-      })
-    }, [])
-
     return (
       <>
         <PageHeader
-          icon={<Calculator size={40} aria-hidden="true" />}
+          icon={<Calculator size={'var(--header-icon-size)'} aria-hidden="true" />}
           title="Расходы"
           action={
-            <Button variant={EButtonVariant.Danger} onClick={onOpenClearAll}>
-              Удалить позиции
-            </Button>
+            <Button
+              variant={EButtonVariant.Danger}
+              onClick={onOpenClearAll}
+              title="Удалить все позиции"
+              icon={<Trash2 size={'var(--button-icon-size)'} aria-hidden="true" />}
+            />
           }
         />
 
-        <FPaymentMode value={paymentMode} onChange={handlePaymentModeChange} />
-
         <div className="p-items__toolbar">
+          <h2 className="p-items__toolbar-title grid--span-4">Режим оплаты</h2>
+          <FPaymentMode className="grid--span-4" value={paymentMode} onChange={handlePaymentModeChange} />
           <Input
+            className="grid--span-3"
             name="search"
-            icon={<Search size={20} aria-hidden="true" />}
+            icon={<Search size={'var(--button-icon-size)'} aria-hidden="true" />}
             clearable
             label="Поиск по названию/имени"
             value={searchQuery}
@@ -132,10 +126,18 @@ const ItemsContent = memo(
               item={item}
               people={people}
               paymentMode={paymentMode}
-              paidByExpanded={expandedPaidBy.has(item.id)}
-              isWeighted={weightedView.has(item.id)}
-              onTogglePaidByExpanded={() => togglePaidByExpanded(item.id)}
-              onPersonPaidToggle={(person) => updateItem(checkId, item.id, { paidBy: [person.id] })}
+              paidByExpanded={item.paidBySectionExpanded ?? false}
+              isWeighted={isSplitDistributionWeightedView(item)}
+              onTogglePaidByExpanded={() => {
+                if (paymentMode === EPaymentMode.Single) return
+                updateItem(checkId, item.id, {
+                  paidBySectionExpanded: !(item.paidBySectionExpanded ?? false),
+                })
+              }}
+              onPersonPaidToggle={(person) => {
+                if (paymentMode === EPaymentMode.Single) return
+                updateItem(checkId, item.id, { paidBy: [person.id], paidBySectionExpanded: false })
+              }}
               onSplitPersonToggle={(person) => {
                 const current = item.split[person.id] ?? 0
                 updateItem(checkId, item.id, {
@@ -143,12 +145,18 @@ const ItemsContent = memo(
                 })
               }}
               onToggleDistribution={() => {
-                setWeightedView((prev) => {
-                  const next = new Set(prev)
-                  if (next.has(item.id)) next.delete(item.id)
-                  else next.add(item.id)
-                  return next
-                })
+                if (isSplitDistributionWeightedView(item)) {
+                  const newSplit: Record<number, number> = {}
+                  for (const p of people) {
+                    newSplit[p.id] = (item.split[p.id] ?? 0) > 0 ? 1 : 0
+                  }
+                  updateItem(checkId, item.id, {
+                    split: newSplit,
+                    splitDistributionWeighted: false,
+                  })
+                } else {
+                  updateItem(checkId, item.id, { splitDistributionWeighted: true })
+                }
               }}
               onAdjustWeight={(personId, delta) => {
                 const current = item.split[personId] ?? 0
@@ -162,10 +170,7 @@ const ItemsContent = memo(
               }}
               onDuplicate={() => duplicateItem(checkId, item.id)}
               onEdit={() => onEdit(item)}
-              onDelete={() => {
-                removeItem(checkId, item.id)
-                toast.success('Позиция удалена')
-              }}
+              onDelete={() => onRequestDelete(item)}
             />
           ))}
         </div>
@@ -178,20 +183,19 @@ ItemsContent.displayName = 'ItemsContent'
 export const PItems = () => {
   const { check, checkId } = useCurrentCheck()
   const addItem = useCheckStore((s) => s.addItem)
+  const removeItem = useCheckStore((s) => s.removeItem)
   const removeAllItems = useCheckStore((s) => s.removeAllItems)
   const setNavAction = useNavActionStore((s) => s.setOnAction)
 
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [editItem, setEditItem] = useState<TItem | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<TItem | null>(null)
   const [isClearAllOpen, setIsClearAllOpen] = useState(false)
-  const reopenTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
     setNavAction(() => setIsAddOpen(true))
     return () => setNavAction(null)
   }, [setNavAction])
-
-  useEffect(() => () => clearTimeout(reopenTimerRef.current), [])
 
   const people = check?.people ?? []
   const items = check?.items ?? []
@@ -200,16 +204,11 @@ export const PItems = () => {
 
   const handleAddItem = useCallback(
     (item: Omit<TItem, 'id'>) => {
-      const finalItem =
-        paymentMode === EPaymentMode.Single && singlePayer != null ? { ...item, paidBy: [singlePayer] } : item
-      addItem(checkId, finalItem)
+      addItem(checkId, { ...item, paidBySectionExpanded: true })
       toast.success('Позиция добавлена')
-
-      clearTimeout(reopenTimerRef.current)
       setIsAddOpen(false)
-      reopenTimerRef.current = setTimeout(() => setIsAddOpen(true), 800)
     },
-    [addItem, checkId, paymentMode, singlePayer],
+    [addItem, checkId],
   )
 
   const handleEditItem = useCallback(
@@ -223,7 +222,10 @@ export const PItems = () => {
 
   const handleAddBulkItems = useCallback(
     (newItems: Omit<TItem, 'id'>[]) => {
-      newItems.forEach((item) => addItem(checkId, item))
+      const n = newItems.length
+      newItems.forEach((entry, i) => {
+        addItem(checkId, { ...entry, paidBySectionExpanded: i === n - 1 })
+      })
     },
     [addItem, checkId],
   )
@@ -233,29 +235,38 @@ export const PItems = () => {
     toast.success('Все позиции удалены')
   }, [removeAllItems, checkId])
 
+  const handleConfirmDeleteItem = useCallback(() => {
+    if (!itemToDelete) return
+    removeItem(checkId, itemToDelete.id)
+    toast.success('Позиция удалена')
+  }, [itemToDelete, removeItem, checkId])
+
   const handleOpenClearAll = useCallback(() => setIsClearAllOpen(true), [])
 
   if (!check) return null
 
   if (people.length === 0) {
     return (
-      <div className="p-items">
-        <PageHeader icon={<Users size={40} aria-hidden="true" />} title="Расходы" />
-        <EmptyState icon={<Users size={48} aria-hidden="true" />} title="Добавьте участников">
+      <>
+        <PageHeader icon={<Users size={'var(--header-icon-size)'} aria-hidden="true" />} title="Расходы" />
+        <EmptyState
+          icon={<Users size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
+          title="Добавьте участников"
+        >
           <p>
             Перейдите на <Link to={buildRoute.people(checkId)}>страницу участников</Link> и добавьте людей
           </p>
         </EmptyState>
-      </div>
+      </>
     )
   }
 
   if (items.length === 0) {
     return (
-      <div className="p-items">
-        <PageHeader icon={<Calculator size={40} aria-hidden="true" />} title="Расходы" />
+      <>
+        <PageHeader icon={<Calculator size={'var(--header-icon-size)'} aria-hidden="true" />} title="Расходы" />
         <EmptyState
-          icon={<Calculator size={48} aria-hidden="true" />}
+          icon={<Calculator size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
           title="Добавьте расходы"
           actions={
             <FReceiptScan
@@ -275,14 +286,15 @@ export const PItems = () => {
           mode="add"
           people={people}
           paymentMode={paymentMode}
+          singlePayerId={singlePayer}
           onSubmit={handleAddItem}
         />
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="p-items">
+    <>
       <ItemsContent
         checkId={checkId}
         people={people}
@@ -290,6 +302,7 @@ export const PItems = () => {
         paymentMode={paymentMode}
         singlePayer={singlePayer}
         onEdit={setEditItem}
+        onRequestDelete={setItemToDelete}
         onOpenClearAll={handleOpenClearAll}
         onAddBulkItems={handleAddBulkItems}
       />
@@ -300,6 +313,7 @@ export const PItems = () => {
         mode="add"
         people={people}
         paymentMode={paymentMode}
+        singlePayerId={singlePayer}
         onSubmit={handleAddItem}
       />
 
@@ -310,7 +324,16 @@ export const PItems = () => {
         initialData={editItem ?? undefined}
         people={people}
         paymentMode={paymentMode}
+        singlePayerId={singlePayer}
         onSubmit={handleEditItem}
+      />
+
+      <FConfirmDelete
+        isOpen={itemToDelete != null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={handleConfirmDeleteItem}
+        title="Удалить позицию?"
+        message={`Позиция «${itemToDelete?.title}» будет удалена без возможности восстановления.`}
       />
 
       <FConfirmDelete
@@ -320,6 +343,6 @@ export const PItems = () => {
         title="Удалить все позиции?"
         message="Все расходы в текущем чеке будут удалены. Участники останутся. Действие нельзя отменить."
       />
-    </div>
+    </>
   )
 }

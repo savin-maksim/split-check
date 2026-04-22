@@ -143,7 +143,7 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
                   >
                     {row.fromLabel}
                   </Button>
-                  <MoveRight size={40} aria-hidden="true" />
+                  <MoveRight size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
                   <Button>{row.to}</Button>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
                 >
                   {transfer.from}
                 </Button>
-                <MoveRight size={40} aria-hidden="true" />
+                <MoveRight size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
                 <Button>{transfer.to}</Button>
               </div>
             </div>

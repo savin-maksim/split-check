@@ -59,56 +59,54 @@ export const PStats = () => {
 
   if (people.length === 0) {
     return (
-      <div className={cn('p-stats', 'p-stats--standalone')}>
+      <>
+        <PageHeader icon={<Users size={'var(--header-icon-size)'} aria-hidden="true" />} title="Статистика" />
         <EmptyState
-          muted
-          className="p-stats__empty-surface"
-          icon={<Users size={48} aria-hidden="true" />}
+          icon={<Users size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
           title="Добавьте участников"
         >
           <p>
             Перейдите на <Link to={buildRoute.people(checkId)}>страницу участников</Link> и добавьте людей
           </p>
         </EmptyState>
-      </div>
+      </>
     )
   }
 
   if (items.length === 0) {
     return (
-      <div className={cn('p-stats', 'p-stats--standalone')}>
+      <>
         <EmptyState
-          muted
           className="p-stats__empty-surface"
-          icon={<Calculator size={48} aria-hidden="true" />}
+          icon={<Calculator size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
           title="Добавьте расходы"
         >
           <p>
             Перейдите на <Link to={buildRoute.items(checkId)}>страницу расходов</Link> и добавьте расходы
           </p>
         </EmptyState>
-      </div>
+      </>
     )
   }
 
   if (transfers.length === 0) {
     return (
-      <div className={cn('p-stats', 'p-stats--standalone')}>
-        <EmptyState muted icon={<Spinner />} title="Проверьте позиции">
+      <>
+        <EmptyState icon={<Spinner />} title="Проверьте позиции">
           <p>Вероятно в одной из них не выбран плательщик и/или участник</p>
         </EmptyState>
-      </div>
+      </>
     )
   }
 
   return (
     <>
-      <div className="p-stats__transfers">
-        <PageHeader icon={<BarChart3 size={40} aria-hidden="true" />} title="Статистика" />
+      <>
+        <PageHeader icon={<BarChart3 size={'var(--header-icon-size)'} aria-hidden="true" />} title="Статистика" />
         <WTransfersCard transfers={transfers} isLoading={false} />
-      </div>
+      </>
 
-      <div className="p-stats">
+      <>
         <div className="p-stats__cards">
           {/* <WTotalCard check={check} /> */}
 
@@ -197,7 +195,7 @@ export const PStats = () => {
             )
           })}
         </div>
-      </div>
+      </>
 
       <FStatisticsShare isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
     </>

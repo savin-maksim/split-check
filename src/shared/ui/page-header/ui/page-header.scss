@@ -3,13 +3,12 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  padding-block: 1.25rem;
-  gap: 1rem;
+  gap: var(--space-large);
 
   &__title-block {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--space-medium);
     min-width: 0;
   }
 
@@ -29,9 +28,6 @@
 
   &__title {
     margin: 0;
-    color: var(--color-light);
-    line-height: 1.2;
-    font-size: 24px;
   }
 
   &__subtitle {

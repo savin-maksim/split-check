@@ -17,6 +17,8 @@ type TFManageItemProps = {
   initialData?: Partial<TItem>
   people: TPerson[]
   paymentMode: EPaymentMode
+  /** В режиме single подставляется в paidBy при добавлении/сохранении, если задан */
+  singlePayerId?: number | null
   onSubmit: (item: Omit<TItem, 'id'>) => void
 }
 
@@ -27,6 +29,7 @@ export const FManageItem = ({
   initialData,
   people,
   paymentMode,
+  singlePayerId = null,
   onSubmit,
 }: TFManageItemProps) => {
   const [title, setTitle] = useState('')
@@ -40,6 +43,9 @@ export const FManageItem = ({
 
   const callbacksRef = useRef({ onSubmit, onClose })
   callbacksRef.current = { onSubmit, onClose }
+
+  const submitContextRef = useRef({ mode, paymentMode, singlePayerId })
+  submitContextRef.current = { mode, paymentMode, singlePayerId }
 
   useEffect(() => {
     if (!isOpen) return
@@ -84,6 +90,7 @@ export const FManageItem = ({
   const handleSubmit = useCallback(() => {
     const { title: t, priceStr: p, qtyStr: q, paidBy: pb, split: sp } = formRef.current
     const { onSubmit: submit, onClose: close } = callbacksRef.current
+    const { mode: submitMode, paymentMode: pm, singlePayerId: spId } = submitContextRef.current
 
     const trimmedTitle = t.trim()
     if (!trimmedTitle) {
@@ -103,11 +110,14 @@ export const FManageItem = ({
       return
     }
 
+    const effectivePaidBy =
+      submitMode === 'add' && pm === EPaymentMode.Single && spId != null ? [spId] : pb
+
     submit({
       title: formatItemTitle(trimmedTitle),
       price,
       qty,
-      paidBy: pb,
+      paidBy: effectivePaidBy,
       split: sp,
     })
 

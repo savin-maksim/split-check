@@ -3,24 +3,38 @@
 
   &__label {
     @include flex-center();
+    @include button-reset();
+    width: 100%;
     justify-content: space-between;
     gap: 0.5rem;
     margin-block: 1rem;
     font-size: 14px;
     transition: margin-bottom var(--transition-duration) ease;
-
-    &--collapsed {
-      margin-bottom: 0;
-    }
+    transition: color var(--transition-duration) ease;
 
     &-picked {
       color: var(--color-orange);
       font-weight: 600;
       min-width: 0;
+      @include text-ellipsis();
+    }
+
+    :last-child:is(button) {
       flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      justify-content: flex-end;
+    }
+
+    @include hover {
+      color: var(--color-orange);
+
+      .icon-button {
+        color: var(--color-orange);
+        filter: drop-shadow(0 0 8px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha)));
+      }
+    }
+
+    &--collapsed {
+      margin-bottom: 0;
     }
   }
 

@@ -133,7 +133,7 @@ export const Input = memo(
 
           {showClear ? (
             <button type="button" className="input-field__clear" onClick={handleClear} aria-label={clearAriaLabel}>
-              <X size={18} strokeWidth={2} />
+              <X size={'var(--button-icon-size)'} strokeWidth={2} />
             </button>
           ) : null}
 
@@ -144,7 +144,7 @@ export const Input = memo(
               onClick={handleTogglePassword}
               aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <EyeOff size={'var(--button-icon-size)'} /> : <Eye size={'var(--button-icon-size)'} />}
             </button>
           ) : null}
 

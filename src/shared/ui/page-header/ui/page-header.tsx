@@ -26,7 +26,7 @@ export const PageHeader = ({ icon, title, subtitle, action, className, titleAs =
           </span>
         )}
         <div className="page-header__text">
-          <TitleTag className="page-header__title">{title}</TitleTag>
+          <TitleTag className="page-header__title h2">{title}</TitleTag>
           {showSubtitle && <p className="page-header__subtitle">{subtitle}</p>}
         </div>
       </div>

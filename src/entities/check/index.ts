@@ -3,9 +3,11 @@ export { EPaymentMode } from './model'
 export type { TCheck, TCheckStore, TItem, TPerson, TTransfer } from './model'
 export {
   getItemTotal,
+  isSplitDistributionWeightedView,
   calculateBalances,
   generateTransfers,
   checkToProducts,
+  getEffectivePayerId,
   validatePersonName,
   validateItemTitle,
   validateItemPrice,

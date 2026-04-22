@@ -18,21 +18,30 @@ type TWhoPaidSectionProps = {
 export const WhoPaidSection = ({ people, paidByIds, expanded, onToggle, onPersonToggle }: TWhoPaidSectionProps) => {
   const selectedPeople = people.filter((p) => paidByIds.includes(p.id))
 
+  const titleHint = expanded ? 'Скрыть список' : 'Показать список'
+
   return (
     <div className="who-paid-section">
-      <div className={cn('who-paid-section__label', !expanded && 'who-paid-section__label--collapsed')}>
+      <button
+        type="button"
+        className={cn('who-paid-section__label', !expanded && 'who-paid-section__label--collapsed')}
+        onClick={onToggle}
+        title={titleHint}
+      >
         <span>Кто платил?</span>
         {!expanded && selectedPeople.length > 0 && (
           <span className="who-paid-section__label-picked">{selectedPeople.map((p) => p.name).join(', ')}</span>
         )}
         <IconButton
-          icon={expanded ? <ChevronsDownUp /> : <ChevronsUpDown />}
-          onClick={onToggle}
-          aria-expanded={expanded}
-          aria-label={expanded ? 'Скрыть список' : 'Показать список'}
-          title={expanded ? 'Скрыть список' : 'Показать список'}
+          icon={
+            expanded ? (
+              <ChevronsDownUp size={'var(--bottom-nav-icon-size)'} />
+            ) : (
+              <ChevronsUpDown size={'var(--bottom-nav-icon-size)'} />
+            )
+          }
         />
-      </div>
+      </button>
       <div className={cn('who-paid-section__collapse', expanded && 'who-paid-section__collapse--open')}>
         <div className="who-paid-section__collapse-inner">
           <PersonGrid people={people} selected={selectedPeople} onToggle={onPersonToggle} />

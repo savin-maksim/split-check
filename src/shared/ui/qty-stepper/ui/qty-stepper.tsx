@@ -15,7 +15,7 @@ export const QtyStepper = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQ
   return (
     <div className="qty-stepper" role="group" aria-label="Количество">
       <IconButton
-        icon={<Minus size={16} />}
+        icon={<Minus size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
         onClick={() => onAdjust(-1)}
         disabled={!canDecreaseQty}
@@ -23,7 +23,7 @@ export const QtyStepper = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQ
       />
       <span className="qty-stepper__value">{qty}</span>
       <IconButton
-        icon={<Plus size={16} />}
+        icon={<Plus size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
         onClick={() => onAdjust(1)}
         aria-label="Увеличить количество"

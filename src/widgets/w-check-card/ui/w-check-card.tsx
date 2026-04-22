@@ -68,18 +68,18 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
         <div className="w-check-card__footer">
           <div className="w-check-card__footer-inner">
             <CardStats
-              icon={<Users size={18} aria-hidden="true" />}
+              icon={<Users size={'var(--button-icon-size)'} aria-hidden="true" />}
               value={peopleCount}
               label={pluralize(peopleCount, ['человек', 'человека', 'человек'])}
             />
             <CardStats
-              icon={<Calculator size={18} aria-hidden="true" />}
+              icon={<Calculator size={'var(--button-icon-size)'} aria-hidden="true" />}
               value={itemsCount}
               label={pluralize(itemsCount, ['позиция', 'позиции', 'позиций'])}
             />
             <CardStats
               className="card-stats--sum"
-              icon={<Receipt size={18} aria-hidden="true" />}
+              icon={<Receipt size={'var(--button-icon-size)'} aria-hidden="true" />}
               value={formatMoney(totalKopecks)}
             />
           </div>

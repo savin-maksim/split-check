@@ -1,5 +1,6 @@
 export { getItemTotal } from './get-item-total'
-export { calculateBalances, generateTransfers, checkToProducts } from './calculate-balances'
+export { isSplitDistributionWeightedView } from './is-split-distribution-weighted-view'
+export { calculateBalances, generateTransfers, checkToProducts, getEffectivePayerId } from './calculate-balances'
 export { validatePersonName, validateItemTitle, validateItemPrice } from './validation'
 export { useCurrentCheck } from './use-current-check'
 export { useCheckBalances } from './use-check-balances'
