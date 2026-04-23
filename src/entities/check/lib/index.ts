@@ -16,3 +16,5 @@ export {
   buildDisplayTransfers,
 } from './merge-transfers'
 export type { TDisplayTransfer } from './merge-transfers'
+export { calculatePersonStats } from './calculate-person-stats'
+export type { TPersonStats, TExpenseItem } from './calculate-person-stats'

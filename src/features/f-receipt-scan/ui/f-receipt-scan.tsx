@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, memo } from 'react'
 import type { ChangeEvent } from 'react'
 
 import { ScanLine } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 import { cn, formatItemTitle } from '@/shared/lib'
-import { IconButton, EIconButtonVariant, Modal, Button, EButtonVariant } from '@/shared/ui'
+import { Modal, Button, EButtonVariant } from '@/shared/ui'
 import type { TItem, TPerson } from '@/entities/check'
 import { EPaymentMode } from '@/entities/check'
 
@@ -25,7 +25,20 @@ type TScannedItem = {
   qty: number
 }
 
-const GEMINI_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b']
+interface IScannedItemProps {
+  item: TScannedItem
+}
+
+const ScannedItem = memo(({ item }: IScannedItemProps) => (
+  <div className="f-receipt-scan__preview-item">
+    <span>{item.title}</span>
+    <span>
+      {item.qty} × {item.price} ₽
+    </span>
+  </div>
+))
+
+const GEMINI_MODELS = ['gemini-3.1-flash-lite-preview', 'gemini-3-flash-preview', 'gemini-3-pro-image-preview']
 
 const getNextModel = (): string => {
   try {
@@ -49,40 +62,86 @@ const fileToBase64 = (file: File): Promise<string> =>
     reader.readAsDataURL(file)
   })
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const parseRetryAfterMs = (resp: Response): number | null => {
+  const ra = resp.headers.get('Retry-After')
+  if (ra == null) return null
+  const sec = parseInt(ra, 10)
+  if (Number.isNaN(sec)) return null
+  return Math.min(sec * 1000, 60_000)
+}
+
+const isRetryableStatus = (status: number) => status === 429 || status === 500 || status === 503 || status === 404
+
 const analyzeReceipt = async (file: File): Promise<TScannedItem[]> => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
   if (!apiKey) throw new Error('API ключ не настроен')
 
-  const model = getNextModel()
+  const firstModel = getNextModel()
+  const otherModels = GEMINI_MODELS.filter((m) => m !== firstModel)
+  const modelsToTry = [firstModel, ...otherModels]
+
   const base64 = await fileToBase64(file)
   const mimeType = file.type || 'image/jpeg'
+  const body = JSON.stringify({
+    contents: [
+      {
+        parts: [
+          {
+            text: 'Извлеки позиции из чека. Верни JSON массив: [{"title":"...","price":число,"qty":число}]. Только JSON, без пояснений. Если встречаются позиции с одинаковым названием, суммируй их количество. Учитывай в чеке только количество, если там указаны литры или любые другие единицы, которые не относятся к количеству для позиции, пиши 1.',
+          },
+          { inlineData: { mimeType, data: base64 } },
+        ],
+      },
+    ],
+  })
 
-  const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
+  for (let attempt = 0; attempt < modelsToTry.length; attempt++) {
+    const model = modelsToTry[attempt]!
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+
+    const resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: 'Извлеки позиции из чека. Верни JSON массив: [{"title":"...","price":число,"qty":число}]. Только JSON, без пояснений.',
-              },
-              { inlineData: { mimeType, data: base64 } },
-            ],
-          },
-        ],
-      }),
-    },
-  )
+      body,
+    })
 
-  if (!resp.ok) throw new Error(`Ошибка API: ${resp.status}`)
-  const data = await resp.json()
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
-  const jsonMatch = text.match(/\[[\s\S]*\]/)
-  if (!jsonMatch) throw new Error('Не удалось распознать позиции')
-  return JSON.parse(jsonMatch[0]) as TScannedItem[]
+    if (resp.ok) {
+      const data = await resp.json()
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+      const jsonMatch = text.match(/\[[\s\S]*\]/)
+      if (!jsonMatch) throw new Error('Не удалось распознать позиции')
+      return JSON.parse(jsonMatch[0]) as TScannedItem[]
+    }
+
+    let message = `Ошибка API: ${resp.status}`
+    try {
+      const errJson: { error?: { message?: string } } = await resp.json()
+      if (errJson?.error?.message) message = errJson.error.message
+    } catch {
+      // ignore
+    }
+
+    if (isRetryableStatus(resp.status) && attempt < modelsToTry.length - 1) {
+      const wait = parseRetryAfterMs(resp) ?? Math.min(1500 * (attempt + 1), 10_000)
+      if (resp.status === 429) {
+        await sleep(wait)
+        continue
+      }
+      await sleep(Math.min(800 * (attempt + 1), 5000))
+      continue
+    }
+
+    if (resp.status === 429) {
+      throw new Error(
+        'Слишком много запросов к Google AI (лимит квоты). Подождите минуту и попробуйте снова или проверьте план в Google AI Studio.',
+      )
+    }
+    throw new Error(message)
+  }
+
+  throw new Error('Не удалось обратиться к API распознавания')
 }
 
 export const FReceiptScan = ({ people, paymentMode, singlePayerId, onAddItems, className }: TFReceiptScanProps) => {
@@ -142,24 +201,20 @@ export const FReceiptScan = ({ people, paymentMode, singlePayerId, onAddItems, c
   return (
     <div className={cn('f-receipt-scan', className)}>
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange} className="f-receipt-scan__input" />
-      <IconButton
-        variant={EIconButtonVariant.Scanner}
+      <Button
         icon={<ScanLine size={'var(--button-icon-size)'} />}
         onClick={() => fileRef.current?.click()}
         disabled={isLoading}
         aria-label="Сканировать чек"
-      />
+      >
+        Сканировать чек
+      </Button>
 
       <Modal isOpen={isPreviewOpen} onClose={() => setIsPreviewOpen(false)}>
         <h3 className="modal__title">Позиции из чека</h3>
         <div className="modal__inputs">
           {scannedItems.map((item, idx) => (
-            <div key={idx} className="f-receipt-scan__preview-item">
-              <span>{item.title}</span>
-              <span>
-                {item.qty} × {item.price} ₽
-              </span>
-            </div>
+            <ScannedItem key={idx} item={item} />
           ))}
         </div>
         <div className="modal__buttons">

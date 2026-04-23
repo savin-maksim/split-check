@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { Minus, Plus } from 'lucide-react'
 
 import { IconButton, EIconButtonVariant } from '@/shared/ui/icon-button'
@@ -11,13 +12,16 @@ type TQtyStepperProps = {
   onAdjust: (delta: number) => void
 }
 
-export const QtyStepper = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQtyStepperProps) => {
+const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQtyStepperProps) => {
+  const onDec = useCallback(() => onAdjust(-1), [onAdjust])
+  const onInc = useCallback(() => onAdjust(1), [onAdjust])
+
   return (
     <div className="qty-stepper" role="group" aria-label="Количество">
       <IconButton
         icon={<Minus size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
-        onClick={() => onAdjust(-1)}
+        onClick={onDec}
         disabled={!canDecreaseQty}
         aria-label="Уменьшить количество"
       />
@@ -25,10 +29,13 @@ export const QtyStepper = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQ
       <IconButton
         icon={<Plus size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
-        onClick={() => onAdjust(1)}
+        onClick={onInc}
         aria-label="Увеличить количество"
       />
       <span className="qty-stepper__formula">× {priceFormatted}</span>
     </div>
   )
 }
+
+export const QtyStepper = memo(QtyStepperComponent)
+QtyStepper.displayName = 'QtyStepper'

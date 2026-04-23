@@ -14,7 +14,7 @@
 }
 
 @mixin card-base {
-  background-color: rgba(var(--button-neutral-surface-rgb), 0.08);
+  background-color: var(--color-glass);
   border: var(--border);
   border-radius: var(--border-radius);
 }

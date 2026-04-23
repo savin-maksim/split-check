@@ -13,9 +13,11 @@
     transition: color var(--transition-duration) ease;
 
     &-picked {
+      text-align: start;
       color: var(--color-orange);
       font-weight: 600;
       min-width: 0;
+      flex: 1;
       @include text-ellipsis();
     }
 

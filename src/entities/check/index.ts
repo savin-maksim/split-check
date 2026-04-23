@@ -22,5 +22,6 @@ export {
   canUnmergeSelection,
   applyUnmerge,
   buildDisplayTransfers,
+  calculatePersonStats,
 } from './lib'
-export type { TDisplayTransfer } from './lib'
+export type { TDisplayTransfer, TPersonStats, TExpenseItem } from './lib'

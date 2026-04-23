@@ -1,9 +1,10 @@
+import { memo } from 'react'
 import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
 
 import type { TPerson } from '@/entities/check'
 
 import { cn } from '@/shared/lib'
-import { IconButton, PersonGrid } from '@/shared/ui'
+import { PersonGrid } from '@/shared/ui'
 
 import './who-paid-section.scss'
 
@@ -15,7 +16,7 @@ type TWhoPaidSectionProps = {
   onPersonToggle: (person: TPerson) => void
 }
 
-export const WhoPaidSection = ({ people, paidByIds, expanded, onToggle, onPersonToggle }: TWhoPaidSectionProps) => {
+const WhoPaidSectionComponent = ({ people, paidByIds, expanded, onToggle, onPersonToggle }: TWhoPaidSectionProps) => {
   const selectedPeople = people.filter((p) => paidByIds.includes(p.id))
 
   const titleHint = expanded ? 'Скрыть список' : 'Показать список'
@@ -32,15 +33,13 @@ export const WhoPaidSection = ({ people, paidByIds, expanded, onToggle, onPerson
         {!expanded && selectedPeople.length > 0 && (
           <span className="who-paid-section__label-picked">{selectedPeople.map((p) => p.name).join(', ')}</span>
         )}
-        <IconButton
-          icon={
-            expanded ? (
-              <ChevronsDownUp size={'var(--bottom-nav-icon-size)'} />
-            ) : (
-              <ChevronsUpDown size={'var(--bottom-nav-icon-size)'} />
-            )
-          }
-        />
+        <span className="icon-button" aria-hidden>
+          {expanded ? (
+            <ChevronsDownUp size={'var(--bottom-nav-icon-size)'} />
+          ) : (
+            <ChevronsUpDown size={'var(--bottom-nav-icon-size)'} />
+          )}
+        </span>
       </button>
       <div className={cn('who-paid-section__collapse', expanded && 'who-paid-section__collapse--open')}>
         <div className="who-paid-section__collapse-inner">
@@ -50,3 +49,6 @@ export const WhoPaidSection = ({ people, paidByIds, expanded, onToggle, onPerson
     </div>
   )
 }
+
+export const WhoPaidSection = memo(WhoPaidSectionComponent)
+WhoPaidSection.displayName = 'WhoPaidSection'

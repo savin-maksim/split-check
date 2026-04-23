@@ -1,0 +1,71 @@
+.w-statistics-summary {
+  @include card-base;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: var(--space-large);
+  color: var(--color-light);
+  width: 100%;
+  max-width: calc(var(--cards-width) * 2);
+  margin-inline: auto;
+  grid-column: 1 / -1;
+
+  &__title {
+    color: var(--color-orange);
+  }
+
+  &__total {
+    text-align: center;
+    margin-block: var(--space-large);
+  }
+
+  &__expenses {
+    padding-top: var(--space-large);
+    border-top: 1px solid var(--color-glass);
+  }
+
+  &__expenses-title {
+    margin-bottom: var(--space);
+    display: flex;
+    align-items: center;
+
+    :nth-child(2) {
+      text-align: center;
+      flex: 1;
+    }
+  }
+
+  &__expense-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+    margin-bottom: var(--space-small);
+    padding: var(--space) 0;
+    border-bottom: 1px solid var(--color-glass);
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  &__expense-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    flex: 1;
+  }
+
+  &__expense-quantity {
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  &__expense-amount {
+    flex: 1;
+    text-align: end;
+  }
+}

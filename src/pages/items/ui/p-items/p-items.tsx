@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Calculator, Users, Search, Trash2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
-import { useCurrentCheck, useCheckStore, EPaymentMode, isSplitDistributionWeightedView } from '@/entities/check'
+import { useCurrentCheck, useCheckStore, EPaymentMode } from '@/entities/check'
 import type { TItem, TPerson } from '@/entities/check'
 import { WCostCard } from '@/widgets/w-cost-card'
 import { FManageItem } from '@/features/f-manage-item'
@@ -28,6 +28,71 @@ type TItemsContentProps = {
   onAddBulkItems: (items: Omit<TItem, 'id'>[]) => void
 }
 
+type TItemsListWithSearchProps = {
+  checkId: string
+  people: TPerson[]
+  items: TItem[]
+  paymentMode: EPaymentMode
+  onEdit: (item: TItem) => void
+  onRequestDelete: (item: TItem) => void
+}
+
+const ItemsListWithSearch = memo(function ItemsListWithSearch({
+  checkId,
+  people,
+  items,
+  paymentMode,
+  onEdit,
+  onRequestDelete,
+}: TItemsListWithSearchProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return items
+    const query = searchQuery.toLowerCase()
+    return items.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(query)
+      const payerMatch = item.paidBy.some((payerId) =>
+        people
+          .find((p) => p.id === payerId)
+          ?.name.toLowerCase()
+          .includes(query),
+      )
+      return titleMatch || payerMatch
+    })
+  }, [items, searchQuery, people])
+
+  return (
+    <>
+      <div className="p-items__search">
+        <Input
+          name="search"
+          icon={<Search size={'var(--button-icon-size)'} aria-hidden="true" />}
+          clearable
+          label="Поиск по названию/имени"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          enterKeyHint="search"
+        />
+      </div>
+      <div className="list-layout">
+        {filteredItems.map((item) => (
+          <WCostCard
+            key={item.id}
+            checkId={checkId}
+            item={item}
+            people={people}
+            paymentMode={paymentMode}
+            onEdit={onEdit}
+            onDelete={onRequestDelete}
+          />
+        ))}
+      </div>
+    </>
+  )
+})
+ItemsListWithSearch.displayName = 'ItemsListWithSearch'
+
 const ItemsContent = memo(
   ({
     checkId,
@@ -40,27 +105,8 @@ const ItemsContent = memo(
     onOpenClearAll,
     onAddBulkItems,
   }: TItemsContentProps) => {
-    const updateItem = useCheckStore((s) => s.updateItem)
-    const duplicateItem = useCheckStore((s) => s.duplicateItem)
     const setPaymentMode = useCheckStore((s) => s.setPaymentMode)
     const setSinglePayer = useCheckStore((s) => s.setSinglePayer)
-
-    const [searchQuery, setSearchQuery] = useState('')
-
-    const filteredItems = useMemo(() => {
-      if (!searchQuery.trim()) return items
-      const query = searchQuery.toLowerCase()
-      return items.filter((item) => {
-        const titleMatch = item.title.toLowerCase().includes(query)
-        const payerMatch = item.paidBy.some((payerId) =>
-          people
-            .find((p) => p.id === payerId)
-            ?.name.toLowerCase()
-            .includes(query),
-        )
-        return titleMatch || payerMatch
-      })
-    }, [items, searchQuery, people])
 
     const handlePaymentModeChange = useCallback(
       (mode: EPaymentMode) => setPaymentMode(checkId, mode),
@@ -90,17 +136,8 @@ const ItemsContent = memo(
         <div className="p-items__toolbar">
           <h2 className="p-items__toolbar-title grid--span-4">Режим оплаты</h2>
           <FPaymentMode className="grid--span-4" value={paymentMode} onChange={handlePaymentModeChange} />
-          <Input
-            className="grid--span-3"
-            name="search"
-            icon={<Search size={'var(--button-icon-size)'} aria-hidden="true" />}
-            clearable
-            label="Поиск по названию/имени"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            enterKeyHint="search"
-          />
           <FReceiptScan
+            className="grid--span-4"
             people={people}
             paymentMode={paymentMode}
             singlePayerId={singlePayer}
@@ -119,61 +156,14 @@ const ItemsContent = memo(
           </div>
         )}
 
-        <div className="list-layout">
-          {filteredItems.map((item) => (
-            <WCostCard
-              key={item.id}
-              item={item}
-              people={people}
-              paymentMode={paymentMode}
-              paidByExpanded={item.paidBySectionExpanded ?? false}
-              isWeighted={isSplitDistributionWeightedView(item)}
-              onTogglePaidByExpanded={() => {
-                if (paymentMode === EPaymentMode.Single) return
-                updateItem(checkId, item.id, {
-                  paidBySectionExpanded: !(item.paidBySectionExpanded ?? false),
-                })
-              }}
-              onPersonPaidToggle={(person) => {
-                if (paymentMode === EPaymentMode.Single) return
-                updateItem(checkId, item.id, { paidBy: [person.id], paidBySectionExpanded: false })
-              }}
-              onSplitPersonToggle={(person) => {
-                const current = item.split[person.id] ?? 0
-                updateItem(checkId, item.id, {
-                  split: { ...item.split, [person.id]: current > 0 ? 0 : 1 },
-                })
-              }}
-              onToggleDistribution={() => {
-                if (isSplitDistributionWeightedView(item)) {
-                  const newSplit: Record<number, number> = {}
-                  for (const p of people) {
-                    newSplit[p.id] = (item.split[p.id] ?? 0) > 0 ? 1 : 0
-                  }
-                  updateItem(checkId, item.id, {
-                    split: newSplit,
-                    splitDistributionWeighted: false,
-                  })
-                } else {
-                  updateItem(checkId, item.id, { splitDistributionWeighted: true })
-                }
-              }}
-              onAdjustWeight={(personId, delta) => {
-                const current = item.split[personId] ?? 0
-                updateItem(checkId, item.id, {
-                  split: { ...item.split, [personId]: Math.max(0, current + delta) },
-                })
-              }}
-              onAdjustQty={(delta) => {
-                const newQty = Math.max(1, item.qty + delta)
-                updateItem(checkId, item.id, { qty: newQty })
-              }}
-              onDuplicate={() => duplicateItem(checkId, item.id)}
-              onEdit={() => onEdit(item)}
-              onDelete={() => onRequestDelete(item)}
-            />
-          ))}
-        </div>
+        <ItemsListWithSearch
+          checkId={checkId}
+          people={people}
+          items={items}
+          paymentMode={paymentMode}
+          onEdit={onEdit}
+          onRequestDelete={onRequestDelete}
+        />
       </>
     )
   },
@@ -278,6 +268,9 @@ export const PItems = () => {
           }
         >
           <p>Нажмите на кнопку в навигационной панели, чтобы добавить расходы</p>
+          <p>
+            Или воспользуйтесь <span className="gemini-gradient">ИИ распознованием</span>
+          </p>
         </EmptyState>
 
         <FManageItem

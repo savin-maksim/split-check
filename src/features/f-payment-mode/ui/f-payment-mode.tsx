@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 import { ToggleGroup } from '@/shared/ui'
 import { EPaymentMode } from '@/entities/check'
 import { Users, User } from 'lucide-react'
@@ -19,7 +21,7 @@ type TFPaymentModeProps = {
   className?: string
 }
 
-export const FPaymentMode = ({ value, onChange, className }: TFPaymentModeProps) => {
+export const FPaymentMode = memo(({ value, onChange, className }: TFPaymentModeProps) => {
   return (
     <ToggleGroup
       options={PAYMENT_OPTIONS}
@@ -29,4 +31,5 @@ export const FPaymentMode = ({ value, onChange, className }: TFPaymentModeProps)
       label="Режим оплаты"
     />
   )
-}
+})
+FPaymentMode.displayName = 'FPaymentMode'

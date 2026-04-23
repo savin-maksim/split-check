@@ -38,7 +38,7 @@ export const Input = memo(
       ref,
     ) => {
       const generatedId = useId()
-      const inputId = id ?? name ?? generatedId
+      const inputId = id ?? generatedId
 
       const [showPassword, setShowPassword] = useState(false)
       const [hasUncontrolledValue, setHasUncontrolledValue] = useState(

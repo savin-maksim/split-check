@@ -10,7 +10,9 @@ type TFConfirmDeleteProps = {
   message?: string
 }
 
-export const FConfirmDelete = ({
+import { memo } from 'react'
+
+export const FConfirmDelete = memo(({
   isOpen,
   onClose,
   onConfirm,
@@ -36,4 +38,4 @@ export const FConfirmDelete = ({
       </div>
     </Modal>
   )
-}
+})

@@ -57,9 +57,6 @@
   }
 
   &__label {
-    @include flex-center($isInline: true);
-    flex: 1;
-    text-align: center;
     min-width: 0;
     line-height: 1.1;
     @include text-ellipsis;

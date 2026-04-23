@@ -38,6 +38,7 @@
   @include card-base;
   width: 100%;
   max-width: var(--cards-width);
+  margin-inline: auto;
 
   &__transfers {
     display: grid;
@@ -65,10 +66,11 @@
 
   &__people {
     display: grid;
-    grid-template-columns: 1fr 0.1fr 1fr;
+    grid-template-columns: 1fr 0.3fr 1fr;
     align-items: center;
+    justify-items: center;
     gap: 0.5rem;
-    padding-inline: 1rem;
+    padding-inline: var(--space);
   }
 
   &__person {

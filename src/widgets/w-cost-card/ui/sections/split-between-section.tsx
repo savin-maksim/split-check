@@ -1,8 +1,10 @@
+import { memo, useCallback } from 'react'
 import { ChartPie } from 'lucide-react'
 
 import type { TPerson } from '@/entities/check'
 
-import { IconButton, EIconButtonVariant, PersonGrid, PersonBadge } from '@/shared/ui'
+import { cn } from '@/shared/lib'
+import { PersonGrid, PersonBadge } from '@/shared/ui'
 
 import './split-between-section.scss'
 
@@ -15,7 +17,40 @@ type TSplitBetweenSectionProps = {
   onToggleDistribution: () => void
 }
 
-export const SplitBetweenSection = ({
+type TSplitWeightRowProps = {
+  personId: number
+  name: string
+  value: number
+  onAdjustWeight: (personId: number, delta: number) => void
+}
+
+const SplitWeightRow = memo(function SplitWeightRow({
+  personId,
+  name,
+  value,
+  onAdjustWeight,
+}: TSplitWeightRowProps) {
+  const onDecrease = useCallback(
+    () => onAdjustWeight(personId, -1),
+    [onAdjustWeight, personId],
+  )
+  const onIncrease = useCallback(
+    () => onAdjustWeight(personId, 1),
+    [onAdjustWeight, personId],
+  )
+
+  return (
+    <PersonBadge
+      value={value}
+      label={name}
+      onDecrease={onDecrease}
+      onIncrease={onIncrease}
+    />
+  )
+})
+SplitWeightRow.displayName = 'SplitWeightRow'
+
+const SplitBetweenSectionComponent = ({
   people,
   split,
   onTogglePerson,
@@ -34,21 +69,23 @@ export const SplitBetweenSection = ({
         title={isWeighted ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
       >
         <p>На кого разделить?</p>
-        <IconButton
-          icon={<ChartPie size={'var(--bottom-nav-icon-size)'} />}
-          variant={isWeighted ? EIconButtonVariant.Active : undefined}
-        />
+        <span
+          className={cn('icon-button', isWeighted && 'icon-button--active')}
+          aria-hidden
+        >
+          <ChartPie size={'var(--bottom-nav-icon-size)'} />
+        </span>
       </button>
 
       {isWeighted ? (
         <PersonGrid variant="weights">
           {people.map((person) => (
-            <PersonBadge
+            <SplitWeightRow
               key={person.id}
+              personId={person.id}
+              name={person.name}
               value={split[person.id] ?? 0}
-              label={person.name}
-              onDecrease={() => onAdjustWeight(person.id, -1)}
-              onIncrease={() => onAdjustWeight(person.id, 1)}
+              onAdjustWeight={onAdjustWeight}
             />
           ))}
         </PersonGrid>
@@ -58,3 +95,6 @@ export const SplitBetweenSection = ({
     </div>
   )
 }
+
+export const SplitBetweenSection = memo(SplitBetweenSectionComponent)
+SplitBetweenSection.displayName = 'SplitBetweenSection'

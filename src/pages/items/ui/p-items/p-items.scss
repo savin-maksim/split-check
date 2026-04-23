@@ -6,6 +6,8 @@
 
   &__toolbar {
     width: 100%;
+    max-width: var(--cards-width);
+    margin-inline: auto;
     display: grid;
     gap: var(--space);
     grid-template-columns: repeat(4, 1fr);
@@ -13,6 +15,12 @@
     &-title {
       text-align: center;
     }
+  }
+
+  &__search {
+    width: 100%;
+    max-width: var(--cards-width);
+    margin-inline: auto;
   }
 
   &__cards {

@@ -28,7 +28,8 @@ const getActionKey = (path: string): string => {
 export const BottomNav = () => {
   const location = useLocation()
   const { checkId: paramCheckId } = useParams<{ checkId: string }>()
-  const checks = useCheckStore((s) => s.checks)
+  // Стабильная строка id — не меняется при правках чека (кроме набора id), в отличие от s.checks
+  const checkIdsKey = useCheckStore((s) => s.checks.map((c) => c.id).join('\u0000'))
   const currentCheckId = useCheckStore((s) => s.currentCheckId)
   const onAction = useNavActionStore((s) => s.onAction)
 
@@ -37,11 +38,16 @@ export const BottomNav = () => {
   const contextCheckId = useMemo(() => {
     if (paramCheckId) return paramCheckId
     if (!isHome) return null
-    if (currentCheckId && checks.some((c) => c.id === currentCheckId)) {
-      return currentCheckId
+    if (currentCheckId) {
+      const idSet = new Set(
+        checkIdsKey
+          ? checkIdsKey.split('\u0000')
+          : [],
+      )
+      if (idSet.has(currentCheckId)) return currentCheckId
     }
     return null
-  }, [paramCheckId, isHome, currentCheckId, checks])
+  }, [paramCheckId, isHome, currentCheckId, checkIdsKey])
 
   const navItems = useMemo(() => {
     if (!contextCheckId) {
