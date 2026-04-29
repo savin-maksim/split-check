@@ -10,6 +10,8 @@
   border: var(--border);
   border-radius: var(--border-radius-large);
   background-color: rgba(var(--color-bg), 0.5);
+  max-width: var(--cards-width);
+  margin: 0 auto;
 
   z-index: 100;
   backdrop-filter: blur(10px);
