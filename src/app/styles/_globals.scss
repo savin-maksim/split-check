@@ -72,6 +72,10 @@ button {
   -webkit-user-select: none;
 }
 
+dialog {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .grid {
   @include tag-grid-container;
 }

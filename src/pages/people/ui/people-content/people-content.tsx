@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { useCheckStore } from '@/entities/check'
 import type { TPerson } from '@/entities/check'
 import { WPersonCard } from '@/widgets/w-person-card'
-import { PageHeader, Button, EButtonVariant } from '@/shared/ui'
+import { PageHeader, Button, EButtonVariant, AnimatedListLayout } from '@/shared/ui'
 import { pluralize } from '@/shared/lib'
 
 type TPeopleContentProps = {
@@ -42,16 +42,20 @@ export const PeopleContent = memo(({ checkId, people, onEdit, onOpenClearAll }: 
         }
       />
 
-      <ul className="list-layout" role="list">
-        {people.map((person) => (
+      <AnimatedListLayout
+        as="ul"
+        role="list"
+        className="list-layout"
+        items={people}
+        getKey={(person) => person.id}
+        renderItem={(person) => (
           <WPersonCard
-            key={person.id}
             person={person}
             onEdit={() => onEdit(person)}
             onDelete={() => handleDeletePerson(person.id)}
           />
-        ))}
-      </ul>
+        )}
+      />
     </>
   )
 })

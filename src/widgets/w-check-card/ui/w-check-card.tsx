@@ -26,13 +26,7 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
 
   return (
     <ItemCard as="li" className={cn(isActive && 'item-card--active')}>
-      <div
-        className="w-check-card__link"
-        role="button"
-        tabIndex={0}
-        onClick={onOpen}
-        onKeyDown={handleOpenKeyDown}
-      >
+      <div className="w-check-card__link" role="button" tabIndex={0} onClick={onOpen} onKeyDown={handleOpenKeyDown}>
         <div className="w-check-card__header">
           <MarqueeTitle as="h3">{check.title}</MarqueeTitle>
           <div className="w-check-card__actions">

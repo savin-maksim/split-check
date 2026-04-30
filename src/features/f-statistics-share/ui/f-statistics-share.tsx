@@ -17,7 +17,7 @@ export const FStatisticsShare = ({ isOpen, onClose }: TFStatisticsShareProps) =>
     useStatisticsShare({ isOpen, onClose })
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} mode="top-0">
       <h3 className="modal__title">{sections.length === 0 ? 'Нет секций для экспорта' : 'Поделиться статистикой'}</h3>
       <div className="modal__inputs">
         {sections.length > 0 && (

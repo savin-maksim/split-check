@@ -39,6 +39,7 @@
   width: 100%;
   max-width: var(--cards-width);
   margin-inline: auto;
+  margin-top: var(--space-large);
 
   &__transfers {
     display: grid;

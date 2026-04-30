@@ -1,10 +1,9 @@
 import { useState, useMemo, memo } from 'react'
 import { Search } from 'lucide-react'
 
-import { EPaymentMode } from '@/entities/check'
-import type { TItem, TPerson } from '@/entities/check'
+import type { EPaymentMode, TItem, TPerson } from '@/entities/check'
 import { WCostCard } from '@/widgets/w-cost-card'
-import { Input } from '@/shared/ui'
+import { Input, AnimatedListLayout } from '@/shared/ui'
 
 type TItemsListWithSearchProps = {
   checkId: string
@@ -53,10 +52,13 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
           enterKeyHint="search"
         />
       </div>
-      <div className="list-layout">
-        {filteredItems.map((item) => (
+      <AnimatedListLayout
+        className="list-layout"
+        suppressInitialEnter={true}
+        items={filteredItems}
+        getKey={(item) => item.id}
+        renderItem={(item) => (
           <WCostCard
-            key={item.id}
             checkId={checkId}
             item={item}
             people={people}
@@ -64,8 +66,8 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
             onEdit={onEdit}
             onDelete={onRequestDelete}
           />
-        ))}
-      </div>
+        )}
+      />
     </>
   )
 })

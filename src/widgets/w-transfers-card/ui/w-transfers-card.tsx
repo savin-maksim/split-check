@@ -4,11 +4,13 @@ import type { TTransfer } from '@/entities/check'
 import { isEligibleForMerge } from '@/entities/check'
 
 import { cn, formatMoney } from '@/shared/lib'
-import { Button, EButtonVariant, IconButton, Spinner } from '@/shared/ui'
+import { AnimatedNumber, Button, EButtonVariant, IconButton, Spinner } from '@/shared/ui'
 
 import { useTransfersCard } from '../lib/use-transfers-card'
 
 import './w-transfers-card.scss'
+
+const transferAmountDuration = 0.7
 
 type TWTransfersCardProps = {
   transfers: TTransfer[]
@@ -53,7 +55,14 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
 
             return (
               <div key={row.key} className="w-transfers-card__item">
-                <h4 className="w-transfers-card__amount">{formatMoney(row.amount)}</h4>
+                <h4 className="w-transfers-card__amount">
+                  <AnimatedNumber
+                    value={row.amount}
+                    format={formatMoney}
+                    className="h4"
+                    duration={transferAmountDuration}
+                  />
+                </h4>
                 <div className="w-transfers-card__people">
                   <Button
                     className={cn(
@@ -86,7 +95,12 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
 
           return (
             <div key={row.key} className="w-transfers-card__item">
-              <h4 className="w-transfers-card__amount">{formatMoney(transfer.amount)}</h4>
+              <AnimatedNumber
+                value={transfer.amount}
+                format={formatMoney}
+                className="h4 w-transfers-card__amount"
+                duration={transferAmountDuration}
+              />
               <div className="w-transfers-card__people">
                 <Button
                   className={cn(

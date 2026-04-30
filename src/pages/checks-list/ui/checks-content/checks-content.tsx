@@ -2,6 +2,7 @@ import { memo } from 'react'
 
 import type { TCheck } from '@/entities/check'
 import { WCheckCard } from '@/widgets/w-check-card'
+import { AnimatedListLayout } from '@/shared/ui'
 
 type TChecksContentProps = {
   checks: TCheck[]
@@ -12,17 +13,20 @@ type TChecksContentProps = {
 }
 
 export const ChecksContent = memo(({ checks, currentCheckId, onOpen, onEdit, onDelete }: TChecksContentProps) => (
-  <ul className="list-layout">
-    {checks.map((check) => (
+  <AnimatedListLayout
+    as="ul"
+    className="list-layout"
+    items={checks}
+    getKey={(check) => check.id}
+    renderItem={(check) => (
       <WCheckCard
-        key={check.id}
         check={check}
         isActive={currentCheckId === check.id}
         onOpen={() => onOpen(check)}
         onEdit={() => onEdit(check)}
         onDelete={() => onDelete(check)}
       />
-    ))}
-  </ul>
+    )}
+  />
 ))
 ChecksContent.displayName = 'ChecksContent'

@@ -18,6 +18,17 @@
     width: 100%;
   }
 
+  &__reveal {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__reveal-grid-cell {
+    min-width: 0;
+    grid-column: 1 / -1;
+  }
+
   &__cards {
     display: grid;
     gap: 1rem;

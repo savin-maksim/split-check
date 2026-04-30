@@ -32,7 +32,7 @@ export const ReceiptPreviewModal = ({
   const selectedCount = selectedIndexes.size
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} mode="top-0">
       <h3 className="modal__title">Распознанные товары</h3>
       <div className="receipt-preview-modal__list">
         {items.map((item, index) => (

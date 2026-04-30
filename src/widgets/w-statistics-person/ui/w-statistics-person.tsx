@@ -1,4 +1,5 @@
 import { cn, formatMoney } from '@/shared/lib'
+import { AnimatedNumber } from '@/shared/ui'
 
 import './w-statistics-person.scss'
 
@@ -22,7 +23,11 @@ type TWStatisticsPersonProps = {
   person: TStatisticsPersonData
 }
 
+const statsNumberDuration = 0.7
+
 export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
+  const balanceRounded = Math.round(person.balance)
+
   return (
     <div
       className="w-statistics-person"
@@ -34,35 +39,46 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
         <p className="h4 w-statistics-person__title">{person.name}</p>
         <div className="w-statistics-person__spent">
           <span>Потратил(а):</span>
-          <span className="h4">{formatMoney(person.paidTotal)}</span>
+          <AnimatedNumber value={person.paidTotal} format={formatMoney} className="h4" duration={statsNumberDuration} />
         </div>
         <p className="h4">Детализация расходов:</p>
         {person.expenses.map((expense, idx) => (
-          <div key={idx} className="w-statistics-person__expense">
+          <div key={`${person.id}-${idx}`} className="w-statistics-person__expense">
             <span className="w-statistics-person__expense-name">{expense.title}</span>
             <span className="w-statistics-person__expense-quantity">
               {expense.qty}/{expense.splitCount} шт
             </span>
-            <span className="h4 w-statistics-person__expense-amount">{formatMoney(expense.amount)}</span>
+            <AnimatedNumber
+              value={expense.amount}
+              format={formatMoney}
+              className="h4 w-statistics-person__expense-amount"
+              duration={statsNumberDuration}
+            />
           </div>
         ))}
       </div>
       <div className="w-statistics-person__summary">
         <div className="w-statistics-person__summary-item">
           <span className="h4">Итог:</span>
-          <span className="h4">{formatMoney(person.totalExpenses)}</span>
+          <AnimatedNumber
+            value={person.totalExpenses}
+            format={formatMoney}
+            className="h4"
+            duration={statsNumberDuration}
+          />
         </div>
         <div className="w-statistics-person__summary-item">
           <span className="h4">Баланс:</span>
-          <span
+          <AnimatedNumber
+            value={balanceRounded}
+            format={formatMoney}
             className={cn(
               'h4 w-statistics-person__expense-amount',
               person.balance > 0 && 'positive',
               person.balance < 0 && 'negative',
             )}
-          >
-            {formatMoney(Math.round(person.balance))}
-          </span>
+            duration={statsNumberDuration}
+          />
         </div>
       </div>
     </div>

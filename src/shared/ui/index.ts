@@ -11,9 +11,15 @@ export { EmptyState } from './empty-state'
 export { PageHeader } from './page-header'
 export { ItemCard } from './item-card'
 export { CardStats } from './card-stats'
+export {
+  AnimatedListLayout,
+  AnimatedListPresence,
+  animatedListLayoutTransition,
+} from './animated-list-layout'
 export { Spinner } from './spinner'
 export { PersonGrid } from './person-grid'
 export { PersonBadge } from './person-badge'
+export { AnimatedNumber } from './animated-number'
 export { QtyStepper } from './qty-stepper'
 export { ToggleGroup } from './toggle-group'
 export { StatsCard } from './stats-card'

@@ -21,8 +21,7 @@ export const useStatisticsShare = ({ isOpen, onClose }: TUseStatisticsShareParam
       return
     }
 
-    setSelectedSections(new Set(sections.map((section) => section.index)))
-  }, [isOpen, sections])
+  }, [isOpen])
 
   const handleToggleSection = (index: number) => {
     setSelectedSections((prev) => {

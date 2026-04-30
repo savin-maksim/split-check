@@ -1,24 +1,72 @@
 .modal {
   border: none;
   padding: 0;
-  background: none;
+  margin: 0;
   width: 100%;
-  max-width: var(--cards-width);
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  background: transparent;
   color: var(--color-light);
+  overflow: hidden;
   z-index: var(--z-index-modal);
-  scrollbar-width: none;
-  -webkit-scrollbar-width: none;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &::backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: transparent;
   }
-  max-height: 80vh;
+
+  &__layer {
+    position: relative;
+    display: flex;
+    // align-items: center;
+    // justify-content: center;
+    min-height: 100%;
+    width: 100%;
+    padding: var(--space);
+    box-sizing: border-box;
+  }
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  &__center {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: var(--cards-width);
+    max-height: fit-content;
+    margin: 0 auto;
+
+    &--top-100 {
+      top: 100px;
+    }
+
+    &--top-0 {
+      top: var(--space);
+    }
+  }
+
+  &__sheet {
+    padding: 0;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 80vh;
+    scrollbar-width: none;
+    -webkit-scrollbar-width: none;
+    overflow: auto;
+  }
 
   &__content {
     display: flex;
