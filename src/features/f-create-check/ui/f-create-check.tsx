@@ -9,7 +9,6 @@ type TFCreateCheckProps = {
 }
 
 export const FCreateCheck = ({ isOpen, onClose, onSubmit }: TFCreateCheckProps) => {
-  // Use a stable reference to callbacks to avoid unnecessary re‑creation across renders
   const callbacksRef = useRef({ onSubmit, onClose })
   callbacksRef.current = { onSubmit, onClose }
 

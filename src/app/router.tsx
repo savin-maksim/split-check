@@ -8,7 +8,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        lazy: () => import('@/pages/checks-list').then((m) => ({ Component: m.PChecksList })),
+        lazy: () => import('@/pages/checks-list').then((m) => ({ Component: m.PChecks })),
       },
       {
         path: 'check/:checkId/people',

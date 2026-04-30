@@ -202,12 +202,16 @@ export const useCheckStore = create<TCheckStore>()(
           checks: updateCheck(s.checks, checkId, (c) => {
             const idx = c.items.findIndex((i) => i.id === itemId)
             if (idx === -1) return c
-            const original = c.items[idx]
-            if (!original) return c
-            const newItem: TItem = { ...original, id: c.nextItemId }
-            const newItems = [...c.items]
-            newItems.splice(idx + 1, 0, newItem)
-            return { ...c, items: newItems, nextItemId: c.nextItemId + 1 }
+            const original = {
+              id: c.nextItemId,
+              title: c.items[idx]?.title ?? '',
+              qty: c.items[idx]?.qty ?? 0,
+              price: c.items[idx]?.price ?? 0,
+              paidBy: [],
+              split: {},
+              paidBySectionExpanded: true,
+            }
+            return { ...c, items: [...c.items, original], nextItemId: c.nextItemId + 1 }
           }),
         }))
       },

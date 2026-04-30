@@ -1,0 +1,23 @@
+.receipt-preview-modal {
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+    margin-inline: var(--space);
+    text-align: start;
+  }
+
+  &__summary {
+    margin: var(--space-large) var(--space) 0;
+    color: var(--color-light);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  &__summary-total {
+    @include text-accent-bold;
+
+    margin-left: var(--space);
+    white-space: nowrap;
+  }
+}

@@ -8,11 +8,15 @@ import './f-payment-mode.scss'
 
 const PAYMENT_OPTIONS = [
   {
+    value: EPaymentMode.Single,
+    label: 'Единственный',
+    icon: <User size={'var(--button-icon-size)'} aria-hidden="true" />,
+  },
+  {
     value: EPaymentMode.Manual,
     label: 'Множество',
     icon: <Users size={'var(--button-icon-size)'} aria-hidden="true" />,
   },
-  { value: EPaymentMode.Single, label: 'Единый', icon: <User size={'var(--button-icon-size)'} aria-hidden="true" /> },
 ]
 
 type TFPaymentModeProps = {
@@ -28,7 +32,7 @@ export const FPaymentMode = memo(({ value, onChange, className }: TFPaymentModeP
       value={value}
       onChange={onChange}
       className={className}
-      label="Режим оплаты"
+      label="Режим плательщиков"
     />
   )
 })

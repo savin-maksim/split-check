@@ -9,10 +9,11 @@ type TQtyStepperProps = {
   qty: number
   canDecreaseQty: boolean
   priceFormatted: string
+  isPriceHidden?: boolean
   onAdjust: (delta: number) => void
 }
 
-const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: TQtyStepperProps) => {
+const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, isPriceHidden, onAdjust }: TQtyStepperProps) => {
   const onDec = useCallback(() => onAdjust(-1), [onAdjust])
   const onInc = useCallback(() => onAdjust(1), [onAdjust])
 
@@ -32,7 +33,9 @@ const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, onAdjust }: 
         onClick={onInc}
         aria-label="Увеличить количество"
       />
-      <span className="qty-stepper__formula">× {priceFormatted}</span>
+      {!isPriceHidden && isPriceHidden !== undefined && (
+        <span className="qty-stepper__formula">× {priceFormatted}</span>
+      )}
     </div>
   )
 }

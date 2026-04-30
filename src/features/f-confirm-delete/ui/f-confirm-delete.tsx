@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 import { Modal, Button, EButtonVariant } from '@/shared/ui'
 
 import './f-confirm-delete.scss'
@@ -10,9 +12,7 @@ type TFConfirmDeleteProps = {
   message?: string
 }
 
-import { memo } from 'react'
-
-export const FConfirmDelete = memo(({
+const FConfirmDeleteComponent = ({
   isOpen,
   onClose,
   onConfirm,
@@ -38,4 +38,7 @@ export const FConfirmDelete = memo(({
       </div>
     </Modal>
   )
-})
+}
+
+export const FConfirmDelete = memo(FConfirmDeleteComponent)
+FConfirmDelete.displayName = 'FConfirmDelete'

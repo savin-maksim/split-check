@@ -1,0 +1,31 @@
+.f-receipt-scan-loading {
+  padding: var(--space-large);
+  text-align: center;
+
+  &__text {
+    margin: 0;
+    font-style: normal;
+  }
+
+  &__hint {
+    margin-block: var(--space-medium) 0;
+    color: var(--color-text-secondary);
+  }
+
+  &__gemini-text {
+    background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc04 50%, #34a853 75%, #4285f4 100%);
+    background-size: 200% auto;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    animation: f-receipt-scan-loading-text-shimmer 3s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@keyframes f-receipt-scan-loading-text-shimmer {
+  to {
+    background-position: -200% center;
+  }
+}

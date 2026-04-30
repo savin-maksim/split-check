@@ -19,22 +19,25 @@ type TToggleGroupProps<T extends string> = {
 
 export const ToggleGroup = <T extends string>({ options, value, onChange, className, label }: TToggleGroupProps<T>) => {
   return (
-    <div className={cn('toggle-group', className)} role="radiogroup" aria-label={label}>
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          role="radio"
-          aria-checked={value === option.value}
-          className={cn('toggle-group__option', value === option.value && 'toggle-group__option--active')}
-          onClick={() => onChange(option.value)}
-        >
-          <span className="toggle-group__option-icon" aria-hidden="true">
-            {option.icon}
-          </span>
-          {option.label}
-        </button>
-      ))}
-    </div>
+    <>
+      <h2 className="grid--span-4 text-center">{label}</h2>
+      <div className={cn('toggle-group', className)} role="radiogroup" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={value === option.value}
+            className={cn('toggle-group__option', value === option.value && 'toggle-group__option--active')}
+            onClick={() => onChange(option.value)}
+          >
+            <span className="toggle-group__option-icon" aria-hidden="true">
+              {option.icon}
+            </span>
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </>
   )
 }

@@ -1,10 +1,10 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { Pencil, Trash2, Users, Calculator, Receipt } from 'lucide-react'
 
 import type { TCheck } from '@/entities/check'
 import { getItemTotal } from '@/entities/check'
 
-import { cn, formatSavedDate, formatMoney, pluralize } from '@/shared/lib'
+import { cn, formatSavedDate, formatMoney, pluralize, createKeyboardActivationHandler } from '@/shared/lib'
 import { ItemCard, MarqueeTitle, IconButton, EIconButtonVariant, CardStats } from '@/shared/ui'
 
 import './w-check-card.scss'
@@ -22,6 +22,8 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
   const itemsCount = check.items.length
   const totalKopecks = check.items.reduce((sum, item) => sum + getItemTotal(item), 0)
 
+  const handleOpenKeyDown = useCallback(createKeyboardActivationHandler(onOpen), [onOpen])
+
   return (
     <ItemCard as="li" className={cn(isActive && 'item-card--active')}>
       <div
@@ -29,12 +31,7 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
         role="button"
         tabIndex={0}
         onClick={onOpen}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onOpen()
-          }
-        }}
+        onKeyDown={handleOpenKeyDown}
       >
         <div className="w-check-card__header">
           <MarqueeTitle as="h3">{check.title}</MarqueeTitle>

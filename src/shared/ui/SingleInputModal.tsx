@@ -4,8 +4,8 @@ import {
   useCallback,
   useRef,
   type ChangeEvent,
-  type KeyboardEvent,
 } from 'react';
+import { createEnterKeyDownHandler } from '@/shared/lib';
 import { Modal, Input, Button, EButtonVariant } from '@/shared/ui';
 
 export interface ISingleInputModalProps {
@@ -31,7 +31,7 @@ export interface ISingleInputModalProps {
  * does **not** trigger a re‑render of the whole modal. Only the modal itself
  * re‑renders when `isOpen` changes.
  */
-export const SingleInputModal = memo(({
+const SingleInputModalComponent = ({
   isOpen,
   onClose,
   title,
@@ -59,19 +59,14 @@ export const SingleInputModal = memo(({
     valueRef.current = e.target.value;
   }, []);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSubmit();
-    }
-  }, []);
-
   const handleSubmit = useCallback(() => {
     const trimmed = valueRef.current.trim();
     if (!trimmed) return;
     onSubmit(trimmed);
     onClose();
   }, [onSubmit, onClose]);
+
+  const handleKeyDown = useCallback(createEnterKeyDownHandler(handleSubmit), [handleSubmit]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -96,4 +91,7 @@ export const SingleInputModal = memo(({
       </div>
     </Modal>
   );
-});
+}
+
+export const SingleInputModal = memo(SingleInputModalComponent);
+SingleInputModal.displayName = 'SingleInputModal';

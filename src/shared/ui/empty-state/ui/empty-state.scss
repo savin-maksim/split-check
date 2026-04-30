@@ -10,27 +10,13 @@
   }
 
   &__title {
-    margin: var(--space) 0 var(--space-large);
+    margin: var(--space) 0 var(--space-x-large);
     color: var(--color-light);
-  }
-
-  &__actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 0.5rem;
   }
 
   p {
-    margin: 0 0 1rem;
-    line-height: 1.5;
+    margin: 0 0 var(--space-large);
     color: var(--color-light);
-
-    &:last-of-type {
-      margin-bottom: 0;
-    }
   }
 
   a {

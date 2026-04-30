@@ -1,1 +1,1 @@
-export { PPeople } from './ui/p-people/p-people'
+export { PPeople } from './ui/p-people'

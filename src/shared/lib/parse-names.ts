@@ -9,3 +9,9 @@ export const formatItemTitle = (title: string): string => {
 }
 
 export const normalizeDecimalInput = (raw: string): string => String(raw ?? '').replace(/,/g, '.')
+
+export const parseBulkPersonNames = (raw: string): string[] =>
+  raw
+    .split(',')
+    .map((n) => n.trim())
+    .filter((n) => n.length > 0)

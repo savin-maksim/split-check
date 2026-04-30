@@ -15,7 +15,7 @@ export const WStatisticsSummary = ({ items }: TWStatisticsSummaryProps) => {
   const totalAmount = useMemo(() => items.reduce((sum, item) => sum + getItemTotal(item), 0), [items])
 
   return (
-    <div className="w-statistics-summary" data-stat-share="summary">
+    <div className="w-statistics-summary" data-stat-share="summary" data-stat-share-label="Общая сумма">
       <h3 className="w-statistics-summary__title">Общая сумма</h3>
       <span className="h3 w-statistics-summary__total">{formatMoney(totalAmount)}</span>
       <div className="w-statistics-summary__expenses">

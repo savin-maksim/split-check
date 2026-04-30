@@ -1,4 +1,4 @@
-import type { TCheck, TItem } from '../model/types'
+import type { TCheck } from '../model/types'
 import { getItemTotal } from './get-item-total'
 
 export type TPersonStats = {

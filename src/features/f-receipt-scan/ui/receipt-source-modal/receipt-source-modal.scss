@@ -1,0 +1,17 @@
+.receipt-source-modal {
+  &__options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-medium);
+    margin-inline: var(--space);
+    margin-bottom: var(--space);
+
+    .button {
+      flex-direction: column;
+    }
+
+    svg {
+      color: var(--color-orange);
+    }
+  }
+}

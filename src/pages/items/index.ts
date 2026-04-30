@@ -1,1 +1,1 @@
-export { PItems } from './ui/p-items/p-items'
+export { PItems } from './ui/p-items'

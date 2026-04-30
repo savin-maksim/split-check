@@ -1,39 +1,32 @@
-import { useState, useEffect, useCallback, useRef, memo } from 'react'
-import type { ChangeEvent, KeyboardEvent } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import type { ChangeEvent } from 'react'
 
 import { toast } from 'react-hot-toast'
 
-import { normalizeDecimalInput, formatItemTitle } from '@/shared/lib'
+import { normalizeDecimalInput, formatItemTitle, createEnterKeyDownHandler } from '@/shared/lib'
 import { Modal, Input, Button, EButtonVariant } from '@/shared/ui'
-import type { TItem, TPerson } from '@/entities/check'
+import type { TItem } from '@/entities/check'
 import { EPaymentMode } from '@/entities/check'
-
-import './f-manage-item.scss'
 
 type TFManageItemProps = {
   isOpen: boolean
   onClose: () => void
   mode: 'add' | 'edit'
   initialData?: Partial<TItem>
-  people: TPerson[]
   paymentMode: EPaymentMode
-  /** В режиме single подставляется в paidBy при добавлении/сохранении, если задан */
   singlePayerId?: number | null
   onSubmit: (item: Omit<TItem, 'id'>) => void
 }
 
-const FManageItemComponent = ({
+export const FManageItem = ({
   isOpen,
   onClose,
   mode,
   initialData,
-  people,
   paymentMode,
   singlePayerId = null,
   onSubmit,
 }: TFManageItemProps) => {
-  const handleClose = useCallback(() => onClose(), [onClose])
-
   const titleValueRef = useRef('')
   const priceValueRef = useRef('')
   const qtyValueRef = useRef('1')
@@ -43,15 +36,6 @@ const FManageItemComponent = ({
 
   const [paidBy, setPaidBy] = useState<number[]>([])
   const [split, setSplit] = useState<Record<number, number>>({})
-
-  const paidBySplitRef = useRef({ paidBy, split })
-  paidBySplitRef.current = { paidBy, split }
-
-  const callbacksRef = useRef({ onSubmit, onClose })
-  callbacksRef.current = { onSubmit, onClose }
-
-  const submitContextRef = useRef({ mode, paymentMode, singlePayerId })
-  submitContextRef.current = { mode, paymentMode, singlePayerId }
 
   useEffect(() => {
     if (!isOpen) return
@@ -83,27 +67,12 @@ const FManageItemComponent = ({
     if (qEl) qEl.value = qtyStr
 
     tEl?.focus()
-  }, [isOpen, mode, initialData, people])
-
-  const handleTitleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    titleValueRef.current = e.target.value
-  }, [])
-
-  const handlePriceChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    priceValueRef.current = e.target.value
-  }, [])
-
-  const handleQtyChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    qtyValueRef.current = e.target.value
-  }, [])
+  }, [isOpen, mode, initialData])
 
   const handleSubmit = useCallback(() => {
     const t = titleValueRef.current
     const p = priceValueRef.current
     const q = qtyValueRef.current
-    const { paidBy: pb, split: sp } = paidBySplitRef.current
-    const { onSubmit: submit, onClose: close } = callbacksRef.current
-    const { mode: submitMode, paymentMode: pm, singlePayerId: spId } = submitContextRef.current
 
     const trimmedTitle = t.trim()
     if (!trimmedTitle) {
@@ -123,33 +92,38 @@ const FManageItemComponent = ({
       return
     }
 
-    const effectivePaidBy = submitMode === 'add' && pm === EPaymentMode.Single && spId != null ? [spId] : pb
+    const effectivePaidBy =
+      mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null ? [singlePayerId] : paidBy
 
-    submit({
+    onSubmit({
       title: formatItemTitle(trimmedTitle),
       price,
       qty,
       paidBy: effectivePaidBy,
-      split: sp,
+      split,
     })
 
-    close()
+    onClose()
+  }, [mode, paymentMode, singlePayerId, paidBy, split, onSubmit, onClose])
+
+  const handleTitleKeyDown = useMemo(
+    () =>
+      createEnterKeyDownHandler(() => {
+        priceInputRef.current?.focus()
+      }),
+    [],
+  )
+
+  const handleQtyFocus = useCallback(() => {
+    qtyInputRef.current?.select()
   }, [])
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        handleSubmit()
-      }
-    },
-    [handleSubmit],
-  )
+  const handleEnterSubmit = useMemo(() => createEnterKeyDownHandler(handleSubmit), [handleSubmit])
 
   const modalTitle = mode === 'add' ? 'Добавить позицию' : 'Изменить позицию'
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <h3 className="modal__title">{modalTitle}</h3>
       <div className="modal__inputs">
         <Input
@@ -157,10 +131,12 @@ const FManageItemComponent = ({
           name="title"
           label="Название"
           defaultValue=""
-          onChange={handleTitleChange}
-          onKeyDown={handleKeyDown}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            titleValueRef.current = e.target.value
+          }}
+          onKeyDown={handleTitleKeyDown}
+          enterKeyHint="next"
           clearable
-          autoFocus
         />
         <div className="modal__price-inputs">
           <Input
@@ -170,8 +146,11 @@ const FManageItemComponent = ({
             type="number"
             inputMode="numeric"
             defaultValue="1"
-            onChange={handleQtyChange}
-            onKeyDown={handleKeyDown}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              qtyValueRef.current = e.target.value
+            }}
+            onKeyDown={handleEnterSubmit}
+            onFocus={handleQtyFocus}
           />
           <Input
             ref={priceInputRef}
@@ -181,14 +160,16 @@ const FManageItemComponent = ({
             inputMode="decimal"
             enterKeyHint="done"
             defaultValue=""
-            onChange={handlePriceChange}
-            onKeyDown={handleKeyDown}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              priceValueRef.current = e.target.value
+            }}
+            onKeyDown={handleEnterSubmit}
           />
         </div>
       </div>
 
       <div className="modal__buttons">
-        <Button onClick={handleClose}>Отмена</Button>
+        <Button onClick={onClose}>Отмена</Button>
         <Button variant={EButtonVariant.Active} onClick={handleSubmit}>
           {mode === 'add' ? 'Добавить' : 'Сохранить'}
         </Button>
@@ -197,5 +178,4 @@ const FManageItemComponent = ({
   )
 }
 
-export const FManageItem = memo(FManageItemComponent)
 FManageItem.displayName = 'FManageItem'

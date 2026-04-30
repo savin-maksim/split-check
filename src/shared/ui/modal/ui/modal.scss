@@ -6,27 +6,23 @@
   max-width: var(--cards-width);
   color: var(--color-light);
   z-index: var(--z-index-modal);
+  scrollbar-width: none;
+  -webkit-scrollbar-width: none;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
   }
+  max-height: 80vh;
 
   &__content {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    overflow-y: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-    @media (max-width: 768px) {
-      max-height: 300px;
-    }
   }
 
   &__title {
@@ -59,6 +55,7 @@
     padding: var(--space);
     backdrop-filter: blur(10px);
     border-top: var(--border);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
   }
 
   &__buttons--triple {

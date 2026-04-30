@@ -3,7 +3,7 @@
 
   position: fixed;
   bottom: calc(var(--navigation-height) + var(--space) * 2);
-  right: calc(10% - 0.6rem);
+  right: var(--space);
   width: 3rem;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -13,4 +13,8 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: var(--z-index-overlay);
+
+  @media (max-width: 768px) {
+    right: calc(10% - 0.6rem);
+  }
 }

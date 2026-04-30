@@ -1,0 +1,37 @@
+.split-between-section {
+  padding-inline: 0.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    width: 100%;
+  }
+
+  &__label {
+    @include flex-center();
+    @include button-reset();
+    flex: 1;
+    min-width: 0;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 14px;
+    transition: color var(--transition-duration) ease;
+
+    @include hover {
+      color: var(--color-orange);
+
+      .icon-button {
+        color: var(--color-orange);
+        filter: drop-shadow(0 0 8px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha)));
+      }
+    }
+  }
+
+  &__select-all {
+    @include button-reset();
+    flex-shrink: 0;
+    transition: color var(--transition-duration) ease;
+  }
+}
