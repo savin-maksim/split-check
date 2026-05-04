@@ -19,7 +19,7 @@ export const EmptyState = ({ className, icon, title, titleAs = 'h2', children, a
   return (
     <div className={cn('empty-state', className)}>
       {icon ? (
-        <div className="empty-state__icon" aria-hidden="true">
+        <div aria-hidden="true" className="empty-state__icon">
           {icon}
         </div>
       ) : null}

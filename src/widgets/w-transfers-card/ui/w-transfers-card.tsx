@@ -10,8 +10,6 @@ import { useTransfersCard } from '../lib/use-transfers-card'
 
 import './w-transfers-card.scss'
 
-const transferAmountDuration = 0.7
-
 type TWTransfersCardProps = {
   transfers: TTransfer[]
   isLoading: boolean
@@ -56,12 +54,7 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
             return (
               <div key={row.key} className="w-transfers-card__item">
                 <h4 className="w-transfers-card__amount">
-                  <AnimatedNumber
-                    value={row.amount}
-                    format={formatMoney}
-                    className="h4"
-                    duration={transferAmountDuration}
-                  />
+                  <AnimatedNumber value={row.amount} format={formatMoney} className="h4" />
                 </h4>
                 <div className="w-transfers-card__people">
                   <Button
@@ -95,12 +88,7 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
 
           return (
             <div key={row.key} className="w-transfers-card__item">
-              <AnimatedNumber
-                value={transfer.amount}
-                format={formatMoney}
-                className="h4 w-transfers-card__amount"
-                duration={transferAmountDuration}
-              />
+              <AnimatedNumber value={transfer.amount} format={formatMoney} className="h4 w-transfers-card__amount" />
               <div className="w-transfers-card__people">
                 <Button
                   className={cn(
@@ -119,7 +107,11 @@ export const WTransfersCard = ({ transfers, isLoading }: TWTransfersCardProps) =
                 >
                   {transfer.from}
                 </Button>
-                <MoveRight size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
+                <MoveRight
+                  className="w-transfers-card__icon"
+                  size={'var(--transfer-card-icon-size)'}
+                  aria-hidden="true"
+                />
                 <Button variant={EButtonVariant.Wide}>{transfer.to}</Button>
               </div>
             </div>

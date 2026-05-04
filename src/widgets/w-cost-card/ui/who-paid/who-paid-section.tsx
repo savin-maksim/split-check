@@ -33,7 +33,7 @@ const WhoPaidSectionComponent = ({ people, paidByIds, expanded, onToggle, onPers
         {!expanded && selectedPeople.length > 0 && (
           <span className="who-paid-section__label-picked">{selectedPeople.map((p) => p.name).join(', ')}</span>
         )}
-        <span className="icon-button" aria-hidden>
+        <span aria-hidden="true" className="icon-button who-paid-section__icon">
           {expanded ? (
             <ChevronsDownUp size={'var(--bottom-nav-icon-size)'} />
           ) : (

@@ -11,10 +11,22 @@ import { buildRoute } from '@/shared/constants'
 import './bottom-nav.scss'
 
 const ACTION_ICONS: Record<string, { icon: ReactNode; title: string }> = {
-  '/': { icon: <FilePlus size={'var(--bottom-nav-icon-size)'} />, title: 'Новый чек' },
-  'people': { icon: <UserPlus size={'var(--bottom-nav-icon-size)'} />, title: 'Добавить людей' },
-  'items': { icon: <Plus size={'var(--bottom-nav-icon-size)'} />, title: 'Добавить расход' },
-  'stats': { icon: <Share2 size={'var(--bottom-nav-icon-size)'} />, title: 'Поделиться' },
+  '/': {
+    icon: <FilePlus aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+    title: 'Новый чек',
+  },
+  'people': {
+    icon: <UserPlus aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+    title: 'Добавить людей',
+  },
+  'items': {
+    icon: <Plus aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+    title: 'Добавить расход',
+  },
+  'stats': {
+    icon: <Share2 aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+    title: 'Поделиться',
+  },
 }
 
 const getActionKey = (path: string): string => {
@@ -39,11 +51,7 @@ export const BottomNav = () => {
     if (paramCheckId) return paramCheckId
     if (!isHome) return null
     if (currentCheckId) {
-      const idSet = new Set(
-        checkIdsKey
-          ? checkIdsKey.split('\u0000')
-          : [],
-      )
+      const idSet = new Set(checkIdsKey ? checkIdsKey.split('\u0000') : [])
       if (idSet.has(currentCheckId)) return currentCheckId
     }
     return null
@@ -51,13 +59,35 @@ export const BottomNav = () => {
 
   const navItems = useMemo(() => {
     if (!contextCheckId) {
-      return [{ to: '/', icon: <Receipt size={'var(--bottom-nav-icon-size)'} />, label: 'Чеки' }]
+      return [
+        {
+          to: '/',
+          icon: <Receipt aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+          label: 'Чеки',
+        },
+      ]
     }
     return [
-      { to: '/', icon: <Receipt size={'var(--bottom-nav-icon-size)'} />, label: 'Чеки' },
-      { to: buildRoute.people(contextCheckId), icon: <Users size={'var(--bottom-nav-icon-size)'} />, label: 'Люди' },
-      { to: buildRoute.items(contextCheckId), icon: <Calculator size={'var(--bottom-nav-icon-size)'} />, label: 'Расходы' },
-      { to: buildRoute.stats(contextCheckId), icon: <BarChart3 size={'var(--bottom-nav-icon-size)'} />, label: 'Статистика' },
+      {
+        to: '/',
+        icon: <Receipt aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+        label: 'Чеки',
+      },
+      {
+        to: buildRoute.people(contextCheckId),
+        icon: <Users aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+        label: 'Люди',
+      },
+      {
+        to: buildRoute.items(contextCheckId),
+        icon: <Calculator aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+        label: 'Расходы',
+      },
+      {
+        to: buildRoute.stats(contextCheckId),
+        icon: <BarChart3 aria-hidden="true" className="bottom-nav__icon" size={'var(--bottom-nav-icon-size)'} />,
+        label: 'Статистика',
+      },
     ]
   }, [contextCheckId])
 

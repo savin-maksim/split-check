@@ -21,6 +21,10 @@
     }
   }
 
+  &:active {
+    scale: 0.9;
+  }
+
   &--active:not(:disabled):not(.button--danger) {
     --button-surface-rgb: var(--button-active-surface-rgb);
     --button-background-alpha: var(--button-active-background-alpha);
@@ -50,6 +54,9 @@
 
   &__icon {
     @include flex-center($isInline: true);
+
+    max-width: var(--button-icon-size);
+    aspect-ratio: 1/1;
 
     svg {
       display: block;

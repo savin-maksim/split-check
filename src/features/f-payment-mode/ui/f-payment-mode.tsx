@@ -10,12 +10,12 @@ const PAYMENT_OPTIONS = [
   {
     value: EPaymentMode.Single,
     label: 'Единственный',
-    icon: <User size={'var(--button-icon-size)'} aria-hidden="true" />,
+    icon: <User aria-hidden="true" className="f-payment-mode__icon" size={'var(--button-icon-size)'} />,
   },
   {
     value: EPaymentMode.Manual,
     label: 'Множество',
-    icon: <Users size={'var(--button-icon-size)'} aria-hidden="true" />,
+    icon: <Users aria-hidden="true" className="f-payment-mode__icon" size={'var(--button-icon-size)'} />,
   },
 ]
 

@@ -5,17 +5,19 @@ export type { TIconButtonProps } from './icon-button'
 export { Input } from './input'
 export type { TInputProps } from './input'
 export { Modal } from './modal'
-export { ScrollTopButton } from './scroll-top-button'
+export { ScrollTopButton, type TScrollTopButtonProps } from './scroll-top-button'
 export { MarqueeTitle } from './marquee-title'
 export { EmptyState } from './empty-state'
 export { PageHeader } from './page-header'
 export { ItemCard } from './item-card'
 export { CardStats } from './card-stats'
 export {
-  AnimatedListLayout,
+  AnimatedList,
   AnimatedListPresence,
-  animatedListLayoutTransition,
-} from './animated-list-layout'
+  animatedListItemMotion,
+  animatedListTransition,
+} from './animated-list'
+export { AnimatedBlock, type TAnimatedBlockProps } from './animated-block'
 export { Spinner } from './spinner'
 export { PersonGrid } from './person-grid'
 export { PersonBadge } from './person-badge'

@@ -8,10 +8,15 @@
   }
 
   &__summary {
+    display: flex;
+    justify-content: space-between;
     margin: var(--space-large) var(--space) 0;
     color: var(--color-light);
     font-weight: 600;
-    text-align: right;
+
+    span {
+      color: var(--color-orange);
+    }
   }
 
   &__summary-total {

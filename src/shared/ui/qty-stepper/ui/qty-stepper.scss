@@ -3,6 +3,11 @@
   gap: var(--space-small);
   @include fluid-text(15, 11);
 
+  &__icon {
+    max-width: var(--button-icon-size);
+    aspect-ratio: 1/1;
+  }
+
   &__value {
     min-width: 1.25rem;
     text-align: center;

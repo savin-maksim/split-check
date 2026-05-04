@@ -2,7 +2,7 @@ import { memo } from 'react'
 
 import type { TCheck } from '@/entities/check'
 import { WCheckCard } from '@/widgets/w-check-card'
-import { AnimatedListLayout } from '@/shared/ui'
+import { AnimatedList } from '@/shared/ui'
 
 type TChecksContentProps = {
   checks: TCheck[]
@@ -13,7 +13,7 @@ type TChecksContentProps = {
 }
 
 export const ChecksContent = memo(({ checks, currentCheckId, onOpen, onEdit, onDelete }: TChecksContentProps) => (
-  <AnimatedListLayout
+  <AnimatedList
     as="ul"
     className="list-layout"
     items={checks}

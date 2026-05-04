@@ -1,4 +1,4 @@
-import { Modal, Button, EButtonVariant } from '@/shared/ui'
+import { Modal, Button, EButtonVariant, AnimatedNumber } from '@/shared/ui'
 import { formatMoneyRaw } from '@/shared/lib'
 
 import type { TPreviewQuantities, TScannedItem } from '../../model'
@@ -33,7 +33,7 @@ export const ReceiptPreviewModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} mode="top-0">
-      <h3 className="modal__title">Распознанные товары</h3>
+      <h3 className="modal__title">Распознанные позиции</h3>
       <div className="receipt-preview-modal__list">
         {items.map((item, index) => (
           <ReceiptPreviewItem
@@ -48,8 +48,8 @@ export const ReceiptPreviewModal = ({
         ))}
       </div>
       <div className="receipt-preview-modal__summary">
-        Итого к добавлению:{' '}
-        <strong className="receipt-preview-modal__summary-total">{formatMoneyRaw(totalAmount)}</strong>
+        Итого к добавлению:
+        <AnimatedNumber value={totalAmount} format={formatMoneyRaw} className="h4" initialEnter={true} />
       </div>
       <div className="modal__buttons">
         <Button onClick={onClose}>Отмена</Button>

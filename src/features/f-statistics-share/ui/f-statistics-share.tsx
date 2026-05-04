@@ -45,14 +45,14 @@ export const FStatisticsShare = ({ isOpen, onClose }: TFStatisticsShareProps) =>
           variant={EButtonVariant.Active}
           onClick={handleShare}
           disabled={selectedSections.size === 0}
-          icon={<Share2 size={'var(--button-icon-size)'} />}
+          icon={<Share2 aria-hidden="true" className="f-statistics-share__icon" size={'var(--button-icon-size)'} />}
         >
           Поделиться
         </Button>
         <Button
           onClick={handleSave}
           disabled={selectedSections.size === 0}
-          icon={<Download size={'var(--button-icon-size)'} />}
+          icon={<Download aria-hidden="true" className="f-statistics-share__icon" size={'var(--button-icon-size)'} />}
         >
           Сохранить
         </Button>

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { memo, useMemo } from 'react'
 import { BarChart3 } from 'lucide-react'
 
@@ -6,16 +5,8 @@ import type { TCheck, TTransfer, TPersonStats } from '@/entities/check'
 import { WStatisticsPerson } from '@/widgets/w-statistics-person'
 import { WStatisticsSummary } from '@/widgets/w-statistics-summary'
 import { WTransfersCard } from '@/widgets/w-transfers-card'
-import { PageHeader, AnimatedListPresence } from '@/shared/ui'
-
-const cardEase = [0.4, 0, 0.2, 1] as const
-const cardDuration = 0.22
-
-const cardEnter = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: cardDuration, ease: cardEase },
-}
+import { PageHeader, AnimatedListPresence, AnimatedBlock } from '@/shared/ui'
+import { animatedBlockMotion } from '@/shared/lib'
 
 type TStatsContentProps = {
   check: TCheck
@@ -29,16 +20,22 @@ export const StatsContent = memo(({ check, transfers, personStats }: TStatsConte
   return (
     <>
       <PageHeader icon={<BarChart3 size={'var(--header-icon-size)'} aria-hidden="true" />} title="Статистика" />
-      <motion.div className="p-stats__reveal" {...cardEnter} transition={{ ...cardEnter.transition }}>
+      <AnimatedBlock className="p-stats__reveal" blockMotion={animatedBlockMotion}>
         <WTransfersCard transfers={transfers} isLoading={false} />
-      </motion.div>
+      </AnimatedBlock>
 
       <div className="list-layout">
-        <motion.div className="p-stats__reveal-grid-cell" {...cardEnter} transition={{ ...cardEnter.transition }}>
+        <AnimatedBlock
+          className="p-stats__reveal-grid-cell"
+          blockMotion={animatedBlockMotion}
+          initialDelay={0.05}
+        >
           <WStatisticsSummary items={check.items} />
-        </motion.div>
+        </AnimatedBlock>
 
         <AnimatedListPresence
+          initialDelay={0.1}
+          staggerDelay={0.05}
           items={visiblePersonStats}
           getKey={(person) => person.id}
           renderItem={(person) => <WStatisticsPerson person={person} />}

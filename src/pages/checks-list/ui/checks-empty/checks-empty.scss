@@ -1,0 +1,6 @@
+.checks-empty {
+  &__icon {
+    max-width: var(--empty-state-icon-size);
+    aspect-ratio: 1/1;
+  }
+}

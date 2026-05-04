@@ -1,20 +1,34 @@
 .scroll-top-button {
-  @include flex-center;
+  &__host {
+    position: fixed;
+    bottom: calc(var(--navigation-height) + var(--space) * 2);
+    right: var(--space-large);
+    z-index: var(--z-index-overlay);
 
-  position: fixed;
-  bottom: calc(var(--navigation-height) + var(--space) * 2);
-  right: var(--space);
-  width: 3rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background-color: var(--color-active);
-  border: var(--border-width) solid var(--color-orange);
-  color: var(--color-light);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: var(--z-index-overlay);
+    @media (max-width: 768px) {
+      right: calc(10% - 0.6rem);
+    }
+  }
 
-  @media (max-width: 768px) {
-    right: calc(10% - 0.6rem);
+  &__btn {
+    @include flex-center;
+
+    width: 3rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: var(--color-active);
+    border: var(--border-width) solid var(--color-orange);
+    color: var(--color-light);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    &:active {
+      scale: 0.9;
+    }
+  }
+
+  &__icon {
+    max-width: var(--button-icon-size);
+    aspect-ratio: 1/1;
   }
 }

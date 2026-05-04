@@ -11,11 +11,7 @@ type TStatsEmptyNoItemsProps = {
 export const StatsEmptyNoItems = ({ checkId }: TStatsEmptyNoItemsProps) => (
   <>
     <PageHeader icon={<Users size={'var(--header-icon-size)'} aria-hidden="true" />} title="Статистика" />
-    <EmptyState
-      className="p-stats__empty-surface"
-      icon={<Calculator size={'var(--empty-state-icon-size)'} aria-hidden="true" />}
-      title="Добавьте расходы"
-    >
+    <EmptyState icon={<Calculator size={'var(--empty-state-icon-size)'} aria-hidden="true" />} title="Добавьте расходы">
       <p>
         Перейдите на <Link to={buildRoute.items(checkId)}>страницу расходов</Link> и добавьте расходы
       </p>

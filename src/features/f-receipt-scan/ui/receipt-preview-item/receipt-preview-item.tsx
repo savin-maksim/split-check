@@ -67,13 +67,7 @@ const ReceiptPreviewItemComponent = ({
           />
         </div>
         <span className="receipt-preview-item__unit">× {formatMoneyRaw(item.price)}</span>
-        <AnimatedNumber
-          value={item.price * qty * 100}
-          format={formatMoney}
-          className="h4"
-          animateEntrance={true}
-          duration={0.7}
-        />
+        <AnimatedNumber value={item.price * qty * 100} format={formatMoney} className="h4" initialEnter={true} />
       </div>
     </div>
   )

@@ -46,6 +46,11 @@
     gap: 1rem;
   }
 
+  &__icon {
+    max-width: var(--transfer-card-icon-size);
+    aspect-ratio: 1/1;
+  }
+
   &__amount {
     text-align: center;
     padding-inline: 1rem;

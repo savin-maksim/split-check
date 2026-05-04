@@ -38,7 +38,7 @@ export const PChecks = () => {
   return (
     <div className="p-checks">
       <PageHeader
-        icon={<Receipt size={'var(--header-icon-size)'} aria-hidden="true" />}
+        icon={<Receipt aria-hidden="true" className="p-checks__icon" size={'var(--header-icon-size)'} />}
         title="Чеки"
         subtitle={
           checks.length > 0 ? `${checks.length} ${pluralize(checks.length, ['чек', 'чека', 'чеков'])}` : undefined

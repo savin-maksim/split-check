@@ -87,13 +87,7 @@ const WCostCardComponent = ({ checkId, item, people, paymentMode, onEdit, onDele
             onAdjust={handleAdjustQty}
           />
           <h3 className="w-cost-card__total">
-            <AnimatedNumber
-              animateEntrance={false}
-              value={total}
-              format={formatMoney}
-              className={'h3'}
-              duration={0.3}
-            />
+            <AnimatedNumber initialEnter={false} value={total} format={formatMoney} className={'h3'} />
           </h3>
         </div>
       </div>

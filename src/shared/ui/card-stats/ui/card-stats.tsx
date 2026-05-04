@@ -14,7 +14,9 @@ type TCardStatsProps = {
 export const CardStats = ({ icon, value, label, className, ...rest }: TCardStatsProps) => {
   return (
     <span className={cn('card-stats', className)} {...rest}>
-      {icon}
+      <span aria-hidden="true" className="card-stats__icon">
+        {icon}
+      </span>
       {value} {label}
     </span>
   )

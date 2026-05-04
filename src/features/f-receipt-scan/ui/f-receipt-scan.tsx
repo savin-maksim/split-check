@@ -55,7 +55,7 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
         className="f-receipt-scan__input"
       />
       <Button
-        icon={<ScanLine size={'var(--button-icon-size)'} />}
+        icon={<ScanLine aria-hidden="true" className="f-receipt-scan__icon" size={'var(--button-icon-size)'} />}
         onClick={handleScanClick}
         disabled={isLoading}
         aria-label="Сканировать чек"

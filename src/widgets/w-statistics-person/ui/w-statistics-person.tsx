@@ -23,8 +23,6 @@ type TWStatisticsPersonProps = {
   person: TStatisticsPersonData
 }
 
-const statsNumberDuration = 0.7
-
 export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
   const balanceRounded = Math.round(person.balance)
 
@@ -39,7 +37,7 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
         <p className="h4 w-statistics-person__title">{person.name}</p>
         <div className="w-statistics-person__spent">
           <span>Потратил(а):</span>
-          <AnimatedNumber value={person.paidTotal} format={formatMoney} className="h4" duration={statsNumberDuration} />
+          <AnimatedNumber value={person.paidTotal} format={formatMoney} className="h4" />
         </div>
         <p className="h4">Детализация расходов:</p>
         {person.expenses.map((expense, idx) => (
@@ -52,7 +50,6 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
               value={expense.amount}
               format={formatMoney}
               className="h4 w-statistics-person__expense-amount"
-              duration={statsNumberDuration}
             />
           </div>
         ))}
@@ -60,12 +57,7 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
       <div className="w-statistics-person__summary">
         <div className="w-statistics-person__summary-item">
           <span className="h4">Итог:</span>
-          <AnimatedNumber
-            value={person.totalExpenses}
-            format={formatMoney}
-            className="h4"
-            duration={statsNumberDuration}
-          />
+          <AnimatedNumber value={person.totalExpenses} format={formatMoney} className="h4" />
         </div>
         <div className="w-statistics-person__summary-item">
           <span className="h4">Баланс:</span>
@@ -77,7 +69,6 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
               person.balance > 0 && 'positive',
               person.balance < 0 && 'negative',
             )}
-            duration={statsNumberDuration}
           />
         </div>
       </div>

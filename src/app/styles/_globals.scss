@@ -29,6 +29,17 @@ body {
     pointer-events: none;
     z-index: -1;
   }
+
+  &.scroll-locked {
+    overflow: hidden;
+  }
+}
+
+html {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-orange) rgba(var(--color-bg), 0.55);
+  }
 }
 
 :focus-visible {
@@ -56,7 +67,8 @@ input,
 textarea,
 svg * {
   transition-duration: var(--transition-duration);
-  transition-property: color, background-color, border-color, box-shadow;
+  transition-timing-function: ease;
+  transition-property: color, background-color, border-color, box-shadow, scale;
 }
 
 a {

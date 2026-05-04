@@ -64,7 +64,10 @@ const SplitBetweenSectionComponent = ({
           title={isWeighted ? 'Переключить на равные доли' : 'Переключить на доли по весам'}
         >
           <p>На кого разделить?</p>
-          <span className={cn('icon-button', isWeighted && 'icon-button--active')} aria-hidden>
+          <span
+            aria-hidden="true"
+            className={cn('icon-button split-between-section__icon', isWeighted && 'icon-button--active')}
+          >
             <ChartPie size={'var(--bottom-nav-icon-size)'} />
           </span>
         </button>

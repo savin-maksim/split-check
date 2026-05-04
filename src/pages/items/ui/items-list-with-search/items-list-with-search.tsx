@@ -3,7 +3,8 @@ import { Search } from 'lucide-react'
 
 import type { EPaymentMode, TItem, TPerson } from '@/entities/check'
 import { WCostCard } from '@/widgets/w-cost-card'
-import { Input, AnimatedListLayout } from '@/shared/ui'
+import { Input, AnimatedList, AnimatedBlock } from '@/shared/ui'
+import { animatedBlockMotion } from '@/shared/lib'
 
 type TItemsListWithSearchProps = {
   checkId: string
@@ -41,7 +42,7 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
 
   return (
     <>
-      <div className="p-items__search">
+      <AnimatedBlock className="p-items__search" blockMotion={animatedBlockMotion}>
         <Input
           name="search"
           icon={<Search size={'var(--button-icon-size)'} aria-hidden="true" />}
@@ -51,10 +52,12 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
           onChange={(e) => setSearchQuery(e.target.value)}
           enterKeyHint="search"
         />
-      </div>
-      <AnimatedListLayout
+      </AnimatedBlock>
+
+      <AnimatedList
+        initialDelay={0.05}
+        staggerDelay={0.05}
         className="list-layout"
-        suppressInitialEnter={true}
         items={filteredItems}
         getKey={(item) => item.id}
         renderItem={(item) => (

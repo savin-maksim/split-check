@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'framer-motion'
 import { useCallback, memo } from 'react'
 import { Calculator, Trash2 } from 'lucide-react'
 
@@ -5,7 +6,8 @@ import { useCheckStore, EPaymentMode } from '@/entities/check'
 import type { TItem, TPerson } from '@/entities/check'
 import { FPaymentMode } from '@/features/f-payment-mode'
 import { FReceiptScan } from '@/features/f-receipt-scan'
-import { PageHeader, PersonGrid, Button, EButtonVariant } from '@/shared/ui'
+import { PageHeader, PersonGrid, Button, EButtonVariant, AnimatedBlock } from '@/shared/ui'
+import { animatedBlockMotion, animatedBlockMotionPop } from '@/shared/lib'
 
 import { ItemsListWithSearch } from '../items-list-with-search'
 
@@ -49,7 +51,7 @@ export const ItemsContent = memo(
     return (
       <>
         <PageHeader
-          icon={<Calculator size={'var(--header-icon-size)'} aria-hidden="true" />}
+          icon={<Calculator aria-hidden="true" size={'var(--header-icon-size)'} />}
           title="Расходы"
           action={
             <Button
@@ -61,21 +63,27 @@ export const ItemsContent = memo(
           }
         />
 
-        <div className="p-items__toolbar">
+        <AnimatedBlock className="p-items__toolbar" blockMotion={animatedBlockMotion}>
           <FPaymentMode className="grid--span-4" value={paymentMode} onChange={handlePaymentModeChange} />
           <FReceiptScan className="grid--span-4" onAddItems={onAddBulkItems} />
-        </div>
+        </AnimatedBlock>
 
-        {paymentMode === EPaymentMode.Single && (
-          <div className="p-items__single-payer">
-            <h3>Выберите плательщика</h3>
-            <PersonGrid
-              people={people}
-              selected={singlePayer != null ? people.filter((p) => p.id === singlePayer) : []}
-              onToggle={handleSinglePayerSelect}
-            />
-          </div>
-        )}
+        <AnimatePresence mode="popLayout">
+          {paymentMode === EPaymentMode.Single && (
+            <AnimatedBlock
+              key="p-items-single-payer"
+              className="p-items__single-payer"
+              blockMotion={animatedBlockMotionPop}
+            >
+              <h3>Выберите плательщика</h3>
+              <PersonGrid
+                people={people}
+                selected={singlePayer != null ? people.filter((p) => p.id === singlePayer) : []}
+                onToggle={handleSinglePayerSelect}
+              />
+            </AnimatedBlock>
+          )}
+        </AnimatePresence>
 
         <ItemsListWithSearch
           checkId={checkId}

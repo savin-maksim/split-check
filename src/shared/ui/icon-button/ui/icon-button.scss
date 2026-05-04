@@ -15,6 +15,10 @@
     }
   }
 
+  &:active {
+    scale: 0.9;
+  }
+
   &:disabled {
     opacity: 0.35;
     cursor: not-allowed;

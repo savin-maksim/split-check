@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { useCheckStore } from '@/entities/check'
 import type { TPerson } from '@/entities/check'
 import { WPersonCard } from '@/widgets/w-person-card'
-import { PageHeader, Button, EButtonVariant, AnimatedListLayout } from '@/shared/ui'
+import { PageHeader, Button, EButtonVariant, AnimatedList } from '@/shared/ui'
 import { pluralize } from '@/shared/lib'
 
 type TPeopleContentProps = {
@@ -42,18 +42,15 @@ export const PeopleContent = memo(({ checkId, people, onEdit, onOpenClearAll }: 
         }
       />
 
-      <AnimatedListLayout
+      <AnimatedList
         as="ul"
         role="list"
         className="list-layout"
+        staggerDelay={0.05}
         items={people}
         getKey={(person) => person.id}
         renderItem={(person) => (
-          <WPersonCard
-            person={person}
-            onEdit={() => onEdit(person)}
-            onDelete={() => handleDeletePerson(person.id)}
-          />
+          <WPersonCard person={person} onEdit={() => onEdit(person)} onDelete={() => handleDeletePerson(person.id)} />
         )}
       />
     </>

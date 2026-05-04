@@ -20,7 +20,7 @@ const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, isPriceHidde
   return (
     <div className="qty-stepper" role="group" aria-label="Количество">
       <IconButton
-        icon={<Minus size={'var(--button-icon-size)'} />}
+        icon={<Minus className="qty-stepper__icon" size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
         onClick={onDec}
         disabled={!canDecreaseQty}
@@ -28,7 +28,7 @@ const QtyStepperComponent = ({ qty, canDecreaseQty, priceFormatted, isPriceHidde
       />
       <span className="qty-stepper__value">{qty}</span>
       <IconButton
-        icon={<Plus size={'var(--button-icon-size)'} />}
+        icon={<Plus className="qty-stepper__icon" size={'var(--button-icon-size)'} />}
         variant={EIconButtonVariant.Qty}
         onClick={onInc}
         aria-label="Увеличить количество"

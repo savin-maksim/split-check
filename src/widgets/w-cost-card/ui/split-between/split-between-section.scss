@@ -33,5 +33,12 @@
     @include button-reset();
     flex-shrink: 0;
     transition: color var(--transition-duration) ease;
+    max-width: var(--bottom-nav-icon-size);
+    aspect-ratio: 1/1;
+  }
+
+  &__icon {
+    max-width: var(--bottom-nav-icon-size);
+    aspect-ratio: 1/1;
   }
 }
