@@ -47,7 +47,7 @@ const ReceiptPreviewItemComponent = ({
         <div className="receipt-preview-item__qty" aria-label={`Количество для ${item.title}`}>
           <IconButton
             variant={EIconButtonVariant.Qty}
-            icon={<Minus size={16} strokeWidth={2.5} aria-hidden="true" />}
+            icon={<Minus aria-hidden="true" size={'var(--button-icon-size)'} />}
             aria-label={`Уменьшить количество для ${item.title}`}
             disabled={qty <= 1}
             onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -58,7 +58,7 @@ const ReceiptPreviewItemComponent = ({
           <span className="receipt-preview-item__qty-value">{qty}</span>
           <IconButton
             variant={EIconButtonVariant.Qty}
-            icon={<Plus size={16} strokeWidth={2.5} aria-hidden="true" />}
+            icon={<Plus aria-hidden="true" size={'var(--button-icon-size)'} />}
             aria-label={`Увеличить количество для ${item.title}`}
             onClick={(e: MouseEvent<HTMLButtonElement>) => {
               e.stopPropagation()

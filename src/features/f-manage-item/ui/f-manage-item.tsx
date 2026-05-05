@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, FormEvent } from 'react'
 
-import { toast } from 'react-hot-toast'
-
-import { normalizeDecimalInput, formatItemTitle, createEnterKeyDownHandler } from '@/shared/lib'
+import { normalizeDecimalInput, formatItemTitle, createEnterKeyDownHandler, selectInputOnFocus } from '@/shared/lib'
 import { Modal, Input, Button, EButtonVariant } from '@/shared/ui'
 import type { TItem } from '@/entities/check'
 import { EPaymentMode } from '@/entities/check'
+
+import { syncPriceFieldValidity } from '../lib/sync-price-field-validity'
+
+import './f-manage-item.scss'
 
 type TFManageItemProps = {
   isOpen: boolean
@@ -18,6 +20,8 @@ type TFManageItemProps = {
   onSubmit: (item: Omit<TItem, 'id'>) => void
 }
 
+const TITLE_PATTERN = '.*\\S.*'
+
 export const FManageItem = ({
   isOpen,
   onClose,
@@ -27,6 +31,7 @@ export const FManageItem = ({
   singlePayerId = null,
   onSubmit,
 }: TFManageItemProps) => {
+  const formRef = useRef<HTMLFormElement>(null)
   const titleValueRef = useRef('')
   const priceValueRef = useRef('')
   const qtyValueRef = useRef('1')
@@ -63,50 +68,47 @@ export const FManageItem = ({
     const pEl = priceInputRef.current
     const qEl = qtyInputRef.current
     if (tEl) tEl.value = titleStr
-    if (pEl) pEl.value = priceStr
+    if (pEl) {
+      pEl.value = priceStr
+      syncPriceFieldValidity(pEl)
+    }
     if (qEl) qEl.value = qtyStr
 
     tEl?.focus()
   }, [isOpen, mode, initialData])
 
-  const handleSubmit = useCallback(() => {
-    const t = titleValueRef.current
-    const p = priceValueRef.current
-    const q = qtyValueRef.current
+  const handleFormSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      const fd = new FormData(e.currentTarget)
+      const trimmedTitle = String(fd.get('title') ?? '').trim()
+      const priceRaw = String(fd.get('price') ?? '')
+      const qtyStr = String(fd.get('qty') ?? '1')
 
-    const trimmedTitle = t.trim()
-    if (!trimmedTitle) {
-      toast.error('Введите название позиции')
-      return
-    }
+      const price = Math.round(parseFloat(normalizeDecimalInput(priceRaw)) * 100)
+      const qty = parseInt(qtyStr, 10)
 
-    const price = Math.round(parseFloat(normalizeDecimalInput(p)) * 100)
-    if (Number.isNaN(price) || price < 0) {
-      toast.error('Введите корректную цену')
-      return
-    }
+      const effectivePaidBy =
+        mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null ? [singlePayerId] : paidBy
 
-    const qty = parseInt(q, 10)
-    if (Number.isNaN(qty) || qty < 1) {
-      toast.error('Количество должно быть больше 0')
-      return
-    }
+      onSubmit({
+        title: formatItemTitle(trimmedTitle),
+        price,
+        qty,
+        paidBy: effectivePaidBy,
+        split,
+      })
 
-    const effectivePaidBy =
-      mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null ? [singlePayerId] : paidBy
+      onClose()
+    },
+    [mode, paymentMode, singlePayerId, paidBy, split, onSubmit, onClose],
+  )
 
-    onSubmit({
-      title: formatItemTitle(trimmedTitle),
-      price,
-      qty,
-      paidBy: effectivePaidBy,
-      split,
-    })
+  const requestFormSubmit = useCallback(() => {
+    formRef.current?.requestSubmit()
+  }, [])
 
-    onClose()
-  }, [mode, paymentMode, singlePayerId, paidBy, split, onSubmit, onClose])
-
-  const handleTitleKeyDown = useMemo(
+  const handlePriceFocus = useMemo(
     () =>
       createEnterKeyDownHandler(() => {
         priceInputRef.current?.focus()
@@ -114,66 +116,87 @@ export const FManageItem = ({
     [],
   )
 
-  const handleQtyFocus = useCallback(() => {
-    qtyInputRef.current?.select()
+  const handleChangeTitle = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    titleValueRef.current = e.target.value
   }, [])
 
-  const handleEnterSubmit = useMemo(() => createEnterKeyDownHandler(handleSubmit), [handleSubmit])
+  const handleChangeQty = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    qtyValueRef.current = e.target.value
+  }, [])
+
+  const handleChangePrice = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    priceValueRef.current = e.target.value
+    syncPriceFieldValidity(e.currentTarget)
+  }, [])
+
+  const handleEnterSubmit = useMemo(() => createEnterKeyDownHandler(requestFormSubmit), [requestFormSubmit])
 
   const modalTitle = mode === 'add' ? 'Добавить позицию' : 'Изменить позицию'
+  const titleDefaultValue = mode === 'edit' && initialData != null ? (initialData.title ?? '') : ''
+  const priceDefaultValue =
+    mode === 'edit' && initialData != null ? (initialData.price != null ? String(initialData.price / 100) : '') : ''
+  const qtyDefaultValue = mode === 'edit' && initialData != null ? String(initialData.qty ?? 1) : '1'
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h3 className="modal__title">{modalTitle}</h3>
-      <div className="modal__inputs">
-        <Input
-          ref={titleInputRef}
-          name="title"
-          label="Название"
-          defaultValue=""
-          onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            titleValueRef.current = e.target.value
-          }}
-          onKeyDown={handleTitleKeyDown}
-          enterKeyHint="next"
-          clearable
-        />
-        <div className="modal__price-inputs">
+      <form ref={formRef} onSubmit={handleFormSubmit}>
+        <h3 className="modal__title">{modalTitle}</h3>
+        <div className="modal__inputs">
           <Input
-            ref={qtyInputRef}
-            name="qty"
-            label="Кол-во"
-            type="number"
-            inputMode="numeric"
-            defaultValue="1"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              qtyValueRef.current = e.target.value
-            }}
-            onKeyDown={handleEnterSubmit}
-            onFocus={handleQtyFocus}
+            ref={titleInputRef}
+            name="title"
+            label="Название"
+            defaultValue={titleDefaultValue}
+            pattern={TITLE_PATTERN}
+            title="Введите название позиции"
+            onChange={handleChangeTitle}
+            onKeyDown={handlePriceFocus}
+            enterKeyHint="next"
+            required
+            clearable
           />
-          <Input
-            ref={priceInputRef}
-            name="price"
-            label="Цена"
-            type="text"
-            inputMode="decimal"
-            enterKeyHint="done"
-            defaultValue=""
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              priceValueRef.current = e.target.value
-            }}
-            onKeyDown={handleEnterSubmit}
-          />
+          <div className="modal__price-inputs">
+            <Input
+              ref={qtyInputRef}
+              name="qty"
+              label="Кол-во"
+              type="number"
+              inputMode="numeric"
+              defaultValue={qtyDefaultValue}
+              min={1}
+              step={1}
+              onChange={handleChangeQty}
+              onKeyDown={handlePriceFocus}
+              onFocus={selectInputOnFocus}
+              required
+              clearable
+            />
+            <Input
+              ref={priceInputRef}
+              name="price"
+              label="Цена"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={0.01}
+              defaultValue={priceDefaultValue}
+              onChange={handleChangePrice}
+              onKeyDown={handleEnterSubmit}
+              required
+              clearable
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="modal__buttons">
-        <Button onClick={onClose}>Отмена</Button>
-        <Button variant={EButtonVariant.Active} onClick={handleSubmit}>
-          {mode === 'add' ? 'Добавить' : 'Сохранить'}
-        </Button>
-      </div>
+        <div className="modal__buttons">
+          <Button type="button" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button type="submit" variant={EButtonVariant.Active}>
+            {mode === 'add' ? 'Добавить' : 'Сохранить'}
+          </Button>
+        </div>
+      </form>
     </Modal>
   )
 }

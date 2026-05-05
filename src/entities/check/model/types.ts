@@ -57,7 +57,7 @@ export type TCheckStore = {
   removeItem: (checkId: string, itemId: number) => void
   removeAllItems: (checkId: string) => void
   updateItem: (checkId: string, itemId: number, item: Partial<TItem>) => void
-  duplicateItem: (checkId: string, itemId: number) => void
+  duplicateItem: (checkId: string, itemId: number) => number | null
 
   setPaymentMode: (checkId: string, mode: EPaymentMode) => void
   setSinglePayer: (checkId: string, personId: number | null) => void

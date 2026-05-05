@@ -1,7 +1,11 @@
 import { useCallback } from 'react'
 
+import toast from 'react-hot-toast'
+
 import type { TItem, TPerson } from '@/entities/check'
 import { EPaymentMode, isSplitDistributionWeightedView, useCheckStore } from '@/entities/check'
+
+import { scrollToItemAnchor } from '@/shared/lib'
 
 type TUseCostCardHandlersParams = {
   checkId: string
@@ -93,8 +97,15 @@ export const useCostCardHandlers = ({
   )
 
   const handleDuplicate = useCallback(() => {
-    duplicateItem(checkId, item.id)
-  }, [checkId, item.id, duplicateItem])
+    const newId = duplicateItem(checkId, item.id)
+    if (newId != null) {
+      const rawIdx =
+        useCheckStore.getState().checks.find((c) => c.id === checkId)?.items.findIndex((i) => i.id === newId) ?? -1
+      const listItemIndex = Math.max(0, rawIdx)
+      scrollToItemAnchor(checkId, newId, { listItemIndex })
+    }
+    toast.success(`Дублировано: ${item.title}`)
+  }, [checkId, item.id, duplicateItem, item.title])
 
   const handleEdit = useCallback(() => onEdit(item), [onEdit, item])
 

@@ -18,9 +18,8 @@
   &__layer {
     position: relative;
     display: flex;
-    // align-items: center;
-    // justify-content: center;
     min-height: 100%;
+    height: 100%;
     width: 100%;
     padding: var(--space);
     box-sizing: border-box;
@@ -51,6 +50,16 @@
 
     &--top-0 {
       top: var(--space);
+    }
+
+    &--middle {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &--bottom-0 {
+      top: 100%;
+      transform: translateY(-100%);
     }
   }
 

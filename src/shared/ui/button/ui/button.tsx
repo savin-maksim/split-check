@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { forwardRef, memo } from 'react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 import { cn } from '@/shared/lib'
@@ -26,22 +26,26 @@ export type TButtonProps = {
   variant?: EButtonVariant
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
-export const Button = memo(
-  ({
-    onClick,
-    disabled = false,
-    className,
-    icon,
-    children,
-    title,
-    type = 'button',
-    variant,
-    ...rest
-  }: TButtonProps) => {
+const ButtonInner = forwardRef<HTMLButtonElement, TButtonProps>(
+  (
+    {
+      onClick,
+      disabled = false,
+      className,
+      icon,
+      children,
+      title,
+      type = 'button',
+      variant,
+      ...rest
+    },
+    ref,
+  ) => {
     const variantModifier = variant != null ? variantClass[variant] : null
 
     return (
       <button
+        ref={ref}
         type={type}
         onClick={onClick}
         disabled={disabled}
@@ -59,4 +63,7 @@ export const Button = memo(
     )
   },
 )
+ButtonInner.displayName = 'Button'
+
+export const Button = memo(ButtonInner)
 Button.displayName = 'Button'

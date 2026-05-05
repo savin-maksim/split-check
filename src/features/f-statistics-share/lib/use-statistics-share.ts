@@ -74,7 +74,9 @@ export const useStatisticsShare = ({ isOpen, onClose }: TUseStatisticsShareParam
     if (!targets.length) return
 
     onClose()
+    const loadingToastId = toast.loading('Сохранение скриншотов…', { duration: Infinity })
     const images = await captureSections(targets)
+    toast.dismiss(loadingToastId)
     if (!images.length) return
 
     for (const image of images) {

@@ -3,8 +3,7 @@ import { Receipt } from 'lucide-react'
 
 import { useCheckStore } from '@/entities/check'
 import type { TCheck } from '@/entities/check'
-import { FCreateCheck } from '@/features/f-create-check'
-import { FEditCheck } from '@/features/f-edit-check'
+import { FManageCheck } from '@/features/f-manage-check'
 import { FConfirmDelete } from '@/features/f-confirm-delete'
 import { PageHeader } from '@/shared/ui'
 import { pluralize, useNavActionStore } from '@/shared/lib'
@@ -57,9 +56,15 @@ export const PChecks = () => {
         />
       )}
 
-      <FCreateCheck isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSubmit={handleCreate} />
+      <FManageCheck
+        mode="add"
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onSubmit={handleCreate}
+      />
 
-      <FEditCheck
+      <FManageCheck
+        mode="edit"
         isOpen={editCheck != null}
         onClose={() => setEditCheck(null)}
         initialTitle={editCheck?.title ?? ''}

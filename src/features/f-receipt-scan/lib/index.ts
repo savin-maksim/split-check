@@ -1,4 +1,5 @@
 export { analyzeReceipt } from './analyze-receipt'
+export type { TAnalyzeReceiptOptions } from './analyze-receipt'
 export { buildScannedItems } from './build-scanned-items'
 export {
   bumpPreviewQuantity,

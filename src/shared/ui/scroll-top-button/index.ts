@@ -1,1 +1,1 @@
-export { ScrollTopButton, type TScrollTopButtonProps } from './ui/scroll-top-button'
+export { ScrollTopButton } from './ui/scroll-top-button'

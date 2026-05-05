@@ -7,14 +7,24 @@ export {
   animatedListItemMotion,
   animatedListTransition,
   modalOverlayFadeTransition,
-  modalSheetMotion,
+  modalSheetMotionFromTop,
+  modalSheetMotionFromBottom,
   modalSheetTransition,
 } from './motion-presets'
 export { formatMoney, formatMoneyRaw } from './format-money'
 export { formatSavedDate, formatLongDate } from './format-date'
 export { lockScroll, unlockScroll } from './scroll-lock'
 export { pluralize } from './pluralize'
+export { selectInputOnFocus } from './select-input-on-focus'
 export { generateId } from './generate-id'
+export {
+  getItemAnchorId,
+  getItemsListAnchorSettleMs,
+  scrollToItemAnchor,
+  getPersonStatsAnchorId,
+  scrollToPersonStatsAnchor,
+} from './item-anchor'
+export type { TScrollToItemAnchorOptions } from './item-anchor'
 export {
   formatPersonName,
   formatItemTitle,
@@ -22,3 +32,4 @@ export {
   parseBulkPersonNames,
 } from './parse-names'
 export { useNavActionStore } from './use-nav-action'
+export { useDebouncedValue } from './use-debounced-value'

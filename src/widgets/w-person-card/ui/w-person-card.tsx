@@ -15,7 +15,7 @@ type TWPersonCardProps = {
 
 const WPersonCardComponent = ({ person, onEdit, onDelete }: TWPersonCardProps) => {
   return (
-    <ItemCard as="li">
+    <ItemCard>
       <div className="w-person-card__header">
         <MarqueeTitle as="h3">{person.name}</MarqueeTitle>
         <div className="w-person-card__actions">

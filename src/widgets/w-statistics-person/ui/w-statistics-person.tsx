@@ -5,8 +5,8 @@ import './w-statistics-person.scss'
 
 export type TStatisticsPersonExpense = {
   title: string
-  qty: number
-  splitCount: number
+  qtyNumerator: number
+  qtyDenominator: number
   amount: number
 }
 
@@ -44,7 +44,7 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
           <div key={`${person.id}-${idx}`} className="w-statistics-person__expense">
             <span className="w-statistics-person__expense-name">{expense.title}</span>
             <span className="w-statistics-person__expense-quantity">
-              {expense.qty}/{expense.splitCount} шт
+              {expense.qtyNumerator}/{expense.qtyDenominator} шт
             </span>
             <AnimatedNumber
               value={expense.amount}

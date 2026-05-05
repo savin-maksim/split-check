@@ -13,14 +13,22 @@ import {
   createInitialSelection,
   toggleSelectedIndex,
 } from './preview-state'
-import type { TPreviewQuantities, TReceiptSource, TScannedItem } from '../model'
+import { RECEIPT_ANALYZE_PHASE_LABEL } from '../model'
+import type { TPreviewQuantities, TReceiptAnalyzePhase, TReceiptSource, TScannedItem } from '../model'
 
 type TUseReceiptScanParams = {
   onAddItems: (items: Omit<TItem, 'id'>[]) => void
 }
 
+const isAbortError = (e: unknown): boolean => {
+  if (e instanceof DOMException && e.name === 'AbortError') return true
+  return e instanceof Error && e.name === 'AbortError'
+}
+
 export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMinimized, setIsLoadingMinimized] = useState(false)
+  const [analyzePhase, setAnalyzePhase] = useState<TReceiptAnalyzePhase | null>(null)
   const [scannedItems, setScannedItems] = useState<TScannedItem[]>([])
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isSourceOpen, setIsSourceOpen] = useState(false)
@@ -28,6 +36,7 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
   const [quantities, setQuantities] = useState<TPreviewQuantities>({})
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const abortScanRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!isPreviewOpen) return
@@ -39,6 +48,11 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
   const totalAmount = useMemo(
     () => calculateSelectedTotal(scannedItems, selectedIndexes, quantities),
     [scannedItems, selectedIndexes, quantities],
+  )
+
+  const analyzePhaseLabel = useMemo(
+    () => (analyzePhase ? RECEIPT_ANALYZE_PHASE_LABEL[analyzePhase] : null),
+    [analyzePhase],
   )
 
   const handleScanClick = () => {
@@ -62,14 +76,39 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     }, 100)
   }
 
+  const handleCancelReceiptScan = () => {
+    abortScanRef.current?.abort()
+  }
+
+  const handleLoadingModalClose = () => {
+    setIsLoadingMinimized(true)
+  }
+
+  const handleExpandReceiptScanLoading = () => {
+    setIsLoadingMinimized(false)
+  }
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     e.target.value = ''
 
+    const controller = new AbortController()
+    abortScanRef.current = controller
+
     setIsLoading(true)
+    setIsLoadingMinimized(false)
+    setAnalyzePhase('encoding')
+
     try {
-      const items = await analyzeReceipt(file)
+      const items = await analyzeReceipt(file, {
+        signal: controller.signal,
+        onPhase: (phase) => {
+          setAnalyzePhase(phase)
+          if (phase === 'requesting') {
+          }
+        }
+      })
       if (!items.length) {
         toast.error('Позиции не найдены')
         return
@@ -77,9 +116,16 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
       setScannedItems(items)
       setIsPreviewOpen(true)
     } catch (err) {
+      if (isAbortError(err)) {
+        toast('Отменено')
+        return
+      }
       toast.error(err instanceof Error ? err.message : 'Ошибка сканирования')
     } finally {
       setIsLoading(false)
+      setIsLoadingMinimized(false)
+      setAnalyzePhase(null)
+      abortScanRef.current = null
     }
   }
 
@@ -107,6 +153,8 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     fileInputRef,
     cameraInputRef,
     isLoading,
+    isLoadingMinimized,
+    analyzePhaseLabel,
     isSourceOpen,
     setIsSourceOpen,
     isPreviewOpen,
@@ -121,5 +169,8 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     handleToggleItem,
     handleBumpQuantity,
     handleConfirmItems,
+    handleCancelReceiptScan,
+    handleLoadingModalClose,
+    handleExpandReceiptScanLoading,
   }
 }

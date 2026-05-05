@@ -34,7 +34,7 @@ export const ToggleGroup = <T extends string>({ options, value, onChange, classN
             <span className="toggle-group__option-icon" aria-hidden="true">
               {option.icon}
             </span>
-            {option.label}
+            <span className="toggle-group__option-label">{option.label}</span>
           </button>
         ))}
       </div>

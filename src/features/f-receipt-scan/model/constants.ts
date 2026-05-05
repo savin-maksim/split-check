@@ -1,4 +1,13 @@
+import type { TReceiptAnalyzePhase } from './types'
+
 export const GEMINI_MODEL_INDEX_KEY = 'gemini_model_idx'
+
+export const RECEIPT_ANALYZE_PHASE_LABEL: Record<TReceiptAnalyzePhase, string> = {
+  encoding: 'Готовим изображение',
+  requesting: 'Отправляем запрос',
+  streaming: 'Модель обрабатывает чек',
+  parsing: 'Разбираем результат',
+}
 
 export const GEMINI_MODELS = [
   'gemini-3.1-flash-lite-preview',

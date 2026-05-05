@@ -1,10 +1,12 @@
-import { useState, useMemo, memo } from 'react'
+import { useState, useMemo, memo, useRef, useCallback } from 'react'
 import { Search } from 'lucide-react'
 
 import type { EPaymentMode, TItem, TPerson } from '@/entities/check'
 import { WCostCard } from '@/widgets/w-cost-card'
 import { Input, AnimatedList, AnimatedBlock } from '@/shared/ui'
-import { animatedBlockMotion } from '@/shared/lib'
+import { animatedBlockMotion, createEnterKeyDownHandler, getItemAnchorId, useDebouncedValue } from '@/shared/lib'
+
+const SEARCH_DEBOUNCE_MS = 300
 
 type TItemsListWithSearchProps = {
   checkId: string
@@ -23,11 +25,20 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
   onEdit,
   onRequestDelete,
 }: TItemsListWithSearchProps) {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedQuery, flushDebouncedQuery] = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleConfirmSearch = useCallback(() => {
+    flushDebouncedQuery()
+    inputRef.current?.blur()
+  }, [flushDebouncedQuery])
+
+  const handleSearchKeyDown = createEnterKeyDownHandler(handleConfirmSearch)
 
   const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return items
-    const query = searchQuery.toLowerCase()
+    if (!debouncedQuery.trim()) return items
+    const query = debouncedQuery.toLowerCase()
     return items.filter((item) => {
       const titleMatch = item.title.toLowerCase().includes(query)
       const payerMatch = item.paidBy.some((payerId) =>
@@ -38,19 +49,22 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
       )
       return titleMatch || payerMatch
     })
-  }, [items, searchQuery, people])
+  }, [items, debouncedQuery, people])
 
   return (
     <>
       <AnimatedBlock className="p-items__search" blockMotion={animatedBlockMotion}>
         <Input
+          ref={inputRef}
+          className="items-list-with-search__input"
           name="search"
           icon={<Search size={'var(--button-icon-size)'} aria-hidden="true" />}
           clearable
           label="Поиск по названию/имени"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          enterKeyHint="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+          enterKeyHint="done"
         />
       </AnimatedBlock>
 
@@ -60,6 +74,7 @@ export const ItemsListWithSearch = memo(function ItemsListWithSearch({
         className="list-layout"
         items={filteredItems}
         getKey={(item) => item.id}
+        getItemDomId={(item) => getItemAnchorId(checkId, item.id)}
         renderItem={(item) => (
           <WCostCard
             checkId={checkId}

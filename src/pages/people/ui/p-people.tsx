@@ -18,13 +18,16 @@ export const PPeople = () => {
 
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<TPerson | null>(null)
+  const [personToDelete, setPersonToDelete] = useState<TPerson | null>(null)
   const [isClearAllOpen, setIsClearAllOpen] = useState(false)
 
-  const { handleAddPerson, handleEditPerson, handleClearAll, handleOpenClearAll } = usePeoplePageHandlers({
-    checkId,
-    editingPerson,
-    setClearAllOpen: setIsClearAllOpen,
-  })
+  const { handleAddPerson, handleEditPerson, handleClearAll, handleOpenClearAll, handleConfirmDeletePerson } =
+    usePeoplePageHandlers({
+      checkId,
+      editingPerson,
+      personToDelete,
+      setClearAllOpen: setIsClearAllOpen,
+    })
 
   useEffect(() => {
     setNavAction(() => setIsAddOpen(true))
@@ -41,9 +44,9 @@ export const PPeople = () => {
         <PeopleEmpty />
       ) : (
         <PeopleContent
-          checkId={checkId}
           people={people}
           onEdit={setEditingPerson}
+          onDeletePerson={setPersonToDelete}
           onOpenClearAll={handleOpenClearAll}
         />
       )}
@@ -71,6 +74,14 @@ export const PPeople = () => {
         onConfirm={handleClearAll}
         title="Удалить всех участников?"
         message="Будут удалены все участники и все расходы. Это действие нельзя отменить."
+      />
+
+      <FConfirmDelete
+        isOpen={personToDelete != null}
+        onClose={() => setPersonToDelete(null)}
+        onConfirm={handleConfirmDeletePerson}
+        title="Удалить участника?"
+        message={`Участник «${personToDelete?.name}» будет удалён из чека.`}
       />
     </div>
   )

@@ -1,4 +1,3 @@
-import type { RefObject } from 'react'
 import { useState, useEffect } from 'react'
 
 import { ArrowUp } from 'lucide-react'
@@ -9,47 +8,24 @@ import { AnimatedBlock } from '../../animated-block'
 
 import './scroll-top-button.scss'
 
-export type TScrollTopButtonProps = {
-  /** Корневой прокручиваемый контейнер (если скролл не на `window`) */
-  scrollRootRef?: RefObject<HTMLElement | null>
-}
+const SCROLL_THRESHOLD = 200
 
-export const ScrollTopButton = ({ scrollRootRef }: TScrollTopButtonProps = {}) => {
+export const ScrollTopButton = () => {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    const scrollRoot = scrollRootRef?.current ?? null
-
-    const getScrollY = () => {
-      if (scrollRoot) return scrollRoot.scrollTop
-      return window.scrollY
-    }
-
     const handleScroll = () => {
-      setIsVisible(getScrollY() > 200)
+      setIsVisible(window.scrollY > SCROLL_THRESHOLD)
     }
 
-    if (scrollRoot) {
-      scrollRoot.addEventListener('scroll', handleScroll, { passive: true })
-    } else {
-      window.addEventListener('scroll', handleScroll)
-    }
-
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
-      if (scrollRoot) {
-        scrollRoot.removeEventListener('scroll', handleScroll)
-      } else {
-        window.removeEventListener('scroll', handleScroll)
-      }
+      window.removeEventListener('scroll', handleScroll)
     }
-  }, [scrollRootRef])
+  }, [])
 
   const handleClick = () => {
-    const el = scrollRootRef?.current
-    if (el) {
-      el.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 

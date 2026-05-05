@@ -1,5 +1,5 @@
 import './f-manage-person.scss'
-import { SingleInputModal } from '@/shared/ui/SingleInputModal'
+import { SingleInputModal } from '@/shared/ui/modal/ui/single-input-modal'
 
 type TFManagePersonProps = {
   isOpen: boolean
@@ -10,16 +10,8 @@ type TFManagePersonProps = {
   title?: string
 }
 
-export const FManagePerson = ({
-  isOpen,
-  onClose,
-  mode,
-  initialName = '',
-  onSubmit,
-  title,
-}: TFManagePersonProps) => {
-  const modalTitle =
-    title ?? (mode === 'add' ? 'Добавить участника' : 'Изменить имя')
+export const FManagePerson = ({ isOpen, onClose, mode, initialName = '', onSubmit, title }: TFManagePersonProps) => {
+  const modalTitle = title ?? (mode === 'add' ? 'Добавить участника' : 'Изменить имя')
 
   return (
     <SingleInputModal

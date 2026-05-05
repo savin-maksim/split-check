@@ -6,7 +6,7 @@ import { WStatisticsPerson } from '@/widgets/w-statistics-person'
 import { WStatisticsSummary } from '@/widgets/w-statistics-summary'
 import { WTransfersCard } from '@/widgets/w-transfers-card'
 import { PageHeader, AnimatedListPresence, AnimatedBlock } from '@/shared/ui'
-import { animatedBlockMotion } from '@/shared/lib'
+import { animatedBlockMotion, getPersonStatsAnchorId } from '@/shared/lib'
 
 type TStatsContentProps = {
   check: TCheck
@@ -21,7 +21,7 @@ export const StatsContent = memo(({ check, transfers, personStats }: TStatsConte
     <>
       <PageHeader icon={<BarChart3 size={'var(--header-icon-size)'} aria-hidden="true" />} title="Статистика" />
       <AnimatedBlock className="p-stats__reveal" blockMotion={animatedBlockMotion}>
-        <WTransfersCard transfers={transfers} isLoading={false} />
+        <WTransfersCard checkId={check.id} people={check.people} transfers={transfers} isLoading={false} />
       </AnimatedBlock>
 
       <div className="list-layout">
@@ -38,6 +38,7 @@ export const StatsContent = memo(({ check, transfers, personStats }: TStatsConte
           staggerDelay={0.05}
           items={visiblePersonStats}
           getKey={(person) => person.id}
+          getItemDomId={(person) => getPersonStatsAnchorId(check.id, person.id)}
           renderItem={(person) => <WStatisticsPerson person={person} />}
         />
       </div>

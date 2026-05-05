@@ -1,7 +1,7 @@
 import { ScanLine } from 'lucide-react'
 
 import type { TItem } from '@/entities/check'
-import { FReceiptScanLoading } from '@/features/f-receipt-scan-loading'
+import { FReceiptScanLoading, FReceiptScanLoadingBanner } from '@/features/f-receipt-scan-loading'
 import { cn } from '@/shared/lib'
 import { Button } from '@/shared/ui'
 
@@ -21,6 +21,8 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
     fileInputRef,
     cameraInputRef,
     isLoading,
+    isLoadingMinimized,
+    analyzePhaseLabel,
     isSourceOpen,
     setIsSourceOpen,
     isPreviewOpen,
@@ -35,6 +37,9 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
     handleToggleItem,
     handleBumpQuantity,
     handleConfirmItems,
+    handleCancelReceiptScan,
+    handleLoadingModalClose,
+    handleExpandReceiptScanLoading,
   } = useReceiptScan({ onAddItems })
 
   return (
@@ -55,6 +60,7 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
         className="f-receipt-scan__input"
       />
       <Button
+        className="f-receipt-scan__button"
         icon={<ScanLine aria-hidden="true" className="f-receipt-scan__icon" size={'var(--button-icon-size)'} />}
         onClick={handleScanClick}
         disabled={isLoading}
@@ -65,7 +71,17 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
 
       <ReceiptSourceModal isOpen={isSourceOpen} onClose={() => setIsSourceOpen(false)} onSelect={handleSourceSelect} />
 
-      <FReceiptScanLoading isOpen={isLoading} />
+      <FReceiptScanLoading
+        isOpen={isLoading && !isLoadingMinimized}
+        onClose={handleLoadingModalClose}
+        phaseLabel={analyzePhaseLabel}
+        onCancel={handleCancelReceiptScan}
+      />
+
+      <FReceiptScanLoadingBanner
+        isVisible={isLoading && isLoadingMinimized}
+        onExpand={handleExpandReceiptScanLoading}
+      />
 
       <ReceiptPreviewModal
         isOpen={isPreviewOpen}

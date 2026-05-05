@@ -13,7 +13,7 @@ type TReceiptSourceModalProps = {
 }
 
 export const ReceiptSourceModal = ({ isOpen, onClose, onSelect }: TReceiptSourceModalProps) => (
-  <Modal isOpen={isOpen} onClose={onClose}>
+  <Modal isOpen={isOpen} onClose={onClose} mode="middle">
     <h3 className="modal__title">Загрузить чек</h3>
     <div className="receipt-source-modal__options">
       <Button onClick={() => onSelect('camera')} icon={<Camera aria-hidden="true" />}>

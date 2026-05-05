@@ -1,5 +1,6 @@
 import type { TCheck } from '../model/types'
 import { getItemTotal } from './get-item-total'
+import { readSplitWeight, totalSplitWeight } from './read-split-weight'
 
 export type TPersonStats = {
   id: number
@@ -12,8 +13,8 @@ export type TPersonStats = {
 
 export type TExpenseItem = {
   title: string
-  qty: number
-  splitCount: number
+  qtyNumerator: number
+  qtyDenominator: number
   amount: number
 }
 
@@ -29,19 +30,16 @@ export const calculatePersonStats = (
     const paidTotal = paidItems.reduce((sum, item) => sum + getItemTotal(item), 0)
 
     const expenses = items
-      .filter((item) => (item.split[person.id] ?? 0) > 0)
+      .filter((item) => readSplitWeight(item.split, person.id) > 0)
       .map((item) => {
-        const totalWeight = Object.values(item.split).reduce(
-          (s, w) => s + Math.max(0, w),
-          0,
-        )
-        const personWeight = item.split[person.id] ?? 0
+        const totalWeight = totalSplitWeight(item.split)
+        const personWeight = readSplitWeight(item.split, person.id)
         const share =
           totalWeight > 0 ? (getItemTotal(item) * personWeight) / totalWeight : 0
         return {
           title: item.title,
-          qty: item.qty,
-          splitCount: Object.values(item.split).filter((w) => w > 0).length,
+          qtyNumerator: item.qty * personWeight,
+          qtyDenominator: totalWeight,
           amount: Math.round(share),
         }
       })

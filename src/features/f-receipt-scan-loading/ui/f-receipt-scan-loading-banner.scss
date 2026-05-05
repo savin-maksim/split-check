@@ -1,0 +1,9 @@
+.f-receipt-scan-loading-banner {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--navigation-height) + var(--space) * 2);
+  z-index: var(--z-index-overlay);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}

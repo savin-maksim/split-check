@@ -28,6 +28,7 @@
 
     &--active {
       @include button--active-tokens;
+      --button-background-alpha: var(--button-active-background-alpha);
     }
   }
 }

@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast'
 
 import { useCheckStore } from '@/entities/check'
 import type { TItem } from '@/entities/check'
+import { scrollToItemAnchor } from '@/shared/lib'
 
 type TUseItemsPageHandlersParams = {
   checkId: string
@@ -25,8 +26,14 @@ export const useItemsPageHandlers = ({
 
   const handleAddItem = useCallback(
     (item: Omit<TItem, 'id'>) => {
-      addItem(checkId, { ...item, paidBySectionExpanded: true })
-      toast.success('Позиция добавлена')
+      const newId = addItem(checkId, { ...item, paidBySectionExpanded: true })
+      if (newId != null) {
+        const rawIdx =
+          useCheckStore.getState().checks.find((c) => c.id === checkId)?.items.findIndex((i) => i.id === newId) ?? -1
+        const listItemIndex = Math.max(0, rawIdx)
+        scrollToItemAnchor(checkId, newId, { listItemIndex })
+      }
+      toast.success(`Добавлено: ${item.title}`)
       setAddOpen(false)
     },
     [addItem, checkId, setAddOpen],
@@ -36,7 +43,7 @@ export const useItemsPageHandlers = ({
     (item: Omit<TItem, 'id'>) => {
       if (!editItem) return
       useCheckStore.getState().updateItem(checkId, editItem.id, item)
-      toast.success('Позиция обновлена')
+      toast.success(`Обновлено: ${editItem.title}`)
     },
     [editItem, checkId],
   )
@@ -44,12 +51,20 @@ export const useItemsPageHandlers = ({
   const handleAddBulkItems = useCallback(
     (newItems: Omit<TItem, 'id'>[]) => {
       const n = newItems.length
+      let lastId: number | null = null
       newItems.forEach((entry, i) => {
-        addItem(checkId, {
+        const id = addItem(checkId, {
           ...entry,
           paidBySectionExpanded: entry.paidBySectionExpanded ?? i === n - 1,
         })
+        if (id != null) lastId = id
       })
+      if (lastId != null) {
+        const rawIdx =
+          useCheckStore.getState().checks.find((c) => c.id === checkId)?.items.findIndex((i) => i.id === lastId) ?? -1
+        const listItemIndex = Math.max(0, rawIdx)
+        scrollToItemAnchor(checkId, lastId, { listItemIndex })
+      }
     },
     [addItem, checkId],
   )
@@ -62,7 +77,7 @@ export const useItemsPageHandlers = ({
   const handleConfirmDeleteItem = useCallback(() => {
     if (!itemToDelete) return
     removeItem(checkId, itemToDelete.id)
-    toast.success('Позиция удалена')
+    toast.success(`Удалено: ${itemToDelete.title}`)
   }, [itemToDelete, removeItem, checkId])
 
   const handleOpenClearAll = useCallback(() => {

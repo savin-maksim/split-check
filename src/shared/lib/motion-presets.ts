@@ -61,9 +61,16 @@ export const modalSheetTransition = {
   ease: [0.32, 0.72, 0, 1] as const,
 }
 
-export const modalSheetMotion = {
+export const modalSheetMotionFromTop = {
   initial: { y: '-50%' },
   animate: { y: '0' },
   exit: { y: '-50%' },
+  transition: modalSheetTransition,
+} as const
+
+export const modalSheetMotionFromBottom = {
+  initial: { y: '50%' },
+  animate: { y: '0' },
+  exit: { y: '50%' },
   transition: modalSheetTransition,
 } as const

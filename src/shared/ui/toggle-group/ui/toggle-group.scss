@@ -29,5 +29,10 @@
     &-icon {
       @include flex-center($isInline: true);
     }
+
+    &-label {
+      margin: 0;
+      font: inherit;
+    }
   }
 }

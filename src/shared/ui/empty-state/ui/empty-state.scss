@@ -2,23 +2,13 @@
   @include flex-center;
   flex-direction: column;
   height: 100%;
-  text-align: center;
+  gap: var(--space);
 
   &__icon {
     @include flex-center;
     color: var(--color-orange);
     max-width: var(--empty-state-icon-size);
     aspect-ratio: 1/1;
-  }
-
-  &__title {
-    margin: var(--space) 0 var(--space-x-large);
-    color: var(--color-light);
-  }
-
-  p {
-    margin: 0 0 var(--space-large);
-    color: var(--color-light);
   }
 
   a {

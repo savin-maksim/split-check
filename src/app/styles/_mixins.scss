@@ -81,7 +81,7 @@
 
 @mixin button--active-tokens {
   --button-surface-rgb: var(--button-active-surface-rgb);
-  --button-background-alpha: var(--button-active-background-alpha);
+  // --button-background-alpha: var(--button-active-background-alpha);
   --button-border-alpha: var(--button-active-border-alpha);
   --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
 }

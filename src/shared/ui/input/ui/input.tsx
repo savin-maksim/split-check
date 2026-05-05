@@ -91,7 +91,7 @@ export const Input = memo(
           } as unknown as ChangeEvent<HTMLInputElement>
           onChange?.(syntheticEvent)
         }
-        input.blur()
+        input.focus()
       }
 
       const inputType = isPasswordType ? (showPassword ? 'text' : 'password') : type

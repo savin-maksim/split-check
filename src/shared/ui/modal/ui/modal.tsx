@@ -7,7 +7,8 @@ import {
   cn,
   lockScroll,
   modalOverlayFadeTransition,
-  modalSheetMotion,
+  modalSheetMotionFromTop,
+  modalSheetMotionFromBottom,
   unlockScroll,
 } from '@/shared/lib'
 
@@ -15,7 +16,7 @@ type TModalProps = {
   isOpen: boolean
   onClose: () => void
   children: ReactNode
-  mode?: 'top-100' | 'top-0'
+  mode?: 'top-100' | 'top-0' | 'middle' | 'bottom-0'
 }
 
 const focusFirstField = (dialog: HTMLDialogElement) => {
@@ -29,10 +30,31 @@ const focusFirstField = (dialog: HTMLDialogElement) => {
   target?.focus({ preventScroll: false })
 }
 
+const getModalSheetMotion = (mode: TModalProps['mode']) => {
+  switch (mode) {
+    case 'top-100':
+      return modalSheetMotionFromTop
+    case 'top-0':
+      return modalSheetMotionFromTop
+    case 'middle':
+      return modalSheetMotionFromBottom
+    case 'bottom-0':
+      return modalSheetMotionFromBottom
+    default:
+      return modalSheetMotionFromTop
+  }
+}
 export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const isOpenRef = useRef(isOpen)
   isOpenRef.current = isOpen
+
+  const classMode = cn(
+    mode === 'top-100' && 'modal__center--top-100',
+    mode === 'top-0' && 'modal__center--top-0',
+    mode === 'middle' && 'modal__center--middle',
+    mode === 'bottom-0' && 'modal__center--bottom-0',
+  )
 
   useLayoutEffect(() => {
     const dialog = dialogRef.current
@@ -83,19 +105,13 @@ export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalPro
             transition={modalOverlayFadeTransition}
           >
             <div className="modal__backdrop" role="presentation" onClick={onClose} />
-            <div
-              className={cn(
-                'modal__center',
-                mode === 'top-100' && 'modal__center--top-100',
-                mode === 'top-0' && 'modal__center--top-0',
-              )}
-            >
+            <div className={cn(classMode, 'modal__center')}>
               <motion.div
                 className="modal__sheet"
-                {...modalSheetMotion}
+                {...getModalSheetMotion(mode)}
                 onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               >
-                <div className="modal__content">{children}</div>
+                {children}
               </motion.div>
             </div>
           </motion.div>

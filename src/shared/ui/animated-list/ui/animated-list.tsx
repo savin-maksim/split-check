@@ -9,6 +9,7 @@ type TAnimatedListPresenceProps<T> = {
   items: readonly T[]
   getKey: (item: T) => Key
   renderItem: (item: T) => ReactNode
+  getItemDomId?: (item: T) => string | undefined
   itemAs?: 'div' | 'li'
   itemClassName?: string
   initialDelay?: number
@@ -20,6 +21,7 @@ export const AnimatedListPresence = <T,>({
   items,
   getKey,
   renderItem,
+  getItemDomId,
   itemAs = 'div',
   itemClassName,
   initialDelay = 0,
@@ -34,6 +36,7 @@ export const AnimatedListPresence = <T,>({
       {items.map((item, index) => (
         <MotionItem
           key={getKey(item)}
+          id={getItemDomId?.(item)}
           layout
           className={cellClass}
           initial={animatedListItemMotion.initial}
@@ -65,6 +68,7 @@ export const AnimatedList = <T,>({
   items,
   getKey,
   renderItem,
+  getItemDomId,
   as = 'div',
   itemAs: itemAsProp,
   className,
@@ -83,6 +87,7 @@ export const AnimatedList = <T,>({
         items={items}
         getKey={getKey}
         renderItem={renderItem}
+        getItemDomId={getItemDomId}
         itemAs={itemAs}
         itemClassName={itemClassName}
         initialDelay={initialDelay}

@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useLayoutEffect, useRef } from 'react'
 
 import { Modal, Button, EButtonVariant } from '@/shared/ui'
 
@@ -19,20 +19,29 @@ const FConfirmDeleteComponent = ({
   title = 'Подтверждение',
   message = 'Вы уверены?',
 }: TFConfirmDeleteProps) => {
+  const deleteButtonRef = useRef<HTMLButtonElement>(null)
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    deleteButtonRef.current?.focus()
+  }, [isOpen])
+
   const handleConfirm = () => {
     onConfirm()
     onClose()
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} mode="middle">
       <h3 className="modal__title">{title}</h3>
       <div className="modal__inputs">
         <p className="modal__message">{message}</p>
       </div>
       <div className="modal__buttons">
         <Button onClick={onClose}>Отмена</Button>
-        <Button variant={EButtonVariant.Danger} onClick={handleConfirm}>
+        <Button ref={deleteButtonRef} variant={EButtonVariant.Danger} onClick={handleConfirm}>
           Удалить
         </Button>
       </div>

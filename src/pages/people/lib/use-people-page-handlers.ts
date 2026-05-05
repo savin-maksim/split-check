@@ -8,16 +8,19 @@ import { parseBulkPersonNames, pluralize } from '@/shared/lib'
 type TUsePeoplePageHandlersParams = {
   checkId: string
   editingPerson: TPerson | null
+  personToDelete: TPerson | null
   setClearAllOpen: (open: boolean) => void
 }
 
 export const usePeoplePageHandlers = ({
   checkId,
   editingPerson,
+  personToDelete,
   setClearAllOpen,
 }: TUsePeoplePageHandlersParams) => {
   const addPeople = useCheckStore((s) => s.addPeople)
   const removeAllPeople = useCheckStore((s) => s.removeAllPeople)
+  const removePerson = useCheckStore((s) => s.removePerson)
   const updatePerson = useCheckStore((s) => s.updatePerson)
 
   const handleAddPerson = useCallback(
@@ -52,5 +55,17 @@ export const usePeoplePageHandlers = ({
     setClearAllOpen(true)
   }, [setClearAllOpen])
 
-  return { handleAddPerson, handleEditPerson, handleClearAll, handleOpenClearAll }
+  const handleConfirmDeletePerson = useCallback(() => {
+    if (!personToDelete) return
+    removePerson(checkId, personToDelete.id)
+    toast.success(`Удален участник: ${personToDelete.name}`)
+  }, [personToDelete, removePerson, checkId])
+
+  return {
+    handleAddPerson,
+    handleEditPerson,
+    handleClearAll,
+    handleOpenClearAll,
+    handleConfirmDeletePerson,
+  }
 }

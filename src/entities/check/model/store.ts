@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { generateId } from '@/shared/lib'
+import { formatItemTitle, formatPersonName, generateId } from '@/shared/lib'
 
 import type { TCheck, TCheckStore, TItem } from './types'
 import { EPaymentMode } from './types'
@@ -19,7 +19,7 @@ export const useCheckStore = create<TCheckStore>()(
         const id = generateId()
         const check: TCheck = {
           id,
-          title: title.trim() || 'Без названия',
+          title: formatItemTitle(title) || 'Без названия',
           createdAt: Date.now(),
           paymentMode: EPaymentMode.Manual,
           singlePayer: null,
@@ -43,7 +43,7 @@ export const useCheckStore = create<TCheckStore>()(
         set((s) => ({
           checks: updateCheck(s.checks, checkId, (c) => ({
             ...c,
-            title: title.trim() || 'Без названия',
+            title: formatItemTitle(title) || 'Без названия',
           })),
         }))
       },
@@ -59,8 +59,7 @@ export const useCheckStore = create<TCheckStore>()(
       addPerson: (checkId: string, name: string) => {
         set((s) => ({
           checks: updateCheck(s.checks, checkId, (c) => {
-            const trimmed = name.trim()
-            const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+            const formatted = formatPersonName(name)
             const duplicate = c.people.some((p) => p.name.toLowerCase() === formatted.toLowerCase())
             if (duplicate) return c
             return {
@@ -79,12 +78,12 @@ export const useCheckStore = create<TCheckStore>()(
             const existingNames = new Set(c.people.map((p) => p.name.toLowerCase()))
             const newPeople = names
               .map((n) => {
-                const trimmed = n.trim()
-                return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+                const formatted = formatPersonName(n)
+                return formatted
               })
               .filter((n) => n.length >= 2 && !existingNames.has(n.toLowerCase()))
               .map((name) => {
-                const person = { id: nextId, name }
+                const person = { id: nextId, name: formatPersonName(name) }
                 nextId++
                 return person
               })
@@ -198,10 +197,12 @@ export const useCheckStore = create<TCheckStore>()(
       },
 
       duplicateItem: (checkId: string, itemId: number) => {
+        let newId: number | null = null
         set((s) => ({
           checks: updateCheck(s.checks, checkId, (c) => {
             const idx = c.items.findIndex((i) => i.id === itemId)
             if (idx === -1) return c
+            newId = c.nextItemId
             const original = {
               id: c.nextItemId,
               title: c.items[idx]?.title ?? '',
@@ -211,9 +212,11 @@ export const useCheckStore = create<TCheckStore>()(
               split: {},
               paidBySectionExpanded: true,
             }
-            return { ...c, items: [...c.items, original], nextItemId: c.nextItemId + 1 }
+            const items = [...c.items.slice(0, idx + 1), original, ...c.items.slice(idx + 1)]
+            return { ...c, items, nextItemId: c.nextItemId + 1 }
           }),
         }))
+        return newId
       },
 
       setPaymentMode: (checkId: string, mode: EPaymentMode) => {

@@ -9,6 +9,12 @@
   border: var(--border);
   border-radius: var(--border-radius);
 
+  &[role='button'] {
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   &--active {
     border-color: var(--color-orange);
     .w-check-card__footer {
