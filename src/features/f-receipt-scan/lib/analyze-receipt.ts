@@ -1,10 +1,20 @@
-import { accumulateAnswerFromGeminiStream } from './parse-gemini-stream'
-import { GEMINI_MODEL_INDEX_KEY, GEMINI_MODELS, RECEIPT_ANALYZE_PROMPT } from '../model'
-import type { TReceiptAnalyzePhase, TScannedItem } from '../model'
+import {
+  GoogleGenerativeAI,
+  GoogleGenerativeAIAbortError,
+  GoogleGenerativeAIFetchError,
+  GoogleGenerativeAIResponseError,
+} from '@google/generative-ai'
+
+import {
+  GEMINI_MODEL_INDEX_KEY,
+  GEMINI_MODELS,
+  RECEIPT_ANALYZE_PROMPT,
+  RECEIPT_ITEMS_RESPONSE_SCHEMA,
+} from '../model'
+import type { TScannedItem } from '../model'
 
 export type TAnalyzeReceiptOptions = {
   signal?: AbortSignal
-  onPhase?: (phase: TReceiptAnalyzePhase) => void
 }
 
 const getNextModel = (): string => {
@@ -31,141 +41,140 @@ const fileToBase64 = (file: File): Promise<string> =>
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const parseRetryAfterMs = (resp: Response): number | null => {
-  const retryAfter = resp.headers.get('Retry-After')
-  if (retryAfter == null) return null
-  const seconds = parseInt(retryAfter, 10)
-  if (Number.isNaN(seconds)) return null
-  return Math.min(seconds * 1000, 60_000)
-}
-
-const isRetryableStatus = (status: number) => status === 429 || status === 500 || status === 503 || status === 404
+const isRetryableHttpStatus = (status: number) =>
+  status === 429 || status === 500 || status === 503 || status === 404
 
 const isAbortError = (e: unknown): boolean => {
   if (e instanceof DOMException && e.name === 'AbortError') return true
+  if (e instanceof GoogleGenerativeAIAbortError) return true
   return e instanceof Error && e.name === 'AbortError'
 }
 
-const buildRequestBody = (base64: string, mimeType: string) =>
-  JSON.stringify({
-    contents: [
-      {
-        parts: [{ text: RECEIPT_ANALYZE_PROMPT }, { inlineData: { mimeType, data: base64 } }],
-      },
-    ],
-    generationConfig: {
-      thinkingConfig: {
-        includeThoughts: true,
-      },
-    },
-  })
+const throwIfAborted = (signal?: AbortSignal) => {
+  if (signal?.aborted) {
+    throw new DOMException('Aborted', 'AbortError')
+  }
+}
+
+const stripGenAiPrefix = (message: string) => message.replace(/^\[GoogleGenerativeAI Error\]: /, '')
+
+const logReceiptScan = (label: string, payload: unknown) => {
+  console.log(`[receipt-scan] ${label}`, typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2))
+}
 
 export const analyzeReceipt = async (
   file: File,
   options: TAnalyzeReceiptOptions = {},
 ): Promise<TScannedItem[]> => {
-  const { signal, onPhase } = options
+  const { signal } = options
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined
   if (!apiKey) throw new Error('API ключ не настроен')
 
   const firstModel = getNextModel()
-  const otherModels = GEMINI_MODELS.filter((model) => model !== firstModel)
+  const otherModels = GEMINI_MODELS.filter((m) => m !== firstModel)
   const modelsToTry = [firstModel, ...otherModels]
 
-  onPhase?.('encoding')
   const base64 = await fileToBase64(file)
   const mimeType = file.type || 'image/jpeg'
-  const body = buildRequestBody(base64, mimeType)
+
+  const genAI = new GoogleGenerativeAI(apiKey)
 
   for (let attempt = 0; attempt < modelsToTry.length; attempt++) {
-    if (signal?.aborted) {
-      throw new DOMException('Aborted', 'AbortError')
-    }
+    throwIfAborted(signal)
 
-    const model = modelsToTry[attempt]!
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiKey}`
+    const modelName = modelsToTry[attempt]!
 
-    onPhase?.('requesting')
-
-    let resp: Response
     try {
-      resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-        signal,
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: RECEIPT_ITEMS_RESPONSE_SCHEMA,
+        },
       })
+
+      const genResult = await model.generateContent(
+        {
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                { text: RECEIPT_ANALYZE_PROMPT },
+                { inlineData: { mimeType, data: base64 } },
+              ],
+            },
+          ],
+        },
+        { signal },
+      )
+
+      throwIfAborted(signal)
+
+      const answerText = genResult.response.text().trim()
+      logReceiptScan('ответ модели (сырой JSON)', answerText)
+
+      let parsed: unknown
+      try {
+        parsed = JSON.parse(answerText)
+      } catch {
+        throw new Error('PARSE_JSON_FAILED')
+      }
+
+      if (!Array.isArray(parsed)) {
+        throw new Error('INVALID_JSON_SHAPE')
+      }
+
+      const rawItems = parsed as TScannedItem[]
+
+      return rawItems
     } catch (e) {
       if (isAbortError(e)) throw e
-      if (attempt < modelsToTry.length - 1) {
-        await sleep(Math.min(800 * (attempt + 1), 5000))
-        continue
-      }
-      throw e instanceof Error ? e : new Error('Сеть недоступна')
-    }
 
-    if (!resp.ok) {
-      let message = `Ошибка API: ${resp.status}`
-      try {
-        const errJson: { error?: { message?: string } } = await resp.json()
-        if (errJson?.error?.message) message = errJson.error.message
-      } catch {
-        // Response body can be empty or non-JSON for transport-level failures.
-      }
+      const hasNextModel = attempt < modelsToTry.length - 1
+      const backoff = Math.min(800 * (attempt + 1), 5000)
 
-      if (isRetryableStatus(resp.status) && attempt < modelsToTry.length - 1) {
-        const wait = parseRetryAfterMs(resp) ?? Math.min(1500 * (attempt + 1), 10_000)
-        if (resp.status === 429) {
+      if (e instanceof GoogleGenerativeAIFetchError) {
+        const status = e.status ?? 0
+        if (isRetryableHttpStatus(status) && hasNextModel) {
+          const wait = status === 429 ? Math.min(1500 * (attempt + 1), 10_000) : backoff
           await sleep(wait)
           continue
         }
-        await sleep(Math.min(800 * (attempt + 1), 5000))
+        if (status === 429) {
+          throw new Error(
+            'Слишком много запросов к Google AI (лимит квоты). Подождите минуту и попробуйте снова или проверьте план в Google AI Studio.',
+          )
+        }
+        throw new Error(stripGenAiPrefix(e.message))
+      }
+
+      if (e instanceof GoogleGenerativeAIResponseError) {
+        if (hasNextModel) {
+          await sleep(backoff)
+          continue
+        }
+        throw new Error(stripGenAiPrefix(e.message) || 'Ответ модели заблокирован или недоступен')
+      }
+
+      const msg = e instanceof Error ? e.message : ''
+      const parseOrShapeFailed = msg === 'PARSE_JSON_FAILED' || msg === 'INVALID_JSON_SHAPE'
+
+      if (parseOrShapeFailed && hasNextModel) {
+        await sleep(backoff)
         continue
       }
 
-      if (resp.status === 429) {
-        throw new Error(
-          'Слишком много запросов к Google AI (лимит квоты). Подождите минуту и попробуйте снова или проверьте план в Google AI Studio.',
-        )
+      if (parseOrShapeFailed) {
+        throw new Error(msg === 'INVALID_JSON_SHAPE' ? 'Не удалось распознать позиции' : 'Не удалось разобрать ответ модели')
       }
-      throw new Error(message)
-    }
 
-    onPhase?.('streaming')
-
-    if (!resp.body) {
-      if (attempt < modelsToTry.length - 1) {
-        await sleep(Math.min(800 * (attempt + 1), 5000))
+      if (hasNextModel) {
+        await sleep(backoff)
         continue
       }
-      throw new Error('Пустой ответ')
-    }
 
-    let answerText: string
-    try {
-      answerText = await accumulateAnswerFromGeminiStream(resp.body, {
-        signal,
-      })
-    } catch (e) {
-      if (isAbortError(e)) throw e
-      if (attempt < modelsToTry.length - 1) {
-        await sleep(Math.min(800 * (attempt + 1), 5000))
-        continue
-      }
-      throw e instanceof Error ? e : new Error('Ошибка чтения ответа')
+      throw e instanceof Error ? e : new Error('Ошибка распознавания чека')
     }
-
-    onPhase?.('parsing')
-    const jsonMatch = answerText.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) {
-      if (attempt < modelsToTry.length - 1) {
-        await sleep(Math.min(800 * (attempt + 1), 5000))
-        continue
-      }
-      throw new Error('Не удалось распознать позиции')
-    }
-
-    return JSON.parse(jsonMatch[0]) as TScannedItem[]
   }
 
   throw new Error('Не удалось обратиться к API распознавания')

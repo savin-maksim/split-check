@@ -22,7 +22,6 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
     cameraInputRef,
     isLoading,
     isLoadingMinimized,
-    analyzePhaseLabel,
     isSourceOpen,
     setIsSourceOpen,
     isPreviewOpen,
@@ -74,7 +73,6 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
       <FReceiptScanLoading
         isOpen={isLoading && !isLoadingMinimized}
         onClose={handleLoadingModalClose}
-        phaseLabel={analyzePhaseLabel}
         onCancel={handleCancelReceiptScan}
       />
 

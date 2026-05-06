@@ -27,20 +27,7 @@ export type TButtonProps = {
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 const ButtonInner = forwardRef<HTMLButtonElement, TButtonProps>(
-  (
-    {
-      onClick,
-      disabled = false,
-      className,
-      icon,
-      children,
-      title,
-      type = 'button',
-      variant,
-      ...rest
-    },
-    ref,
-  ) => {
+  ({ onClick, disabled = false, className, icon, children, title, type = 'button', variant, ...rest }, ref) => {
     const variantModifier = variant != null ? variantClass[variant] : null
 
     return (

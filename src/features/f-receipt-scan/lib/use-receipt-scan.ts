@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast'
 import type { TItem } from '@/entities/check'
 
 import { analyzeReceipt } from './analyze-receipt'
+import { mergeDuplicateReceiptLines } from './merge-duplicate-receipt-lines'
 import { buildScannedItems } from './build-scanned-items'
 import {
   bumpPreviewQuantity,
@@ -13,8 +14,7 @@ import {
   createInitialSelection,
   toggleSelectedIndex,
 } from './preview-state'
-import { RECEIPT_ANALYZE_PHASE_LABEL } from '../model'
-import type { TPreviewQuantities, TReceiptAnalyzePhase, TReceiptSource, TScannedItem } from '../model'
+import type { TPreviewQuantities, TReceiptSource, TScannedItem } from '../model'
 
 type TUseReceiptScanParams = {
   onAddItems: (items: Omit<TItem, 'id'>[]) => void
@@ -25,10 +25,15 @@ const isAbortError = (e: unknown): boolean => {
   return e instanceof Error && e.name === 'AbortError'
 }
 
+const LOG_PREFIX = '[receipt-scan]'
+
+const logReceiptScanFormatted = (payload: unknown) => {
+  console.log(`${LOG_PREFIX} после mergeDuplicateReceiptLines`, JSON.stringify(payload, null, 2))
+}
+
 export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingMinimized, setIsLoadingMinimized] = useState(false)
-  const [analyzePhase, setAnalyzePhase] = useState<TReceiptAnalyzePhase | null>(null)
   const [scannedItems, setScannedItems] = useState<TScannedItem[]>([])
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isSourceOpen, setIsSourceOpen] = useState(false)
@@ -48,11 +53,6 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
   const totalAmount = useMemo(
     () => calculateSelectedTotal(scannedItems, selectedIndexes, quantities),
     [scannedItems, selectedIndexes, quantities],
-  )
-
-  const analyzePhaseLabel = useMemo(
-    () => (analyzePhase ? RECEIPT_ANALYZE_PHASE_LABEL[analyzePhase] : null),
-    [analyzePhase],
   )
 
   const handleScanClick = () => {
@@ -98,17 +98,14 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
 
     setIsLoading(true)
     setIsLoadingMinimized(false)
-    setAnalyzePhase('encoding')
 
     try {
-      const items = await analyzeReceipt(file, {
-        signal: controller.signal,
-        onPhase: (phase) => {
-          setAnalyzePhase(phase)
-          if (phase === 'requesting') {
-          }
-        }
-      })
+      const items = mergeDuplicateReceiptLines(
+        await analyzeReceipt(file, {
+          signal: controller.signal,
+        }),
+      )
+      logReceiptScanFormatted(items)
       if (!items.length) {
         toast.error('Позиции не найдены')
         return
@@ -124,7 +121,6 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     } finally {
       setIsLoading(false)
       setIsLoadingMinimized(false)
-      setAnalyzePhase(null)
       abortScanRef.current = null
     }
   }
@@ -154,7 +150,6 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     cameraInputRef,
     isLoading,
     isLoadingMinimized,
-    analyzePhaseLabel,
     isSourceOpen,
     setIsSourceOpen,
     isPreviewOpen,
