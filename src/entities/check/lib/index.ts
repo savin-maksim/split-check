@@ -1,8 +1,12 @@
 export { getItemTotal } from './get-item-total'
 export { isSplitDistributionWeightedView } from './is-split-distribution-weighted-view'
-export { calculateBalances, generateTransfers, checkToProducts, getEffectivePayerId } from './calculate-balances'
+export {
+  calculateBalances,
+  generateTransfers,
+  computeCheckSettlement,
+} from './calculate-balances'
+export type { TCheckSettlement } from './calculate-balances'
 export { validatePersonName, validateItemTitle, validateItemPrice } from './validation'
-export { useCurrentCheck } from './use-current-check'
 export { useCheckBalances } from './use-check-balances'
 export {
   transferListSignature,
@@ -18,3 +22,5 @@ export {
 export type { TDisplayTransfer } from './merge-transfers'
 export { calculatePersonStats } from './calculate-person-stats'
 export type { TPersonStats, TExpenseItem } from './calculate-person-stats'
+export { scrollToAddedItem } from './scroll-to-added-item'
+export { parseSplit } from './parse-split'

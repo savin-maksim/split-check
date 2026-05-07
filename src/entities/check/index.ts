@@ -6,12 +6,10 @@ export {
   isSplitDistributionWeightedView,
   calculateBalances,
   generateTransfers,
-  checkToProducts,
-  getEffectivePayerId,
+  computeCheckSettlement,
   validatePersonName,
   validateItemTitle,
   validateItemPrice,
-  useCurrentCheck,
   useCheckBalances,
   transferListSignature,
   getRecipientCounts,
@@ -23,5 +21,6 @@ export {
   applyUnmerge,
   buildDisplayTransfers,
   calculatePersonStats,
+  scrollToAddedItem,
 } from './lib'
-export type { TDisplayTransfer, TPersonStats, TExpenseItem } from './lib'
+export type { TDisplayTransfer, TPersonStats, TExpenseItem, TCheckSettlement } from './lib'

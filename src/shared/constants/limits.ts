@@ -8,5 +8,4 @@ export const ITEM_LIMITS = {
   TITLE_MAX_LENGTH: 100,
   MAX_PRICE: 100_000_000,
   MIN_PRICE: 0,
-  MIN_QTY: 1,
 } as const

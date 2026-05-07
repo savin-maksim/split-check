@@ -12,6 +12,8 @@ export type TInputProps = {
   isLabelHidden?: boolean
   error?: string
   icon?: ReactNode
+  /** Контент справа внутри поля (до кнопки очистки, если есть) */
+  suffix?: ReactNode
   clearable?: boolean
   clearAriaLabel?: string
 } & InputHTMLAttributes<HTMLInputElement>
@@ -26,6 +28,7 @@ export const Input = memo(
         isLabelHidden = false,
         error,
         icon,
+        suffix,
         clearable = false,
         clearAriaLabel = 'Очистить',
         value,
@@ -73,24 +76,10 @@ export const Input = memo(
         const input = innerRef.current
         if (!input || rest.disabled || rest.readOnly) return
 
-        if (isControlled) {
-          const syntheticEvent = {
-            target: { value: '' },
-            currentTarget: input,
-          } as unknown as ChangeEvent<HTMLInputElement>
-          onChange?.(syntheticEvent)
-        } else {
-          const setNative = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
-          setNative?.call(input, '')
-          setHasUncontrolledValue(false)
-          const ev = new Event('input', { bubbles: true })
-          input.dispatchEvent(ev)
-          const syntheticEvent = {
-            target: input,
-            currentTarget: input,
-          } as unknown as ChangeEvent<HTMLInputElement>
-          onChange?.(syntheticEvent)
-        }
+        const setNativeValue = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
+        setNativeValue?.call(input, '')
+        if (!isControlled) setHasUncontrolledValue(false)
+        input.dispatchEvent(new Event('input', { bubbles: true }))
         input.focus()
       }
 
@@ -101,6 +90,7 @@ export const Input = memo(
           className={cn(
             'input-field',
             icon ? 'input-field--with-icon' : null,
+            suffix != null ? 'input-field--with-suffix' : null,
             showClear && 'input-field--with-clear',
             isPasswordType && 'input-field--with-password',
             className,
@@ -130,6 +120,8 @@ export const Input = memo(
               {label}
             </label>
           )}
+
+          {suffix != null ? <div className="input-field__suffix">{suffix}</div> : null}
 
           {showClear ? (
             <button type="button" className="input-field__clear" onClick={handleClear} aria-label={clearAriaLabel}>

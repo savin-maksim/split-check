@@ -1,11 +1,12 @@
-import { memo, useCallback } from 'react'
+import { memo } from 'react'
+import type { MouseEvent } from 'react'
 import { Pencil, Trash2, Users, Calculator, Receipt } from 'lucide-react'
 
 import type { TCheck } from '@/entities/check'
 import { getItemTotal } from '@/entities/check'
 
 import { cn, formatSavedDate, formatMoney, pluralize, createKeyboardActivationHandler } from '@/shared/lib'
-import { ItemCard, MarqueeTitle, IconButton, EIconButtonVariant, CardStats } from '@/shared/ui'
+import { ItemCard, CardHeader, IconButton, EIconButtonVariant, CardStats } from '@/shared/ui'
 
 import './w-check-card.scss'
 
@@ -22,7 +23,12 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
   const itemsCount = check.items.length
   const totalKopecks = check.items.reduce((sum, item) => sum + getItemTotal(item), 0)
 
-  const handleOpenKeyDown = useCallback(createKeyboardActivationHandler(onOpen), [onOpen])
+  const handleOpenKeyDown = createKeyboardActivationHandler(onOpen)
+
+  const stopAndCall = (fn: () => void) => (e: MouseEvent) => {
+    e.stopPropagation()
+    fn()
+  }
 
   return (
     <ItemCard
@@ -32,30 +38,21 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
       onClick={onOpen}
       onKeyDown={handleOpenKeyDown}
     >
-      <div className="w-check-card__header">
-        <MarqueeTitle as="h3">{check.title}</MarqueeTitle>
-        <div className="w-check-card__actions">
-          <IconButton
-            icon={<Pencil />}
-            onClick={(e) => {
-              e.stopPropagation()
-              onEdit()
-            }}
-            title="Редактировать"
-            aria-label="Редактировать"
-          />
-          <IconButton
-            icon={<Trash2 />}
-            variant={EIconButtonVariant.Danger}
-            onClick={(e) => {
-              e.stopPropagation()
-              onDelete()
-            }}
-            title="Удалить"
-            aria-label="Удалить"
-          />
-        </div>
-      </div>
+      <CardHeader
+        title={check.title}
+        actions={
+          <>
+            <IconButton icon={<Pencil />} onClick={stopAndCall(onEdit)} title="Редактировать" aria-label="Редактировать" />
+            <IconButton
+              icon={<Trash2 />}
+              variant={EIconButtonVariant.Danger}
+              onClick={stopAndCall(onDelete)}
+              title="Удалить"
+              aria-label="Удалить"
+            />
+          </>
+        }
+      />
 
       <time className="w-check-card__date" dateTime={new Date(check.createdAt).toISOString()}>
         {formatSavedDate(check.createdAt)}

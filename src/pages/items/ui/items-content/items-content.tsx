@@ -64,8 +64,8 @@ export const ItemsContent = memo(
         />
 
         <AnimatedBlock className="p-items__toolbar" blockMotion={animatedBlockMotion}>
-          <FPaymentMode className="grid--span-4" value={paymentMode} onChange={handlePaymentModeChange} />
-          <FReceiptScan className="grid--span-4" onAddItems={onAddBulkItems} />
+          <FPaymentMode value={paymentMode} onChange={handlePaymentModeChange} />
+          <FReceiptScan onAddItems={onAddBulkItems} />
         </AnimatedBlock>
 
         <AnimatePresence mode="popLayout">

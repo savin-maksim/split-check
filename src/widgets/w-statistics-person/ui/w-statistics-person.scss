@@ -42,11 +42,11 @@
       text-align: end;
       flex: 1;
 
-      &.positive {
+      &--positive {
         color: var(--color-success);
       }
 
-      &.negative {
+      &--negative {
         color: rgb(var(--color-error));
       }
     }

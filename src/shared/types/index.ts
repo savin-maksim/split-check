@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 export type {
   TAnimatedBlockMotion,
@@ -13,7 +13,3 @@ export type TPropsWithClassName = {
 export type TPropsWithChildren = {
   children: ReactNode
 }
-
-export type TPolymorphicProps<T extends ElementType> = {
-  as?: T
-} & ComponentPropsWithoutRef<T>

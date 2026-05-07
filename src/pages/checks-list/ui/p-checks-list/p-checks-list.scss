@@ -1,0 +1,8 @@
+.p-checks-list {
+  height: 100%;
+
+  &__icon {
+    max-width: var(--header-icon-size);
+    aspect-ratio: 1/1;
+  }
+}

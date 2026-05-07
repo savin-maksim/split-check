@@ -19,9 +19,9 @@ type TToggleGroupProps<T extends string> = {
 
 export const ToggleGroup = <T extends string>({ options, value, onChange, className, label }: TToggleGroupProps<T>) => {
   return (
-    <>
-      <h2 className="grid--span-4 text-center">{label}</h2>
-      <div className={cn('toggle-group', className)} role="radiogroup" aria-label={label}>
+    <div className={cn('toggle-group', className)}>
+      {label && <h2 className="toggle-group__label">{label}</h2>}
+      <div className="toggle-group__options" role="radiogroup" aria-label={label}>
         {options.map((option) => (
           <button
             key={option.value}
@@ -38,6 +38,6 @@ export const ToggleGroup = <T extends string>({ options, value, onChange, classN
           </button>
         ))}
       </div>
-    </>
+    </div>
   )
 }

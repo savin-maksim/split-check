@@ -18,42 +18,55 @@ export type TExpenseItem = {
   amount: number
 }
 
-export const calculatePersonStats = (
-  check: TCheck,
-  balances: Map<number, number>,
-): TPersonStats[] => {
-  const people = check.people
-  const items = check.items
+/**
+ * Одна проходка по позициям: O(items × people) без повторных filter по всему списку на каждого участника.
+ * Порядок строк в `expenses` совпадает с порядком позиций в чеке.
+ */
+export const calculatePersonStats = (check: TCheck, balances: Map<number, number>): TPersonStats[] => {
+  const { people, items } = check
+  if (people.length === 0) return []
+
+  const paidTotals = new Map<number, number>()
+  const expenseByPerson = new Map<number, TExpenseItem[]>()
+
+  for (const p of people) {
+    paidTotals.set(p.id, 0)
+    expenseByPerson.set(p.id, [])
+  }
+
+  for (const item of items) {
+    const lineTotal = getItemTotal(item)
+    const totalWeight = totalSplitWeight(item.split)
+    const canShare = totalWeight > 0
+
+    for (const person of people) {
+      if (item.paidBy.includes(person.id)) {
+        paidTotals.set(person.id, (paidTotals.get(person.id) ?? 0) + lineTotal)
+      }
+
+      const personWeight = readSplitWeight(item.split, person.id)
+      if (!canShare || personWeight <= 0) continue
+
+      const share = (lineTotal * personWeight) / totalWeight
+      expenseByPerson.get(person.id)!.push({
+        title: item.title,
+        qtyNumerator: item.qty * personWeight,
+        qtyDenominator: totalWeight,
+        amount: Math.round(share),
+      })
+    }
+  }
 
   return people.map((person) => {
-    const paidItems = items.filter((item) => item.paidBy.includes(person.id))
-    const paidTotal = paidItems.reduce((sum, item) => sum + getItemTotal(item), 0)
-
-    const expenses = items
-      .filter((item) => readSplitWeight(item.split, person.id) > 0)
-      .map((item) => {
-        const totalWeight = totalSplitWeight(item.split)
-        const personWeight = readSplitWeight(item.split, person.id)
-        const share =
-          totalWeight > 0 ? (getItemTotal(item) * personWeight) / totalWeight : 0
-        return {
-          title: item.title,
-          qtyNumerator: item.qty * personWeight,
-          qtyDenominator: totalWeight,
-          amount: Math.round(share),
-        }
-      })
-
+    const expenses = expenseByPerson.get(person.id) ?? []
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
-    const balance = balances.get(person.id) ?? 0
-
     return {
       id: person.id,
       name: person.name,
-      paidTotal,
+      paidTotal: paidTotals.get(person.id) ?? 0,
       expenses,
       totalExpenses,
-      balance,
+      balance: balances.get(person.id) ?? 0,
     }
   })
 }

@@ -19,9 +19,10 @@ import type { BigNumber } from '@/shared/lib/math'
 import type { TCheck, TItem, TTransfer } from '../model/types'
 import { EPaymentMode } from '../model/types'
 import { getItemTotal } from './get-item-total'
+import { readSplitWeight, totalSplitWeight } from './read-split-weight'
 
-/** Плательщик для расчётов: в режиме single — `singlePayer`, иначе — первый из `people` в `item.paidBy` */
-export const getEffectivePayerId = (check: TCheck, item: TItem): number | null => {
+/** Плательщик для расчётов: в режиме single — `singlePayer`, иначе — первый из `people` в `item.paidBy`. */
+const getEffectivePayerId = (check: TCheck, item: TItem): number | null => {
   if (check.paymentMode === EPaymentMode.Single && check.singlePayer != null) {
     return check.singlePayer
   }
@@ -40,37 +41,38 @@ type TProduct = {
   distribution: TDistribution
 }
 
+/**
+ * Соответствие имя → индекс в векторах actual/expected.
+ * Ограничение модели: `TTransfer` и распределение идут по строковым именам; при дубликатах имён в `check.people`
+ * индекс будет последнего такого имени — данные вне этого контракта считаются некорректными.
+ */
 const buildIndexMap = (peopleList: string[]): Map<string, number> => {
   const map = new Map<string, number>()
-  peopleList.forEach((p, i) => map.set(p, i))
+  for (let i = 0; i < peopleList.length; i++) map.set(peopleList[i]!, i)
   return map
 }
 
-const readWeight = (split: Record<number, number>, personId: number): number => {
-  const raw = split[personId]
-  return Math.max(0, Math.floor(Number(raw) || 0))
-}
+const checkToProducts = (check: TCheck): TProduct[] => {
+  const peopleById = new Map(check.people.map((p) => [p.id, p]))
 
-export const checkToProducts = (check: TCheck): TProduct[] => {
   return check.items.map((item) => {
     const amount = getItemTotal(item)
     const effectivePayerId = getEffectivePayerId(check, item)
-    const payerPerson = check.people.find((p) => p.id === effectivePayerId)
-    const payer = payerPerson?.name ?? ''
+    const payer = effectivePayerId != null ? (peopleById.get(effectivePayerId)?.name ?? '') : ''
 
-    const totalWeight = Object.values(item.split).reduce((s, w) => s + Math.max(0, Math.floor(Number(w) || 0)), 0)
+    const totalWeight = totalSplitWeight(item.split)
 
     const distribution: TDistribution =
       totalWeight > 0
         ? {
             type: 'weighted',
             items: check.people
-              .map((p) => ({ name: p.name, units: readWeight(item.split, p.id) }))
+              .map((p) => ({ name: p.name, units: readSplitWeight(item.split, p.id) }))
               .filter((x) => x.units > 0),
           }
         : {
             type: 'equal',
-            participants: check.people.filter((p) => readWeight(item.split, p.id) > 0).map((p) => p.name),
+            participants: check.people.filter((p) => readSplitWeight(item.split, p.id) > 0).map((p) => p.name),
           }
 
     return { name: item.title, amount, payer, distribution }
@@ -108,15 +110,16 @@ const getExpectedSpent = (products: TProduct[], peopleMap: Map<string, number>):
           result[idx] = add(result[idx]!, share) as BigNumber
         }
       }
-    } else if (distribution.type === 'weighted') {
+    } else {
       const { items } = distribution
       if (!items.length) continue
-      const totalUnits = items.reduce((sum, p) => sum + p.units, 0)
+      let totalUnits = 0
+      for (const row of items) totalUnits += row.units
       if (totalUnits === 0) continue
 
-      for (const item of items) {
-        const share = multiply(divide(bignumber(item.units), bignumber(totalUnits)) as BigNumber, total) as BigNumber
-        const idx = peopleMap.get(item.name)
+      for (const row of items) {
+        const share = multiply(divide(bignumber(row.units), bignumber(totalUnits)) as BigNumber, total) as BigNumber
+        const idx = peopleMap.get(row.name)
         if (idx !== undefined) {
           result[idx] = add(result[idx]!, share) as BigNumber
         }
@@ -129,14 +132,13 @@ const getExpectedSpent = (products: TProduct[], peopleMap: Map<string, number>):
 
 type TBalance = { person: string; balance: BigNumber }
 
-const getBalances = (actual: BigNumber[], expected: BigNumber[], peopleList: string[]): TBalance[] => {
-  return actual
+const getBalances = (actual: BigNumber[], expected: BigNumber[], peopleList: string[]): TBalance[] =>
+  actual
     .map((value, i) => ({
       person: peopleList[i]!,
       balance: subtract(value, expected[i]!) as BigNumber,
     }))
     .sort((a, b) => compare(b.balance, a.balance) as number)
-}
 
 const settleDebts = (balances: TBalance[]): TTransfer[] => {
   const creditors = balances.filter((b) => larger(b.balance, 0) as boolean)
@@ -167,43 +169,56 @@ const settleDebts = (balances: TBalance[]): TTransfer[] => {
   return result
 }
 
-export const calculateBalances = (check: TCheck): Map<number, number> => {
-  const products = checkToProducts(check)
-  const peopleNames = check.people.map((p) => p.name)
-  const peopleMap = buildIndexMap(peopleNames)
-
-  const actual = getActualSpent(products, peopleMap)
-  const expected = getExpectedSpent(products, peopleMap)
-
-  const balanceMap = new Map<number, number>()
-  check.people.forEach((person, i) => {
-    const balance = subtract(actual[i]!, expected[i]!) as BigNumber
-    balanceMap.set(person.id, roundForDisplay(balance))
-  })
-
-  return balanceMap
+export type TCheckSettlement = {
+  balanceMap: Map<number, number>
+  transfers: TTransfer[]
 }
 
-export const generateTransfers = (check: TCheck): TTransfer[] => {
+/** Один проход по чеку: балансы и переводы согласованы; внутри не дублируется `checkToProducts`. */
+export const computeCheckSettlement = (check: TCheck): TCheckSettlement => {
   const products = checkToProducts(check)
   const peopleNames = check.people.map((p) => p.name)
-  if (!peopleNames.length || !products.length) return []
+  const balanceMap = new Map<number, number>()
+
+  if (peopleNames.length === 0) {
+    return { balanceMap, transfers: [] }
+  }
 
   const peopleMap = buildIndexMap(peopleNames)
   const actual = getActualSpent(products, peopleMap)
   const expected = getExpectedSpent(products, peopleMap)
-  const balances = getBalances(actual, expected, peopleNames)
 
-  if (check.paymentMode === 'single' && check.singlePayer != null) {
+  for (let i = 0; i < check.people.length; i++) {
+    const person = check.people[i]!
+    const balance = subtract(actual[i]!, expected[i]!) as BigNumber
+    balanceMap.set(person.id, roundForDisplay(balance))
+  }
+
+  if (!products.length) {
+    return { balanceMap, transfers: [] }
+  }
+
+  let transfers: TTransfer[]
+  if (check.paymentMode === EPaymentMode.Single && check.singlePayer != null) {
     const payerPerson = check.people.find((p) => p.id === check.singlePayer)
     if (payerPerson) {
       const expectedRounded = expected.map(roundForDisplay)
-      return peopleNames
+      transfers = peopleNames
         .map((person, i) => ({ person, amount: expectedRounded[i]! }))
         .filter((d) => d.amount > 0 && d.person !== payerPerson.name)
         .map((d) => ({ from: d.person, to: payerPerson.name, amount: d.amount }))
+    } else {
+      transfers = settleDebts(getBalances(actual, expected, peopleNames))
     }
+  } else {
+    transfers = settleDebts(getBalances(actual, expected, peopleNames))
   }
 
-  return settleDebts(balances)
+  return { balanceMap, transfers }
 }
+
+export const calculateBalances = (check: TCheck): Map<number, number> =>
+  computeCheckSettlement(check).balanceMap
+
+export const generateTransfers = (check: TCheck): TTransfer[] =>
+  computeCheckSettlement(check).transfers

@@ -44,7 +44,6 @@ export type TCheckStore = {
   addCheck: (title: string) => string
   removeCheck: (checkId: string) => void
   updateCheckTitle: (checkId: string, title: string) => void
-  setCurrentCheck: (checkId: string | null) => void
   loadCheck: (checkId: string) => void
 
   addPerson: (checkId: string, name: string) => void

@@ -1,20 +1,4 @@
 .w-check-card {
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space);
-    min-width: 0;
-    margin: var(--space);
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-large);
-    flex-shrink: 0;
-  }
-
   &__date {
     display: block;
     padding-inline: var(--space);
@@ -33,4 +17,8 @@
       padding: var(--space);
     }
   }
+}
+
+.item-card--active .w-check-card__footer {
+  border-color: var(--color-orange);
 }

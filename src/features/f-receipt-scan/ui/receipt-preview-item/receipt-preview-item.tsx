@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react'
+import { memo } from 'react'
 import type { MouseEvent } from 'react'
 
 import { Minus, Plus } from 'lucide-react'
@@ -27,10 +27,7 @@ const ReceiptPreviewItemComponent = ({
   onToggle,
   onBumpQuantity,
 }: TReceiptPreviewItemProps) => {
-  const handleKeyDown = useCallback(
-    createKeyboardActivationHandler(() => onToggle(index)),
-    [onToggle, index],
-  )
+  const handleKeyDown = createKeyboardActivationHandler(() => onToggle(index))
 
   return (
     <div

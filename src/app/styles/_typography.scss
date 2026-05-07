@@ -40,28 +40,3 @@ span {
   text-align: center;
 }
 
-.gemini-gradient {
-  font-weight: 800;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-
-  background: linear-gradient(
-      90deg,
-      rgb(66, 133, 244),
-      rgb(234, 67, 53),
-      rgb(251, 188, 4),
-      rgb(52, 168, 83),
-      rgb(66, 133, 244)
-    )
-    0% 0% / 200% text;
-  animation: 5s linear 0s infinite normal none running gemini-gradient-shimmer;
-}
-
-@keyframes gemini-gradient-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}

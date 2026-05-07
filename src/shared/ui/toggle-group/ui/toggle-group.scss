@@ -1,8 +1,20 @@
 .toggle-group {
   display: flex;
+  flex-direction: column;
   gap: var(--space);
 
+  &__label {
+    margin: 0;
+    text-align: center;
+  }
+
+  &__options {
+    display: flex;
+    gap: var(--space);
+  }
+
   &__option {
+    @include text-ellipsis;
     @include button-surface;
 
     --button-surface-rgb: var(--button-neutral-surface-rgb);
@@ -31,6 +43,7 @@
     }
 
     &-label {
+      @include text-ellipsis;
       margin: 0;
       font: inherit;
     }

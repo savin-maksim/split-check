@@ -2,8 +2,6 @@ import { memo, useLayoutEffect, useRef } from 'react'
 
 import { Modal, Button, EButtonVariant } from '@/shared/ui'
 
-import './f-confirm-delete.scss'
-
 type TFConfirmDeleteProps = {
   isOpen: boolean
   onClose: () => void

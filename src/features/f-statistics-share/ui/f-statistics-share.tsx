@@ -13,8 +13,10 @@ type TFStatisticsShareProps = {
 }
 
 export const FStatisticsShare = ({ isOpen, onClose }: TFStatisticsShareProps) => {
-  const { sections, selectedSections, handleToggleSection, handleSelectAll, handleShare, handleSave } =
-    useStatisticsShare({ isOpen, onClose })
+  const { sections, selectedIds, handleToggleSection, handleSelectAll, handleShare, handleSave } = useStatisticsShare({
+    isOpen,
+    onClose,
+  })
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} mode="top-0">
@@ -24,16 +26,16 @@ export const FStatisticsShare = ({ isOpen, onClose }: TFStatisticsShareProps) =>
           <div className="f-statistics-share__sections">
             {sections.map((section) => (
               <button
-                key={section.index}
+                key={section.id}
                 type="button"
                 className={cn(
                   'f-statistics-share__section',
-                  selectedSections.has(section.index) && 'f-statistics-share__section--active',
+                  selectedIds.has(section.id) && 'f-statistics-share__section--active',
                 )}
-                aria-pressed={selectedSections.has(section.index)}
-                onClick={() => handleToggleSection(section.index)}
+                aria-pressed={selectedIds.has(section.id)}
+                onClick={() => handleToggleSection(section.id)}
               >
-                {section.title}
+                {section.label}
               </button>
             ))}
           </div>
@@ -44,14 +46,14 @@ export const FStatisticsShare = ({ isOpen, onClose }: TFStatisticsShareProps) =>
         <Button
           variant={EButtonVariant.Active}
           onClick={handleShare}
-          disabled={selectedSections.size === 0}
+          disabled={selectedIds.size === 0}
           icon={<Share2 aria-hidden="true" className="f-statistics-share__icon" size={'var(--button-icon-size)'} />}
         >
           Поделиться
         </Button>
         <Button
           onClick={handleSave}
-          disabled={selectedSections.size === 0}
+          disabled={selectedIds.size === 0}
           icon={<Download aria-hidden="true" className="f-statistics-share__icon" size={'var(--button-icon-size)'} />}
         >
           Сохранить

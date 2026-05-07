@@ -1,11 +1,14 @@
 import { memo, useEffect, useCallback, useRef, useMemo, type FormEvent } from 'react'
 
-import { Modal, Input, Button, EButtonVariant } from '@/shared/ui'
+import { Button, EButtonVariant } from '@/shared/ui/button'
+import { Input } from '@/shared/ui/input'
 import { createEnterKeyDownHandler } from '@/shared/lib'
+
+import { Modal } from './modal'
 
 const VALUE_PATTERN = '.*\\S.*'
 
-export type ISingleInputModalProps = {
+export type TSingleInputModalProps = {
   isOpen: boolean
   onClose: () => void
   title: string
@@ -23,7 +26,7 @@ const SingleInputModalComponent = ({
   initialValue = '',
   submitLabel,
   onSubmit,
-}: ISingleInputModalProps) => {
+}: TSingleInputModalProps) => {
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 

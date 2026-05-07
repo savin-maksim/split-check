@@ -1,38 +1,24 @@
+import type { TPersonStats } from '@/entities/check'
+import { useRegisterStatTarget } from '@/features/f-statistics-share'
 import { cn, formatMoney } from '@/shared/lib'
 import { AnimatedNumber } from '@/shared/ui'
 
 import './w-statistics-person.scss'
 
-export type TStatisticsPersonExpense = {
-  title: string
-  qtyNumerator: number
-  qtyDenominator: number
-  amount: number
-}
-
-export type TStatisticsPersonData = {
-  id: number
-  name: string
-  paidTotal: number
-  expenses: TStatisticsPersonExpense[]
-  totalExpenses: number
-  balance: number
-}
-
 type TWStatisticsPersonProps = {
-  person: TStatisticsPersonData
+  person: TPersonStats
 }
 
 export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
   const balanceRounded = Math.round(person.balance)
+  const ref = useRegisterStatTarget<HTMLDivElement>({
+    id: `person-${person.id}`,
+    kind: 'person',
+    label: person.name,
+  })
 
   return (
-    <div
-      className="w-statistics-person"
-      data-stat-share="person"
-      data-stat-share-label={person.name}
-      data-stat-share-id={String(person.id)}
-    >
+    <div ref={ref} className="w-statistics-person">
       <div className="w-statistics-person__top">
         <p className="h4 w-statistics-person__title">{person.name}</p>
         <div className="w-statistics-person__spent">
@@ -66,8 +52,8 @@ export const WStatisticsPerson = ({ person }: TWStatisticsPersonProps) => {
             format={formatMoney}
             className={cn(
               'h4 w-statistics-person__expense-amount',
-              person.balance > 0 && 'positive',
-              person.balance < 0 && 'negative',
+              person.balance > 0 && 'w-statistics-person__expense-amount--positive',
+              person.balance < 0 && 'w-statistics-person__expense-amount--negative',
             )}
           />
         </div>

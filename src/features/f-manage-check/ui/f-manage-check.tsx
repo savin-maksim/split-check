@@ -1,4 +1,4 @@
-import { SingleInputModal } from '@/shared/ui/modal/ui/single-input-modal'
+import { SingleInputModal } from '@/shared/ui'
 
 type TFManageCheckProps =
   | {

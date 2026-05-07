@@ -17,6 +17,7 @@ export const ChecksContent = memo(({ checks, currentCheckId, onOpen, onEdit, onD
     as="ul"
     className="list-layout"
     items={checks}
+    staggerDelay={0.05}
     getKey={(check) => check.id}
     renderItem={(check) => (
       <WCheckCard

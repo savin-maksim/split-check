@@ -4,9 +4,11 @@ import { animatedListTransition } from './motion-presets'
 const ITEMS_LIST_INITIAL_DELAY_S = 0.05
 const ITEMS_LIST_STAGGER_DELAY_S = 0.05
 
+type TScrollBehavior = 'auto' | 'smooth' | 'instant'
+
 const scheduleScrollToElementById = (
   id: string,
-  options?: { settleMs?: number; behavior?: ScrollBehavior },
+  options?: { settleMs?: number; behavior?: TScrollBehavior },
 ) => {
   const settleMs = options?.settleMs ?? 0
   const behavior = options?.behavior ?? 'smooth'

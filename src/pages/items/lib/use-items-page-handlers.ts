@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { toast } from 'react-hot-toast'
 
-import { useCheckStore } from '@/entities/check'
+import { useCheckStore, scrollToAddedItem } from '@/entities/check'
 import type { TItem } from '@/entities/check'
-import { scrollToItemAnchor } from '@/shared/lib'
 
 type TUseItemsPageHandlersParams = {
   checkId: string
@@ -21,18 +20,14 @@ export const useItemsPageHandlers = ({
   setClearAllOpen,
 }: TUseItemsPageHandlersParams) => {
   const addItem = useCheckStore((s) => s.addItem)
+  const updateItem = useCheckStore((s) => s.updateItem)
   const removeItem = useCheckStore((s) => s.removeItem)
   const removeAllItems = useCheckStore((s) => s.removeAllItems)
 
   const handleAddItem = useCallback(
     (item: Omit<TItem, 'id'>) => {
       const newId = addItem(checkId, { ...item, paidBySectionExpanded: true })
-      if (newId != null) {
-        const rawIdx =
-          useCheckStore.getState().checks.find((c) => c.id === checkId)?.items.findIndex((i) => i.id === newId) ?? -1
-        const listItemIndex = Math.max(0, rawIdx)
-        scrollToItemAnchor(checkId, newId, { listItemIndex })
-      }
+      if (newId != null) scrollToAddedItem(checkId, newId)
       toast.success(`Добавлено: ${item.title}`)
       setAddOpen(false)
     },
@@ -42,10 +37,10 @@ export const useItemsPageHandlers = ({
   const handleEditItem = useCallback(
     (item: Omit<TItem, 'id'>) => {
       if (!editItem) return
-      useCheckStore.getState().updateItem(checkId, editItem.id, item)
+      updateItem(checkId, editItem.id, item)
       toast.success(`Обновлено: ${editItem.title}`)
     },
-    [editItem, checkId],
+    [editItem, checkId, updateItem],
   )
 
   const handleAddBulkItems = useCallback(
@@ -59,12 +54,7 @@ export const useItemsPageHandlers = ({
         })
         if (id != null) lastId = id
       })
-      if (lastId != null) {
-        const rawIdx =
-          useCheckStore.getState().checks.find((c) => c.id === checkId)?.items.findIndex((i) => i.id === lastId) ?? -1
-        const listItemIndex = Math.max(0, rawIdx)
-        scrollToItemAnchor(checkId, lastId, { listItemIndex })
-      }
+      if (lastId != null) scrollToAddedItem(checkId, lastId)
     },
     [addItem, checkId],
   )

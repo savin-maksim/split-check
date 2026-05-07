@@ -1,0 +1,72 @@
+.w-bottom-nav {
+  position: fixed;
+  bottom: var(--space);
+  left: var(--space-large);
+  right: var(--space-large);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: var(--navigation-height);
+  border: var(--border);
+  border-radius: var(--border-radius-large);
+  background-color: rgba(var(--color-bg), 0.5);
+  max-width: var(--cards-width);
+  margin: 0 auto;
+
+  z-index: var(--z-index-nav);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  &__icon {
+    max-width: var(--bottom-nav-icon-size);
+    aspect-ratio: 1/1;
+  }
+
+  &__link {
+    @include flex-center;
+    color: var(--color-text-active);
+    padding: var(--space);
+    border-radius: var(--border-radius-small);
+
+    &--active {
+      color: var(--color-orange);
+      background: var(--color-glass);
+    }
+
+    @include hover {
+      background: var(--color-glass);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__action {
+    @include button-reset;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-orange);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+
+    @include hover {
+      transform: scale(1.05);
+      background-color: var(--color-active);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__action-placeholder {
+    width: 40px;
+    height: 40px;
+  }
+}

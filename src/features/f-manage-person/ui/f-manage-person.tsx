@@ -1,5 +1,4 @@
-import './f-manage-person.scss'
-import { SingleInputModal } from '@/shared/ui/modal/ui/single-input-modal'
+import { SingleInputModal } from '@/shared/ui'
 
 type TFManagePersonProps = {
   isOpen: boolean

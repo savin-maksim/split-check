@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Toaster, toast, useToasterStore } from 'react-hot-toast'
 
+import './toast.scss'
+
 const TOAST_LIMIT = 2
 
 export const Toast = () => {
@@ -44,25 +46,11 @@ export const Toast = () => {
       position="top-center"
       reverseOrder={false}
       gutter={8}
-      containerStyle={{
-        top: isMobile ? viewportOffset + 20 : 20,
-        position: 'fixed',
-        zIndex: 10000,
-      }}
+      containerClassName="toast-container"
+      containerStyle={{ top: isMobile ? viewportOffset + 20 : 20 }}
       toastOptions={{
         duration: 3000,
-        style: {
-          background: 'rgba(255, 255, 255, 0.2)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          border: '2px solid rgba(255, 255, 255, 0.3)',
-          borderRadius: 'var(--border-radius)',
-          color: 'var(--color-light)',
-          padding: '1rem',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          maxWidth: 'var(--cards-width)',
-          fontSize: '0.875rem',
-        },
+        className: 'toast-item',
         success: {
           iconTheme: {
             primary: 'var(--color-orange)',

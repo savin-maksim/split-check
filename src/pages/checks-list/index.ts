@@ -1,1 +1,1 @@
-export { PChecks } from './ui/p-checks'
+export { PChecksList } from './ui/p-checks-list'

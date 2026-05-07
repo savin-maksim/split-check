@@ -1,9 +1,11 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 import { pluralize } from '@/shared/lib'
 
-import { captureSections, collectShareSections } from './stat-share-sections'
+import { useStatShareContext } from '../model'
+import type { TStatShareTarget } from '../model'
+import { captureTargets } from './capture-sections'
 
 type TUseStatisticsShareParams = {
   isOpen: boolean
@@ -11,53 +13,51 @@ type TUseStatisticsShareParams = {
 }
 
 export const useStatisticsShare = ({ isOpen, onClose }: TUseStatisticsShareParams) => {
-  const [selectedSections, setSelectedSections] = useState<Set<number>>(new Set())
-
-  const sections = useMemo(() => (isOpen ? collectShareSections() : []), [isOpen])
+  const ctx = useStatShareContext()
+  const [sections, setSections] = useState<TStatShareTarget[]>([])
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectedSections(new Set())
+      setSections([])
+      setSelectedIds(new Set())
       return
     }
+    setSections(ctx?.list() ?? [])
+  }, [isOpen, ctx])
 
-  }, [isOpen])
-
-  const handleToggleSection = (index: number) => {
-    setSelectedSections((prev) => {
+  const handleToggleSection = (id: string) => {
+    setSelectedIds((prev) => {
       const next = new Set(prev)
-      if (next.has(index)) next.delete(index)
-      else next.add(index)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
       return next
     })
   }
 
   const handleSelectAll = () => {
-    setSelectedSections(new Set(sections.map((section) => section.index)))
+    setSelectedIds(new Set(sections.map((section) => section.id)))
   }
 
-  const getSelectedSections = () => {
-    const targets = sections.filter((section) => selectedSections.has(section.index))
+  const getSelectedTargets = (): TStatShareTarget[] => {
+    const targets = sections.filter((section) => selectedIds.has(section.id))
     if (!targets.length) {
       toast.error('Выберите секции для экспорта')
       return []
     }
-
     return targets
   }
 
   const handleShare = async () => {
-    const targets = getSelectedSections()
+    const targets = getSelectedTargets()
     if (!targets.length) return
 
     onClose()
-    const images = await captureSections(targets)
+    const images = await captureTargets(targets)
     if (!images.length) return
 
     try {
-      const files = images.map(
-        (image) => new File([image.blob], image.filename, { type: 'image/png' }),
-      )
+      const files = images.map((image) => new File([image.blob], image.filename, { type: 'image/png' }))
 
       if (navigator.canShare?.({ files })) {
         await navigator.share({ files, title: 'Статистика чека' })
@@ -70,12 +70,12 @@ export const useStatisticsShare = ({ isOpen, onClose }: TUseStatisticsShareParam
   }
 
   const handleSave = async () => {
-    const targets = getSelectedSections()
+    const targets = getSelectedTargets()
     if (!targets.length) return
 
     onClose()
     const loadingToastId = toast.loading('Сохранение скриншотов…', { duration: Infinity })
-    const images = await captureSections(targets)
+    const images = await captureTargets(targets)
     toast.dismiss(loadingToastId)
     if (!images.length) return
 
@@ -97,7 +97,7 @@ export const useStatisticsShare = ({ isOpen, onClose }: TUseStatisticsShareParam
 
   return {
     sections,
-    selectedSections,
+    selectedIds,
     handleToggleSection,
     handleSelectAll,
     handleShare,

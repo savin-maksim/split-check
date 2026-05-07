@@ -5,6 +5,7 @@
   --input-field-icon-offset: 2.75rem;
   --input-field-suffix-one: 2.5rem;
   --input-field-suffix-two: 4.35rem;
+  --input-field-suffix-cluster-width: 6.75rem;
 
   --input-field-label-left-inset: 0.75rem;
   --input-field-label-right-inset: 0.75rem;
@@ -20,6 +21,19 @@
 
   &--with-clear.input-field--with-password {
     --input-field-label-right-inset: var(--input-field-suffix-two);
+  }
+
+  &--with-suffix {
+    --input-field-label-right-inset: var(--input-field-suffix-cluster-width);
+  }
+
+  &--with-suffix.input-field--with-clear,
+  &--with-suffix.input-field--with-password {
+    --input-field-label-right-inset: calc(var(--input-field-suffix-cluster-width) + var(--input-field-suffix-one));
+  }
+
+  &--with-suffix.input-field--with-clear.input-field--with-password {
+    --input-field-label-right-inset: calc(var(--input-field-suffix-cluster-width) + var(--input-field-suffix-two));
   }
 
   &__input {
@@ -76,16 +90,32 @@
     padding-left: var(--input-field-icon-offset);
   }
 
-  &--with-clear .input-field__input {
+  &--with-clear:not(.input-field--with-suffix) .input-field__input {
     padding-right: var(--input-field-suffix-one);
   }
 
-  &--with-password .input-field__input {
+  &--with-password:not(.input-field--with-suffix) .input-field__input {
     padding-right: var(--input-field-suffix-one);
   }
 
-  &--with-clear.input-field--with-password .input-field__input {
+  &--with-clear.input-field--with-password:not(.input-field--with-suffix) .input-field__input {
     padding-right: var(--input-field-suffix-two);
+  }
+
+  &--with-suffix .input-field__input {
+    padding-right: var(--input-field-suffix-cluster-width);
+  }
+
+  &--with-suffix.input-field--with-clear .input-field__input {
+    padding-right: calc(var(--input-field-suffix-cluster-width) + var(--input-field-suffix-one));
+  }
+
+  &--with-suffix.input-field--with-password .input-field__input {
+    padding-right: calc(var(--input-field-suffix-cluster-width) + var(--input-field-suffix-one));
+  }
+
+  &--with-suffix.input-field--with-clear.input-field--with-password .input-field__input {
+    padding-right: calc(var(--input-field-suffix-cluster-width) + var(--input-field-suffix-two));
   }
 
   &__label {
@@ -147,6 +177,25 @@
     right: 10px;
     max-width: var(--button-icon-size);
     aspect-ratio: 1/1;
+  }
+
+  &__suffix {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    right: 0.625rem;
+    max-width: min(calc(100% - 3rem), 11rem);
+    pointer-events: auto;
+  }
+
+  &--with-clear &__suffix,
+  &--with-password:not(.input-field--with-clear) &__suffix {
+    right: calc(0.625rem + var(--button-icon-size) + 0.25rem);
+  }
+
+  &--with-clear.input-field--with-password &__suffix {
+    right: calc(0.625rem + var(--input-field-suffix-two));
   }
 
   &--with-clear.input-field--with-password .input-field__clear {

@@ -1,13 +1,16 @@
 import { useCallback } from 'react'
-import { MoveRight, Combine } from 'lucide-react'
+import { Combine } from 'lucide-react'
 
 import type { TPerson, TTransfer } from '@/entities/check'
 import { isEligibleForMerge } from '@/entities/check'
+import { useRegisterStatTarget } from '@/features/f-statistics-share'
 
-import { cn, formatMoney, scrollToPersonStatsAnchor } from '@/shared/lib'
-import { AnimatedNumber, Button, EButtonVariant, IconButton, Spinner } from '@/shared/ui'
+import { cn, scrollToPersonStatsAnchor } from '@/shared/lib'
+import { Button, EButtonVariant, IconButton, Spinner } from '@/shared/ui'
 
 import { useTransfersCard } from '../lib/use-transfers-card'
+import { TransferRow } from './transfer-row'
+import { MergedTransferRow } from './merged-transfer-row'
 
 import './w-transfers-card.scss'
 
@@ -33,6 +36,8 @@ export const WTransfersCard = ({ transfers, isLoading, checkId, people }: TWTran
     handleUnmerge,
   } = useTransfersCard({ transfers })
 
+  const ref = useRegisterStatTarget<HTMLDivElement>({ id: 'transfers', kind: 'transfers', label: 'Переводы' })
+
   const scrollToPersonByName = useCallback(
     (name: string) => {
       const person = people.find((p) => p.name === name)
@@ -52,7 +57,7 @@ export const WTransfersCard = ({ transfers, isLoading, checkId, people }: TWTran
   )
 
   return (
-    <div className="w-transfers-card" data-stat-share="transfers" data-stat-share-label="Переводы">
+    <div ref={ref} className="w-transfers-card">
       <div className="w-transfers-card__header">
         <h3>Переводы</h3>
         <div className="w-transfers-card__header-actions">
@@ -60,6 +65,7 @@ export const WTransfersCard = ({ transfers, isLoading, checkId, people }: TWTran
             icon={<Combine />}
             className={cn('w-transfers-card__merge-toggle', mergeMode && 'w-transfers-card__merge-toggle--active')}
             onClick={toggleMergeMode}
+            title={mergeMode ? 'Выключить режим объединения переводов' : 'Включить режим объединения переводов'}
             aria-label={mergeMode ? 'Выключить режим объединения переводов' : 'Включить режим объединения переводов'}
             aria-pressed={mergeMode}
           />
@@ -70,96 +76,38 @@ export const WTransfersCard = ({ transfers, isLoading, checkId, people }: TWTran
       <div className="w-transfers-card__transfers">
         {displayRows.map((row) => {
           if (row.kind === 'merged') {
-            const mergedSelected = row.sourceIndices.every((i) => pendingSelection.has(i))
-
+            const selected = row.sourceIndices.every((i) => pendingSelection.has(i))
             return (
-              <div key={row.key} className="w-transfers-card__item">
-                <h4 className="w-transfers-card__amount">
-                  <AnimatedNumber value={row.amount} format={formatMoney} className="h4" />
-                </h4>
-                <div className="w-transfers-card__people">
-                  <Button
-                    className={cn(
-                      'button--wide',
-                      'w-transfers-card__person--merged-from',
-                      mergeMode && 'w-transfers-card__person--from-selectable',
-                      mergeMode && 'w-transfers-card__person--shake',
-                      mergeMode && mergedSelected && 'button--active',
-                    )}
-                    onClick={
-                      mergeMode
-                        ? () => toggleMergedGroup(row.sourceIndices)
-                        : () => scrollToMergedFromFirst(row.sourceIndices)
-                    }
-                    aria-pressed={mergeMode ? mergedSelected : undefined}
-                    aria-label={
-                      mergeMode
-                        ? `${mergedSelected ? 'Снять выбор' : 'Выбрать'} объединённых отправителей → ${row.to}`
-                        : `Перейти к статистике: ${row.fromLabel.replace(/\n/g, ', ')}`
-                    }
-                  >
-                    {row.fromLabel}
-                  </Button>
-                  <MoveRight size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
-                  <Button
-                    variant={EButtonVariant.Wide}
-                    type="button"
-                    onClick={() => scrollToPersonByName(row.to)}
-                    title={`Статистика: ${row.to}`}
-                    aria-label={`Перейти к статистике: ${row.to}`}
-                  >
-                    {row.to}
-                  </Button>
-                </div>
-              </div>
+              <MergedTransferRow
+                key={row.key}
+                fromLabel={row.fromLabel}
+                to={row.to}
+                amount={row.amount}
+                mergeMode={mergeMode}
+                selected={selected}
+                onSelectToggle={() => toggleMergedGroup(row.sourceIndices)}
+                onScrollFrom={() => scrollToMergedFromFirst(row.sourceIndices)}
+                onScrollTo={() => scrollToPersonByName(row.to)}
+              />
             )
           }
 
-          const { index, transfer } = row
-          const eligible = isEligibleForMerge(index, transfers, recipientCounts)
-          const selected = pendingSelection.has(index)
+          const eligible = isEligibleForMerge(row.index, transfers, recipientCounts)
+          const selectable = mergeMode && eligible
+          const selected = pendingSelection.has(row.index)
 
           return (
-            <div key={row.key} className="w-transfers-card__item">
-              <AnimatedNumber value={transfer.amount} format={formatMoney} className="h4 w-transfers-card__amount" />
-              <div className="w-transfers-card__people">
-                <Button
-                  className={cn(
-                    'button--wide',
-                    mergeMode && eligible && 'w-transfers-card__person--from-selectable',
-                    mergeMode && eligible && 'w-transfers-card__person--shake',
-                    mergeMode && eligible && selected && 'button--active',
-                  )}
-                  type="button"
-                  onClick={() => {
-                    if (mergeMode && eligible) toggleSelectIndex(index)
-                    else scrollToPersonByName(transfer.from)
-                  }}
-                  aria-pressed={mergeMode && eligible ? selected : undefined}
-                  aria-label={
-                    mergeMode && eligible
-                      ? `${selected ? 'Снять выбор' : 'Выбрать'}: ${transfer.from} → ${transfer.to}`
-                      : `Перейти к статистике: ${transfer.from}`
-                  }
-                >
-                  {transfer.from}
-                </Button>
-                <MoveRight
-                  className="w-transfers-card__icon"
-                  size={'var(--transfer-card-icon-size)'}
-                  aria-hidden="true"
-                />
-                <Button
-                  variant={EButtonVariant.Wide}
-                  type="button"
-                  onClick={() => scrollToPersonByName(transfer.to)}
-                  title={`Статистика: ${transfer.to}`}
-                  aria-label={`Перейти к статистике: ${transfer.to}`}
-                >
-                  {transfer.to}
-                </Button>
-              </div>
-            </div>
+            <TransferRow
+              key={row.key}
+              from={row.transfer.from}
+              to={row.transfer.to}
+              amount={row.transfer.amount}
+              selectable={selectable}
+              selected={selected}
+              onSelectToggle={() => toggleSelectIndex(row.index)}
+              onScrollFrom={() => scrollToPersonByName(row.transfer.from)}
+              onScrollTo={() => scrollToPersonByName(row.transfer.to)}
+            />
           )
         })}
       </div>

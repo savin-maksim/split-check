@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 
-import { useCurrentCheck } from '@/entities/check'
 import type { TPerson } from '@/entities/check'
 import { FManagePerson } from '@/features/f-manage-person'
 import { FConfirmDelete } from '@/features/f-confirm-delete'
-import { useNavActionStore } from '@/shared/lib'
+import { useRegisterNavAction } from '@/widgets/w-bottom-nav'
+import { useCurrentCheckFromRoute } from '@/shared/lib'
 
 import { usePeoplePageHandlers } from '../lib/use-people-page-handlers'
 import { PeopleContent } from './people-content'
@@ -13,8 +13,7 @@ import { PeopleEmpty } from './people-empty'
 import './p-people.scss'
 
 export const PPeople = () => {
-  const { check, checkId } = useCurrentCheck()
-  const setNavAction = useNavActionStore((s) => s.setOnAction)
+  const { check, checkId } = useCurrentCheckFromRoute()
 
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [editingPerson, setEditingPerson] = useState<TPerson | null>(null)
@@ -29,10 +28,7 @@ export const PPeople = () => {
       setClearAllOpen: setIsClearAllOpen,
     })
 
-  useEffect(() => {
-    setNavAction(() => setIsAddOpen(true))
-    return () => setNavAction(null)
-  }, [setNavAction])
+  useRegisterNavAction(useCallback(() => setIsAddOpen(true), []))
 
   const people = check?.people ?? []
 

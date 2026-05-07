@@ -1,8 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
+import { WBottomNav } from '@/widgets/w-bottom-nav'
 import { ScrollTopButton, Toast } from '@/shared/ui'
-
-import { BottomNav } from './bottom-nav'
 
 import './styles/index.scss'
 import './layout.scss'
@@ -13,7 +12,7 @@ export const AppLayout = () => {
       <main className="layout__content">
         <Outlet />
       </main>
-      <BottomNav />
+      <WBottomNav />
       <ScrollTopButton />
       <Toast />
     </div>

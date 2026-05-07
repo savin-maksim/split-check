@@ -79,12 +79,8 @@ export const canUnmergeSelection = (pendingSelection: Set<number> | number[], co
       for (const i of g) union.add(i)
     }
   }
-  if (union.size === 0) return false
-  if (union.size !== S.size) return false
-  for (const i of S) {
-    if (!union.has(i)) return false
-  }
-  return true
+  /** Все индексы union ⊆ S; при |union| === |S| выделение совпадает с объединением подходящих групп */
+  return union.size > 0 && union.size === S.size
 }
 
 export const applyUnmerge = (pendingSelection: Set<number> | number[], committedGroups: number[][]): number[][] => {

@@ -1,0 +1,17 @@
+.toast-container {
+  position: fixed;
+  z-index: var(--z-index-toast);
+}
+
+.toast-item {
+  background: var(--color-glass) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: var(--border-width) solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: var(--border-radius) !important;
+  color: var(--color-light) !important;
+  padding: var(--space-large) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  max-width: var(--cards-width) !important;
+  font-size: 0.875rem !important;
+}

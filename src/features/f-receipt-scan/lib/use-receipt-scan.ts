@@ -1,4 +1,3 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
 import type { ChangeEvent } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -7,111 +6,34 @@ import type { TItem } from '@/entities/check'
 import { analyzeReceipt } from './analyze-receipt'
 import { mergeDuplicateReceiptLines } from './merge-duplicate-receipt-lines'
 import { buildScannedItems } from './build-scanned-items'
-import {
-  bumpPreviewQuantity,
-  calculateSelectedTotal,
-  createInitialQuantities,
-  createInitialSelection,
-  toggleSelectedIndex,
-} from './preview-state'
-import type { TPreviewQuantities, TReceiptSource, TScannedItem } from '../model'
+import { isAbortError } from './is-abort-error'
+import { useReceiptSourceModal } from './use-receipt-source-modal'
+import { useReceiptLoadingState } from './use-receipt-loading-state'
+import { useReceiptPreview } from './use-receipt-preview'
 
 type TUseReceiptScanParams = {
   onAddItems: (items: Omit<TItem, 'id'>[]) => void
 }
 
-const isAbortError = (e: unknown): boolean => {
-  if (e instanceof DOMException && e.name === 'AbortError') return true
-  return e instanceof Error && e.name === 'AbortError'
-}
-
-const LOG_PREFIX = '[receipt-scan]'
-
-const logReceiptScanFormatted = (payload: unknown) => {
-  console.log(`${LOG_PREFIX} после mergeDuplicateReceiptLines`, JSON.stringify(payload, null, 2))
-}
-
 export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingMinimized, setIsLoadingMinimized] = useState(false)
-  const [scannedItems, setScannedItems] = useState<TScannedItem[]>([])
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-  const [isSourceOpen, setIsSourceOpen] = useState(false)
-  const [selectedIndexes, setSelectedIndexes] = useState<Set<number>>(() => new Set())
-  const [quantities, setQuantities] = useState<TPreviewQuantities>({})
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const cameraInputRef = useRef<HTMLInputElement>(null)
-  const abortScanRef = useRef<AbortController | null>(null)
-
-  useEffect(() => {
-    if (!isPreviewOpen) return
-
-    setSelectedIndexes(createInitialSelection(scannedItems))
-    setQuantities(createInitialQuantities(scannedItems))
-  }, [isPreviewOpen, scannedItems])
-
-  const totalAmount = useMemo(
-    () => calculateSelectedTotal(scannedItems, selectedIndexes, quantities),
-    [scannedItems, selectedIndexes, quantities],
-  )
-
-  const handleScanClick = () => {
-    if (!import.meta.env.VITE_GEMINI_API_KEY) {
-      toast.error('API ключ не настроен. См. инструкцию в README.')
-      return
-    }
-
-    setIsSourceOpen(true)
-  }
-
-  const handleSourceSelect = (source: TReceiptSource) => {
-    setIsSourceOpen(false)
-    window.setTimeout(() => {
-      if (source === 'camera') {
-        cameraInputRef.current?.click()
-        return
-      }
-
-      fileInputRef.current?.click()
-    }, 100)
-  }
-
-  const handleCancelReceiptScan = () => {
-    abortScanRef.current?.abort()
-  }
-
-  const handleLoadingModalClose = () => {
-    setIsLoadingMinimized(true)
-  }
-
-  const handleExpandReceiptScanLoading = () => {
-    setIsLoadingMinimized(false)
-  }
+  const source = useReceiptSourceModal()
+  const loading = useReceiptLoadingState()
+  const preview = useReceiptPreview()
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     e.target.value = ''
 
-    const controller = new AbortController()
-    abortScanRef.current = controller
-
-    setIsLoading(true)
-    setIsLoadingMinimized(false)
+    const controller = loading.start()
 
     try {
-      const items = mergeDuplicateReceiptLines(
-        await analyzeReceipt(file, {
-          signal: controller.signal,
-        }),
-      )
-      logReceiptScanFormatted(items)
+      const items = mergeDuplicateReceiptLines(await analyzeReceipt(file, { signal: controller.signal }))
       if (!items.length) {
         toast.error('Позиции не найдены')
         return
       }
-      setScannedItems(items)
-      setIsPreviewOpen(true)
+      preview.openPreview(items)
     } catch (err) {
       if (isAbortError(err)) {
         toast('Отменено')
@@ -119,53 +41,44 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
       }
       toast.error(err instanceof Error ? err.message : 'Ошибка сканирования')
     } finally {
-      setIsLoading(false)
-      setIsLoadingMinimized(false)
-      abortScanRef.current = null
+      loading.finish()
     }
   }
 
-  const handleToggleItem = (index: number) => {
-    setSelectedIndexes((prev) => toggleSelectedIndex(prev, index))
-  }
-
-  const handleBumpQuantity = (index: number, delta: number) => {
-    setQuantities((prev) => bumpPreviewQuantity(prev, scannedItems, index, delta))
-  }
-
   const handleConfirmItems = () => {
-    const items = buildScannedItems({ scannedItems, selectedIndexes, quantities })
+    const items = buildScannedItems({
+      scannedItems: preview.scannedItems,
+      selectedIndexes: preview.selectedIndexes,
+      quantities: preview.quantities,
+    })
     if (items.length === 0) return
 
     onAddItems(items)
-    setIsPreviewOpen(false)
-    setScannedItems([])
-    setSelectedIndexes(new Set())
-    setQuantities({})
+    preview.reset()
     toast.success(`Добавлено ${items.length} позиций`)
   }
 
   return {
-    fileInputRef,
-    cameraInputRef,
-    isLoading,
-    isLoadingMinimized,
-    isSourceOpen,
-    setIsSourceOpen,
-    isPreviewOpen,
-    setIsPreviewOpen,
-    scannedItems,
-    selectedIndexes,
-    quantities,
-    totalAmount,
-    handleScanClick,
-    handleSourceSelect,
+    fileInputRef: source.fileInputRef,
+    cameraInputRef: source.cameraInputRef,
+    isLoading: loading.isLoading,
+    isLoadingMinimized: loading.isMinimized,
+    isSourceOpen: source.isSourceOpen,
+    setIsSourceOpen: source.setIsSourceOpen,
+    isPreviewOpen: preview.isPreviewOpen,
+    setIsPreviewOpen: preview.setIsPreviewOpen,
+    scannedItems: preview.scannedItems,
+    selectedIndexes: preview.selectedIndexes,
+    quantities: preview.quantities,
+    totalAmount: preview.totalAmount,
+    handleScanClick: source.openSourceModal,
+    handleSourceSelect: source.handleSourceSelect,
     handleFileChange,
-    handleToggleItem,
-    handleBumpQuantity,
+    handleToggleItem: preview.toggleItem,
+    handleBumpQuantity: preview.bumpQuantity,
     handleConfirmItems,
-    handleCancelReceiptScan,
-    handleLoadingModalClose,
-    handleExpandReceiptScanLoading,
+    handleCancelReceiptScan: loading.cancel,
+    handleLoadingModalClose: loading.minimize,
+    handleExpandReceiptScanLoading: loading.expand,
   }
 }

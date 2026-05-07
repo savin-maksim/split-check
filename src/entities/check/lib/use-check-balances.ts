@@ -1,18 +1,17 @@
 import { useMemo } from 'react'
 
-import type { TCheck } from '../model/types'
-import { calculateBalances, generateTransfers } from './calculate-balances'
+import type { TCheck, TTransfer } from '../model/types'
 
-export const useCheckBalances = (check: TCheck | undefined) => {
-  const balances = useMemo(() => {
-    if (!check) return new Map<number, number>()
-    return calculateBalances(check)
+import { computeCheckSettlement } from './calculate-balances'
+
+const emptyBalances = new Map<number, number>()
+const emptyTransfers: TTransfer[] = []
+
+export const useCheckBalances = (check: TCheck | undefined) =>
+  useMemo(() => {
+    if (!check) {
+      return { balances: emptyBalances, transfers: emptyTransfers }
+    }
+    const { balanceMap, transfers } = computeCheckSettlement(check)
+    return { balances: balanceMap, transfers }
   }, [check])
-
-  const transfers = useMemo(() => {
-    if (!check) return []
-    return generateTransfers(check)
-  }, [check])
-
-  return { balances, transfers }
-}

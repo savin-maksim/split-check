@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 
-import { useCurrentCheck, EPaymentMode } from '@/entities/check'
+import { EPaymentMode } from '@/entities/check'
 import type { TItem } from '@/entities/check'
-import { FManageItem } from '@/features/f-manage-item'
-import { FConfirmDelete } from '@/features/f-confirm-delete'
-import { useNavActionStore } from '@/shared/lib'
+import { useRegisterNavAction } from '@/widgets/w-bottom-nav'
+import { useCurrentCheckFromRoute } from '@/shared/lib'
 
 import { useItemsPageHandlers } from '../lib/use-items-page-handlers'
 import { ItemsContent } from './items-content'
 import { ItemsEmptyNoItems } from './items-empty-no-items'
 import { ItemsEmptyNoPeople } from './items-empty-no-people'
+import { ItemsPageModals } from './items-page-modals'
 
 import './p-items.scss'
 
 export const PItems = () => {
-  const { check, checkId } = useCurrentCheck()
-  const setNavAction = useNavActionStore((s) => s.setOnAction)
+  const { check, checkId } = useCurrentCheckFromRoute()
 
   const [isAddOpen, setIsAddOpen] = useState(false)
   const [editItem, setEditItem] = useState<TItem | null>(null)
@@ -37,20 +36,19 @@ export const PItems = () => {
     setClearAllOpen: setIsClearAllOpen,
   })
 
-  useEffect(() => {
-    setNavAction(() => setIsAddOpen(true))
-    return () => setNavAction(null)
-  }, [setNavAction])
+  useRegisterNavAction(useCallback(() => setIsAddOpen(true), []))
 
-  const people = check?.people ?? []
-  const items = check?.items ?? []
-  const paymentMode = check?.paymentMode ?? EPaymentMode.Manual
-  const singlePayer = check?.singlePayer ?? null
+  if (!check) return null
+
+  const { people, items, paymentMode, singlePayer } = {
+    people: check.people,
+    items: check.items,
+    paymentMode: check.paymentMode ?? EPaymentMode.Manual,
+    singlePayer: check.singlePayer,
+  }
 
   const noPeople = people.length === 0
   const noItems = items.length === 0
-
-  if (!check) return null
 
   return (
     <div className="p-items">
@@ -72,46 +70,24 @@ export const PItems = () => {
         />
       )}
 
-      {!noPeople && (
-        <FManageItem
-          isOpen={isAddOpen}
-          onClose={() => setIsAddOpen(false)}
-          mode="add"
-          paymentMode={paymentMode}
-          singlePayerId={singlePayer}
-          onSubmit={handleAddItem}
-        />
-      )}
-
-      {!noPeople && !noItems && (
-        <>
-          <FManageItem
-            isOpen={editItem != null}
-            onClose={() => setEditItem(null)}
-            mode="edit"
-            initialData={editItem ?? undefined}
-            paymentMode={paymentMode}
-            singlePayerId={singlePayer}
-            onSubmit={handleEditItem}
-          />
-
-          <FConfirmDelete
-            isOpen={itemToDelete != null}
-            onClose={() => setItemToDelete(null)}
-            onConfirm={handleConfirmDeleteItem}
-            title="Удалить позицию?"
-            message={`Позиция «${itemToDelete?.title}» будет удалена без возможности восстановления.`}
-          />
-
-          <FConfirmDelete
-            isOpen={isClearAllOpen}
-            onClose={() => setIsClearAllOpen(false)}
-            onConfirm={handleClearAll}
-            title="Удалить все позиции?"
-            message="Все расходы в текущем чеке будут удалены. Участники останутся. Действие нельзя отменить."
-          />
-        </>
-      )}
+      <ItemsPageModals
+        isAddOpen={isAddOpen}
+        setIsAddOpen={setIsAddOpen}
+        editItem={editItem}
+        setEditItem={setEditItem}
+        itemToDelete={itemToDelete}
+        setItemToDelete={setItemToDelete}
+        isClearAllOpen={isClearAllOpen}
+        setIsClearAllOpen={setIsClearAllOpen}
+        noPeople={noPeople}
+        noItems={noItems}
+        paymentMode={paymentMode}
+        singlePayer={singlePayer}
+        onAddItem={handleAddItem}
+        onEditItem={handleEditItem}
+        onConfirmDeleteItem={handleConfirmDeleteItem}
+        onClearAll={handleClearAll}
+      />
     </div>
   )
 }

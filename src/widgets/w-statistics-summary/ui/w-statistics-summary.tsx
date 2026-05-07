@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 import type { TItem } from '@/entities/check'
 import { getItemTotal } from '@/entities/check'
+import { useRegisterStatTarget } from '@/features/f-statistics-share'
 
 import { formatMoney } from '@/shared/lib'
 import { AnimatedNumber } from '@/shared/ui'
@@ -14,9 +15,10 @@ type TWStatisticsSummaryProps = {
 
 export const WStatisticsSummary = ({ items }: TWStatisticsSummaryProps) => {
   const totalAmount = useMemo(() => items.reduce((sum, item) => sum + getItemTotal(item), 0), [items])
+  const ref = useRegisterStatTarget<HTMLDivElement>({ id: 'summary', kind: 'summary', label: 'Общая сумма' })
 
   return (
-    <div className="w-statistics-summary" data-stat-share="summary" data-stat-share-label="Общая сумма">
+    <div ref={ref} className="w-statistics-summary">
       <h3 className="w-statistics-summary__title">Общая сумма</h3>
       <AnimatedNumber value={totalAmount} format={formatMoney} className="h3 w-statistics-summary__total" />
       <div className="w-statistics-summary__expenses">

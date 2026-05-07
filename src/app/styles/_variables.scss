@@ -28,8 +28,6 @@
   --border-radius-small: 7px;
   --border-radius-large: 45px;
 
-  --button-icon-size: 1.15rem;
-
   --button-neutral-surface-rgb: 255, 255, 255;
   --button-neutral-background-alpha: 0.2;
   --button-neutral-border-alpha: 0.38;
@@ -70,4 +68,5 @@
   --z-index-nav: 100;
   --z-index-overlay: 200;
   --z-index-modal: 300;
+  --z-index-toast: 400;
 }

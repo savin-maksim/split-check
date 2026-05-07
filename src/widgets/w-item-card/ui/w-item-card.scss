@@ -1,0 +1,21 @@
+.w-item-card {
+  &__footer {
+    margin-top: var(--space);
+    border-top: var(--border-width) solid var(--color-glass);
+
+    &-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space);
+      gap: var(--space-small);
+    }
+  }
+
+  &__total {
+    display: flex;
+    justify-content: end;
+    margin: 0;
+    @include fluid-text(30, 18);
+  }
+}
