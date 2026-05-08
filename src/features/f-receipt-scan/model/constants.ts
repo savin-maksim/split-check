@@ -1,21 +1,4 @@
-import type { ResponseSchema } from '@google/generative-ai'
-import { SchemaType } from '@google/generative-ai'
-
 export const GEMINI_MODEL_INDEX_KEY = 'gemini_model_idx'
-
-/** Схема ответа Gemini (строгий JSON-массив позиций). */
-export const RECEIPT_ITEMS_RESPONSE_SCHEMA: ResponseSchema = {
-  type: SchemaType.ARRAY,
-  items: {
-    type: SchemaType.OBJECT,
-    properties: {
-      title: { type: SchemaType.STRING },
-      price: { type: SchemaType.NUMBER },
-      qty: { type: SchemaType.NUMBER },
-    },
-    required: ['title', 'price', 'qty'],
-  },
-}
 
 export const GEMINI_MODELS = [
   'gemini-3.1-flash-lite-preview',

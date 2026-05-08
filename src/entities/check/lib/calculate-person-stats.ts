@@ -40,7 +40,7 @@ export const calculatePersonStats = (check: TCheck, balances: Map<number, number
     const canShare = totalWeight > 0
 
     for (const person of people) {
-      if (item.paidBy.includes(person.id)) {
+      if (item.paidBy === person.id) {
         paidTotals.set(person.id, (paidTotals.get(person.id) ?? 0) + lineTotal)
       }
 

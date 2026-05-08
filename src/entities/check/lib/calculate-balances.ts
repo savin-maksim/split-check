@@ -26,7 +26,7 @@ const getEffectivePayerId = (check: TCheck, item: TItem): number | null => {
   if (check.paymentMode === EPaymentMode.Single && check.singlePayer != null) {
     return check.singlePayer
   }
-  const found = check.people.find((p) => item.paidBy.includes(p.id))
+  const found = check.people.find((p) => item.paidBy === p.id)
   return found?.id ?? null
 }
 

@@ -57,7 +57,7 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
             ? []
             : c.items.map((item) => ({
                 ...item,
-                paidBy: item.paidBy.filter((id) => id !== personId),
+                paidBy: item.paidBy === personId ? 0 : item.paidBy,
                 split: Object.fromEntries(Object.entries(item.split).filter(([key]) => Number(key) !== personId)),
               }))
         return {

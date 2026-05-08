@@ -8,7 +8,7 @@ export type TItem = {
   title: string
   qty: number
   price: number
-  paidBy: number[]
+  paidBy: number
   split: Record<number, number>
   paidBySectionExpanded?: boolean
   splitDistributionWeighted?: boolean

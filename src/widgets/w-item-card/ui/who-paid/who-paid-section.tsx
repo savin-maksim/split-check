@@ -10,14 +10,14 @@ import './who-paid-section.scss'
 
 type TWhoPaidSectionProps = {
   people: TPerson[]
-  paidByIds: number[]
+  paidById: number
   expanded: boolean
   onToggle: () => void
   onPersonToggle: (person: TPerson) => void
 }
 
-const WhoPaidSectionComponent = ({ people, paidByIds, expanded, onToggle, onPersonToggle }: TWhoPaidSectionProps) => {
-  const selectedPeople = people.filter((p) => paidByIds.includes(p.id))
+const WhoPaidSectionComponent = ({ people, paidById, expanded, onToggle, onPersonToggle }: TWhoPaidSectionProps) => {
+  const selectedPeople = people.filter((p) => p.id === paidById)
 
   const titleHint = expanded ? 'Скрыть список' : 'Показать список'
 

@@ -14,8 +14,8 @@ export const useReceiptSourceModal = ({ onSourceSelected }: TUseReceiptSourceMod
   const cameraInputRef = useRef<HTMLInputElement>(null)
 
   const openSourceModal = () => {
-    if (!import.meta.env.VITE_GEMINI_API_KEY) {
-      toast.error('API ключ не настроен. См. инструкцию в README.')
+    if (!import.meta.env.VITE_RECEIPT_SCAN_FUNCTION_URL) {
+      toast.error('API распознавания не настроен. См. инструкцию в README.')
       return
     }
     setIsSourceOpen(true)

@@ -39,7 +39,7 @@ export const ItemsFilteredList = memo(function ItemsFilteredList({
 
     return items.filter((item) => {
       const titleMatch = () => item.title.toLowerCase().includes(query)
-      const payerMatch = () => item.paidBy.some((payerId) => namesMap[payerId]?.includes(query))
+      const payerMatch = () => namesMap[item.paidBy]?.includes(query) ?? false
       const splitMatch = () =>
         Object.keys(item.split).some((personId) => namesMap[Number(personId)]?.includes(query))
 

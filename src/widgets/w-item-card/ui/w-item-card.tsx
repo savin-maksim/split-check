@@ -63,7 +63,7 @@ const WItemCardComponent = ({ checkId, item, people, paymentMode, onEdit, onDele
       {paymentMode === EPaymentMode.Manual && (
         <WhoPaidSection
           people={people}
-          paidByIds={item.paidBy}
+          paidById={item.paidBy}
           expanded={paidByExpanded}
           onToggle={handleTogglePaidByExpanded}
           onPersonToggle={handlePersonPaidToggle}

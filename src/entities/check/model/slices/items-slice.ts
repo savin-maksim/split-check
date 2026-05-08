@@ -72,7 +72,7 @@ export const createItemsSlice: StateCreator<TCheckStore, [], [], TItemsSlice> = 
           title: original.title,
           qty: original.qty,
           price: original.price,
-          paidBy: [],
+          paidBy: 0,
           split: {},
           paidBySectionExpanded: true,
         }

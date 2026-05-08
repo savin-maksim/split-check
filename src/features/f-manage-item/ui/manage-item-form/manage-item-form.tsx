@@ -52,7 +52,7 @@ export const ManageItemForm = ({
 
     const isInitialSinglePayer =
       mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null
-    const paidBy = isInitialSinglePayer ? [singlePayerId] : (initialData?.paidBy ?? [])
+    const paidBy = isInitialSinglePayer ? singlePayerId : (initialData?.paidBy ?? 0)
     const split = initialData?.split ?? {}
 
     onSubmit({

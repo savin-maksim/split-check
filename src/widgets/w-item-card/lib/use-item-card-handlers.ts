@@ -37,7 +37,7 @@ export const useItemCardHandlers = ({
   const handlePersonPaidToggle = useCallback(
     (person: TPerson) => {
       if (paymentMode === EPaymentMode.Single) return
-      updateItem(checkId, item.id, { paidBy: [person.id], paidBySectionExpanded: false })
+      updateItem(checkId, item.id, { paidBy: person.id, paidBySectionExpanded: false })
     },
     [checkId, item.id, paymentMode, updateItem],
   )

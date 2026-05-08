@@ -21,7 +21,7 @@ export const buildScannedItems = ({
       title: formatItemTitle(item.title),
       price: Math.round(item.price * 100),
       qty: Math.max(1, (quantities[index] ?? item.qty) || 1),
-      paidBy: [],
+      paidBy: 0,
       split: {},
       paidBySectionExpanded: true,
     }))
