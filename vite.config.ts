@@ -7,11 +7,11 @@ import reactScan from '@react-scan/vite-plugin-react-scan'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const resolve = (dir: string) => path.resolve(__dirname, 'src', dir)
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     reactScan({
-      enable: true,
+      enable: command === 'serve',
       autoDisplayNames: true,
     }),
   ],
@@ -54,4 +54,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))
