@@ -76,6 +76,7 @@ export const useReceiptScan = ({ onAddItems }: TUseReceiptScanParams) => {
     handleFileChange,
     handleToggleItem: preview.toggleItem,
     handleBumpQuantity: preview.bumpQuantity,
+    handleUpdatePreviewItem: preview.updateItem,
     handleConfirmItems,
     handleCancelReceiptScan: loading.cancel,
     handleLoadingModalClose: loading.minimize,

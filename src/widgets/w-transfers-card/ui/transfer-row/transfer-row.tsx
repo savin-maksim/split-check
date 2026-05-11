@@ -38,7 +38,9 @@ export const TransferRow = ({
         type="button"
         onClick={selectable ? onSelectToggle : onScrollFrom}
         aria-pressed={selectable ? selected : undefined}
-        aria-label={selectable ? `${selected ? 'Снять выбор' : 'Выбрать'}: ${from} → ${to}` : `Перейти к статистике: ${from}`}
+        aria-label={
+          selectable ? `${selected ? 'Снять выбор' : 'Выбрать'}: ${from} → ${to}` : `Перейти к статистике: ${from}`
+        }
       >
         {from}
       </Button>

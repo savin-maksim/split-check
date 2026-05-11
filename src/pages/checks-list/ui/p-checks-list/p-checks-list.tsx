@@ -53,12 +53,7 @@ export const PChecksList = () => {
         />
       )}
 
-      <FManageCheck
-        mode="add"
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreate}
-      />
+      <FManageCheck mode="add" isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onSubmit={handleCreate} />
 
       <FManageCheck
         mode="edit"

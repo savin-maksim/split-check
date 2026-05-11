@@ -1,10 +1,6 @@
 export { getItemTotal } from './get-item-total'
 export { isSplitDistributionWeightedView } from './is-split-distribution-weighted-view'
-export {
-  calculateBalances,
-  generateTransfers,
-  computeCheckSettlement,
-} from './calculate-balances'
+export { calculateBalances, generateTransfers, computeCheckSettlement } from './calculate-balances'
 export type { TCheckSettlement } from './calculate-balances'
 export { validatePersonName, validateItemTitle, validateItemPrice } from './validation'
 export { useCheckBalances } from './use-check-balances'

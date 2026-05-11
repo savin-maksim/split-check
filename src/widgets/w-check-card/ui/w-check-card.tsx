@@ -42,7 +42,12 @@ const WCheckCardComponent = ({ check, isActive, onOpen, onEdit, onDelete }: TWCh
         title={check.title}
         actions={
           <>
-            <IconButton icon={<Pencil />} onClick={stopAndCall(onEdit)} title="Редактировать" aria-label="Редактировать" />
+            <IconButton
+              icon={<Pencil />}
+              onClick={stopAndCall(onEdit)}
+              title="Редактировать"
+              aria-label="Редактировать"
+            />
             <IconButton
               icon={<Trash2 />}
               variant={EIconButtonVariant.Danger}

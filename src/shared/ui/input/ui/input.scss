@@ -5,7 +5,7 @@
   --input-field-icon-offset: 2.75rem;
   --input-field-suffix-one: 2.5rem;
   --input-field-suffix-two: 4.35rem;
-  --input-field-suffix-cluster-width: 6.75rem;
+  --input-field-suffix-cluster-width: 7rem;
 
   --input-field-label-left-inset: 0.75rem;
   --input-field-label-right-inset: 0.75rem;
@@ -185,7 +185,7 @@
     transform: translateY(-50%);
     z-index: 2;
     right: 0.625rem;
-    max-width: min(calc(100% - 3rem), 11rem);
+    //    max-width: min(calc(100% - 3rem), 11rem);
     pointer-events: auto;
   }
 

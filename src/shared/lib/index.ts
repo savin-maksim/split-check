@@ -25,11 +25,6 @@ export {
   scrollToPersonStatsAnchor,
 } from './item-anchor'
 export type { TScrollToItemAnchorOptions } from './item-anchor'
-export {
-  formatPersonName,
-  formatItemTitle,
-  normalizeDecimalInput,
-  parseBulkPersonNames,
-} from './parse-names'
+export { formatPersonName, formatItemTitle, normalizeDecimalInput, parseBulkPersonNames } from './parse-names'
 export { useDebouncedValue } from './use-debounced-value'
 export { useCurrentCheckFromRoute } from './use-current-check-from-route'

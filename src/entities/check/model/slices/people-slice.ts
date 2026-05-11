@@ -12,11 +12,15 @@ export type TPeopleSlice = Pick<
 
 export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> = (set, get) => ({
   addPerson: (checkId: string, name: string) => {
+    const check = get().checks.find((c) => c.id === checkId)
+    if (!check) return false
+
+    const formatted = formatPersonName(name)
+    const duplicate = check.people.some((p) => p.name.toLowerCase() === formatted.toLowerCase())
+    if (duplicate) return false
+
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => {
-        const formatted = formatPersonName(name)
-        const duplicate = c.people.some((p) => p.name.toLowerCase() === formatted.toLowerCase())
-        if (duplicate) return c
         return {
           ...c,
           people: [...c.people, { id: c.nextPersonId, name: formatted }],
@@ -24,9 +28,12 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
         }
       }),
     }))
+    return true
   },
 
   addPeople: (checkId: string, names: string[]) => {
+    let addedCount = 0
+
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => {
         let nextId = c.nextPersonId
@@ -39,6 +46,7 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
             nextId++
             return person
           })
+        addedCount = newPeople.length
         return {
           ...c,
           people: [...c.people, ...newPeople],
@@ -46,6 +54,7 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
         }
       }),
     }))
+    return addedCount
   },
 
   removePerson: (checkId: string, personId: number) => {
@@ -85,9 +94,7 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
     const check = get().checks.find((c) => c.id === checkId)
     if (!check) return false
     const formatted = formatPersonName(name)
-    const duplicate = check.people.some(
-      (p) => p.id !== personId && p.name.toLowerCase() === formatted.toLowerCase(),
-    )
+    const duplicate = check.people.some((p) => p.id !== personId && p.name.toLowerCase() === formatted.toLowerCase())
     if (duplicate) return false
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => ({

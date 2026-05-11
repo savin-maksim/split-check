@@ -1,8 +1,7 @@
 import type { TScannedItem } from '../model'
 
 /** Ключ для склейки: нижний регистр, trim, схлопывание пробелов. */
-const normalizeTitleKey = (title: string): string =>
-  title.trim().replace(/\s+/g, ' ').toLowerCase()
+const normalizeTitleKey = (title: string): string => title.trim().replace(/\s+/g, ' ').toLowerCase()
 
 /**
  * Количество в штуках: только целые значения ≥ 1.

@@ -61,9 +61,5 @@ export const AnimatedBlock = ({
     return <motion.div {...motionProps} />
   }
 
-  return (
-    <AnimatePresence>
-      {isPresent ? <motion.div key={presenceKey} {...motionProps} /> : null}
-    </AnimatePresence>
-  )
+  return <AnimatePresence>{isPresent ? <motion.div key={presenceKey} {...motionProps} /> : null}</AnimatePresence>
 }

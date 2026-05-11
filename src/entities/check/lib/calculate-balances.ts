@@ -217,8 +217,6 @@ export const computeCheckSettlement = (check: TCheck): TCheckSettlement => {
   return { balanceMap, transfers }
 }
 
-export const calculateBalances = (check: TCheck): Map<number, number> =>
-  computeCheckSettlement(check).balanceMap
+export const calculateBalances = (check: TCheck): Map<number, number> => computeCheckSettlement(check).balanceMap
 
-export const generateTransfers = (check: TCheck): TTransfer[] =>
-  computeCheckSettlement(check).transfers
+export const generateTransfers = (check: TCheck): TTransfer[] => computeCheckSettlement(check).transfers

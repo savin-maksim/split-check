@@ -1,5 +1,4 @@
-const getScrollbarWidth = (): number =>
-  window.innerWidth - document.documentElement.clientWidth
+const getScrollbarWidth = (): number => window.innerWidth - document.documentElement.clientWidth
 
 export const lockScroll = (): void => {
   const scrollbarWidth = getScrollbarWidth()

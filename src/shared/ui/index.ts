@@ -12,12 +12,7 @@ export { EmptyState } from './empty-state'
 export { PageHeader } from './page-header'
 export { ItemCard, CardHeader } from './item-card'
 export { CardStats } from './card-stats'
-export {
-  AnimatedList,
-  AnimatedListPresence,
-  animatedListItemMotion,
-  animatedListTransition,
-} from './animated-list'
+export { AnimatedList, AnimatedListPresence, animatedListItemMotion, animatedListTransition } from './animated-list'
 export { AnimatedBlock, type TAnimatedBlockProps } from './animated-block'
 export { Spinner } from './spinner'
 export { PersonGrid } from './person-grid'

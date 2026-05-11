@@ -26,7 +26,7 @@ export const AnimatedNumber = ({
   const prefersReduced = reduceMotion === true
   const shouldEntrance = initialEnter && !prefersReduced
   const mv = useMotionValue(shouldEntrance ? entranceFrom : value)
-  const text = useTransform(mv, (v) => format(Math.round(v)))
+  const text = useTransform(mv, (v) => format(v))
 
   useEffect(() => {
     const controls = animate(mv, value, {

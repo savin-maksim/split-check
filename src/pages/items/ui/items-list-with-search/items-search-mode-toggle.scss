@@ -1,8 +1,6 @@
 .items-search-mode-toggle {
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: var(--space);
-  flex-shrink: 0;
   pointer-events: auto;
 }

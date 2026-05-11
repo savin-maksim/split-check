@@ -87,6 +87,7 @@ const WItemCardComponent = ({ checkId, item, people, paymentMode, onEdit, onDele
             canDecreaseQty={item.qty > 1}
             priceFormatted={priceFormatted}
             onAdjust={handleAdjustQty}
+            isPriceHidden={false}
           />
           <h3 className="w-item-card__total">
             <AnimatedNumber initialEnter={false} value={total} format={formatMoney} className={'h3'} />

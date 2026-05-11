@@ -1,3 +1,5 @@
+/* global Deno */
+
 import { GoogleGenerativeAI, SchemaType } from 'npm:@google/generative-ai@0.24.1'
 
 const corsHeaders = {
@@ -26,6 +28,17 @@ type TAnalyzeReceiptRequest = {
   modelName?: unknown
   base64?: unknown
   mimeType?: unknown
+  generationConfig?: unknown
+}
+
+type TThinkingConfig = {
+  thinkingBudget?: number
+  thinkingLevel?: 'minimal' | 'low'
+}
+
+type TGenerationConfig = {
+  temperature?: number
+  thinkingConfig?: TThinkingConfig
 }
 
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
@@ -49,6 +62,35 @@ const getErrorMessage = (error: unknown): string => {
   return 'Receipt recognition failed'
 }
 
+const parseThinkingConfig = (value: unknown): TThinkingConfig | undefined => {
+  if (!value || typeof value !== 'object') {
+    return undefined
+  }
+
+  const { thinkingBudget, thinkingLevel } = value as Record<string, unknown>
+  if (typeof thinkingBudget === 'number' && Number.isFinite(thinkingBudget)) {
+    return { thinkingBudget }
+  }
+  if (thinkingLevel === 'minimal' || thinkingLevel === 'low') {
+    return { thinkingLevel }
+  }
+
+  return undefined
+}
+
+const parseGenerationConfig = (value: unknown): TGenerationConfig => {
+  if (!value || typeof value !== 'object') {
+    return { temperature: 0.0 }
+  }
+
+  const { temperature, thinkingConfig } = value as Record<string, unknown>
+
+  return {
+    temperature: typeof temperature === 'number' && Number.isFinite(temperature) ? temperature : 0.0,
+    thinkingConfig: parseThinkingConfig(thinkingConfig),
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -70,7 +112,7 @@ Deno.serve(async (req) => {
     return jsonResponse({ message: 'Invalid JSON body' }, 400)
   }
 
-  const { modelName, base64, mimeType } = payload
+  const { modelName, base64, mimeType, generationConfig } = payload
   if (typeof modelName !== 'string' || typeof base64 !== 'string' || typeof mimeType !== 'string') {
     return jsonResponse({ message: 'modelName, base64 and mimeType are required' }, 400)
   }
@@ -82,6 +124,7 @@ Deno.serve(async (req) => {
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: receiptItemsResponseSchema,
+        ...parseGenerationConfig(generationConfig),
       },
     })
 
@@ -89,10 +132,7 @@ Deno.serve(async (req) => {
       contents: [
         {
           role: 'user',
-          parts: [
-            { text: receiptAnalyzePrompt },
-            { inlineData: { mimeType, data: base64 } },
-          ],
+          parts: [{ text: receiptAnalyzePrompt }, { inlineData: { mimeType, data: base64 } }],
         },
       ],
     })

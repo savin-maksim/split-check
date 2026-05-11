@@ -1,5 +1,12 @@
 .icon-button {
   @include flex-center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -0.5rem;
+  }
 
   background-color: transparent;
   color: var(--color-light);

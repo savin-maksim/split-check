@@ -5,12 +5,7 @@ import { STORAGE_KEYS } from '@/shared/constants'
 
 import { parseSplit } from '../lib/parse-split'
 import type { TCheck, TCheckStore } from './types'
-import {
-  createChecksSlice,
-  createItemsSlice,
-  createPaymentSlice,
-  createPeopleSlice,
-} from './slices'
+import { createChecksSlice, createItemsSlice, createPaymentSlice, createPeopleSlice } from './slices'
 
 const normalizeChecks = (checks: TCheck[]): TCheck[] =>
   checks.map((check) => ({

@@ -6,6 +6,7 @@ import { Eye, EyeOff, X } from 'lucide-react'
 import { cn } from '@/shared/lib'
 
 import './input.scss'
+import { IconButton } from '@shared/ui'
 
 export type TInputProps = {
   label?: string
@@ -124,9 +125,13 @@ export const Input = memo(
           {suffix != null ? <div className="input-field__suffix">{suffix}</div> : null}
 
           {showClear ? (
-            <button type="button" className="input-field__clear" onClick={handleClear} aria-label={clearAriaLabel}>
-              <X size={'var(--button-icon-size)'} strokeWidth={2} />
-            </button>
+            <IconButton
+              type="button"
+              className="input-field__clear"
+              onClick={handleClear}
+              aria-label={clearAriaLabel}
+              icon={<X size={'var(--button-icon-size)'} strokeWidth={2} />}
+            />
           ) : null}
 
           {isPasswordType ? (

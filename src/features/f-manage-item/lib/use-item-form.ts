@@ -8,9 +8,10 @@ type TUseItemFormParams = {
   isOpen: boolean
   mode: 'add' | 'edit'
   initialData?: Partial<TItem>
+  initialFocus?: 'title' | 'price'
 }
 
-export const useItemForm = ({ isOpen, mode, initialData }: TUseItemFormParams) => {
+export const useItemForm = ({ isOpen, mode, initialData, initialFocus = 'title' }: TUseItemFormParams) => {
   const formRef = useRef<HTMLFormElement>(null)
   const titleInputRef = useRef<HTMLInputElement>(null)
   const priceInputRef = useRef<HTMLInputElement>(null)
@@ -34,8 +35,12 @@ export const useItemForm = ({ isOpen, mode, initialData }: TUseItemFormParams) =
     }
     if (qEl) qEl.value = qtyDefaultValue
 
-    tEl?.focus()
-  }, [isOpen, titleDefaultValue, priceDefaultValue, qtyDefaultValue])
+    if (initialFocus === 'price') {
+      pEl?.select()
+    } else {
+      tEl?.focus()
+    }
+  }, [isOpen, titleDefaultValue, priceDefaultValue, qtyDefaultValue, initialFocus])
 
   const requestSubmit = () => formRef.current?.requestSubmit()
 

@@ -36,6 +36,7 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
     handleFileChange,
     handleToggleItem,
     handleBumpQuantity,
+    handleUpdatePreviewItem,
     handleConfirmItems,
     handleCancelReceiptScan,
     handleLoadingModalClose,
@@ -89,6 +90,7 @@ export const FReceiptScan = ({ onAddItems, className }: TFReceiptScanProps) => {
         onConfirm={handleConfirmItems}
         onToggleItem={handleToggleItem}
         onBumpQuantity={handleBumpQuantity}
+        onUpdateItem={handleUpdatePreviewItem}
       />
     </div>
   )

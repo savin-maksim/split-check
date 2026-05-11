@@ -46,8 +46,8 @@ export type TCheckStore = {
   updateCheckTitle: (checkId: string, title: string) => void
   loadCheck: (checkId: string) => void
 
-  addPerson: (checkId: string, name: string) => void
-  addPeople: (checkId: string, names: string[]) => void
+  addPerson: (checkId: string, name: string) => boolean
+  addPeople: (checkId: string, names: string[]) => number
   removePerson: (checkId: string, personId: number) => void
   removeAllPeople: (checkId: string) => void
   updatePerson: (checkId: string, personId: number, name: string) => boolean

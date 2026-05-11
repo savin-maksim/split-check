@@ -87,6 +87,22 @@
     margin: var(--space) var(--space) var(--space-large) var(--space);
   }
 
+  &__subtitle {
+    @include flex-center();
+
+    gap: var(--space);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-inline: var(--space);
+    margin-bottom: var(--space-large);
+
+    &--icon {
+      min-width: var(--warning-icon-size);
+      color: var(--color-orange);
+      flex-shrink: 0;
+    }
+  }
+
   &__message {
     margin: 0;
     color: rgba(255, 255, 255, 0.9);
@@ -145,12 +161,6 @@
   &__label {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.875rem;
-  }
-
-  &__tags {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 100px), 1fr));
-    gap: var(--space);
   }
 
   &__weights-grid {

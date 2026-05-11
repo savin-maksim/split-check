@@ -6,10 +6,7 @@ const ITEMS_LIST_STAGGER_DELAY_S = 0.05
 
 type TScrollBehavior = 'auto' | 'smooth' | 'instant'
 
-const scheduleScrollToElementById = (
-  id: string,
-  options?: { settleMs?: number; behavior?: TScrollBehavior },
-) => {
+const scheduleScrollToElementById = (id: string, options?: { settleMs?: number; behavior?: TScrollBehavior }) => {
   const settleMs = options?.settleMs ?? 0
   const behavior = options?.behavior ?? 'smooth'
 
@@ -37,8 +34,7 @@ const scheduleScrollToElementById = (
 
 /** Время до завершения входной анимации строки списка позиций (stagger + duration). */
 export const getItemsListAnchorSettleMs = (listItemIndex: number): number => {
-  const delayBeforeMotion =
-    ITEMS_LIST_INITIAL_DELAY_S + ITEMS_LIST_STAGGER_DELAY_S * Math.max(0, listItemIndex)
+  const delayBeforeMotion = ITEMS_LIST_INITIAL_DELAY_S + ITEMS_LIST_STAGGER_DELAY_S * Math.max(0, listItemIndex)
   return Math.ceil((delayBeforeMotion + animatedListTransition.duration + 0.03) * 1000)
 }
 
@@ -53,11 +49,7 @@ export const getItemAnchorId = (checkId: string, itemId: number) => `check-${che
  * Скролл к карточке позиции после мутации списка.
  * Учитывает stagger входной анимации `AnimatedList` и использует `behavior: 'auto'`, чтобы не конфликтовать с motion.
  */
-export const scrollToItemAnchor = (
-  checkId: string,
-  itemId: number,
-  options: TScrollToItemAnchorOptions,
-) => {
+export const scrollToItemAnchor = (checkId: string, itemId: number, options: TScrollToItemAnchorOptions) => {
   const settleMs = getItemsListAnchorSettleMs(Math.max(0, options.listItemIndex))
   scheduleScrollToElementById(getItemAnchorId(checkId, itemId), {
     settleMs,
@@ -65,8 +57,7 @@ export const scrollToItemAnchor = (
   })
 }
 
-export const getPersonStatsAnchorId = (checkId: string, personId: number) =>
-  `check-${checkId}-person-stats-${personId}`
+export const getPersonStatsAnchorId = (checkId: string, personId: number) => `check-${checkId}-person-stats-${personId}`
 
 export const scrollToPersonStatsAnchor = (checkId: string, personId: number) => {
   scheduleScrollToElementById(getPersonStatsAnchorId(checkId, personId), { behavior: 'smooth' })

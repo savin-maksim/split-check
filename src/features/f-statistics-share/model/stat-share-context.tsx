@@ -1,11 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react'
 import type { ReactNode } from 'react'
 
-import {
-  StatShareContext,
-  type TStatShareContextValue,
-  type TStatShareTarget,
-} from './stat-share-context-value'
+import { StatShareContext, type TStatShareContextValue, type TStatShareTarget } from './stat-share-context-value'
 
 type TStatShareProviderProps = {
   children: ReactNode
@@ -24,10 +20,7 @@ export const StatShareProvider = ({ children }: TStatShareProviderProps) => {
 
   const list = useCallback(() => Array.from(targetsRef.current.values()), [])
 
-  const value = useMemo<TStatShareContextValue>(
-    () => ({ register, unregister, list }),
-    [register, unregister, list],
-  )
+  const value = useMemo<TStatShareContextValue>(() => ({ register, unregister, list }), [register, unregister, list])
 
   return <StatShareContext.Provider value={value}>{children}</StatShareContext.Provider>
 }

@@ -31,3 +31,12 @@ export const bumpPreviewQuantity = (
   const current = quantities[index] ?? items[index]?.qty ?? 1
   return { ...quantities, [index]: Math.max(1, current + delta) }
 }
+
+export const updatePreviewQuantity = (
+  quantities: TPreviewQuantities,
+  index: number,
+  qty: number,
+): TPreviewQuantities => ({
+  ...quantities,
+  [index]: Math.max(1, qty),
+})

@@ -14,6 +14,7 @@ type TManageItemFormProps = {
   mode: 'add' | 'edit'
   isOpen: boolean
   initialData?: Partial<TItem>
+  initialFocus?: 'title' | 'price'
   paymentMode: EPaymentMode
   singlePayerId?: number | null
   onSubmit: (item: Omit<TItem, 'id'>) => void
@@ -24,6 +25,7 @@ export const ManageItemForm = ({
   mode,
   isOpen,
   initialData,
+  initialFocus,
   paymentMode,
   singlePayerId = null,
   onSubmit,
@@ -38,7 +40,7 @@ export const ManageItemForm = ({
     priceDefaultValue,
     qtyDefaultValue,
     requestSubmit,
-  } = useItemForm({ isOpen, mode, initialData })
+  } = useItemForm({ isOpen, mode, initialData, initialFocus })
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -50,8 +52,7 @@ export const ManageItemForm = ({
     const price = Math.round(parseFloat(normalizeDecimalInput(priceRaw)) * 100)
     const qty = parseInt(qtyStr, 10)
 
-    const isInitialSinglePayer =
-      mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null
+    const isInitialSinglePayer = mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null
     const paidBy = isInitialSinglePayer ? singlePayerId : (initialData?.paidBy ?? 0)
     const split = initialData?.split ?? {}
 

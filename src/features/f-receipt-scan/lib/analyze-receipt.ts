@@ -1,4 +1,4 @@
-import type { TScannedItem } from '../model'
+import { GEMINI_GENERATION_CONFIGS, type TGeminiModel, type TScannedItem } from '../model'
 import { isAbortError } from './is-abort-error'
 import { fileToBase64 } from './file-to-base64'
 import { generateReceiptContent, ReceiptScanProxyError } from './receipt-scan-proxy-client'
@@ -11,8 +11,7 @@ export type TAnalyzeReceiptOptions = {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const isRetryableHttpStatus = (status: number) =>
-  status === 429 || status === 500 || status === 503 || status === 404
+const isRetryableHttpStatus = (status: number) => status === 429 || status === 500 || status === 503 || status === 404
 
 const throwIfAborted = (signal?: AbortSignal) => {
   if (signal?.aborted) {
@@ -22,14 +21,11 @@ const throwIfAborted = (signal?: AbortSignal) => {
 
 const isParseFailureMessage = (msg: string) => msg === 'PARSE_JSON_FAILED' || msg === 'INVALID_JSON_SHAPE'
 
-export const analyzeReceipt = async (
-  file: File,
-  options: TAnalyzeReceiptOptions = {},
-): Promise<TScannedItem[]> => {
+export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions = {}): Promise<TScannedItem[]> => {
   const { signal } = options
   const modelsToTry = buildModelRotationOrder(getNextModel())
   const base64 = await fileToBase64(file)
-  const mimeType = file.type || 'image/jpeg'
+  const mimeType = file.type.startsWith('image/') ? 'image/jpeg' : file.type || 'image/jpeg'
 
   for (let attempt = 0; attempt < modelsToTry.length; attempt++) {
     throwIfAborted(signal)
@@ -37,7 +33,13 @@ export const analyzeReceipt = async (
     const modelName = modelsToTry[attempt]!
 
     try {
-      const text = await generateReceiptContent({ modelName, base64, mimeType, signal })
+      const text = await generateReceiptContent({
+        modelName,
+        base64,
+        mimeType,
+        generationConfig: GEMINI_GENERATION_CONFIGS[modelName as TGeminiModel],
+        signal,
+      })
       throwIfAborted(signal)
       return parseReceiptResponse(text)
     } catch (e) {
@@ -59,9 +61,7 @@ export const analyzeReceipt = async (
           )
         }
         if (status === 400) {
-          throw new Error(
-            'Регион не поддерживается'
-          )
+          throw new Error('Регион не поддерживается')
         }
         throw new Error(e.message)
       }
@@ -72,7 +72,9 @@ export const analyzeReceipt = async (
           await sleep(backoff)
           continue
         }
-        throw new Error(msg === 'INVALID_JSON_SHAPE' ? 'Не удалось распознать позиции' : 'Не удалось разобрать ответ модели')
+        throw new Error(
+          msg === 'INVALID_JSON_SHAPE' ? 'Не удалось распознать позиции' : 'Не удалось разобрать ответ модели',
+        )
       }
 
       if (hasNextModel) {

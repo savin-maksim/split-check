@@ -27,8 +27,12 @@ export const usePeoplePageHandlers = ({
     (name: string) => {
       const names = parseBulkPersonNames(name)
       if (names.length === 0) return
-      addPeople(checkId, names)
-      toast.success(`Добавлено: ${names.length} ${pluralize(names.length, ['человек', 'человека', 'человек'])}`)
+      const addedCount = addPeople(checkId, names)
+      if (addedCount === 0) {
+        toast.error('Такой человек уже есть, добавление невозможно')
+        return
+      }
+      toast.success(`Добавлено: ${addedCount} ${pluralize(addedCount, ['человек', 'человека', 'человек'])}`)
     },
     [addPeople, checkId],
   )

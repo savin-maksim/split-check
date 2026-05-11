@@ -1,7 +1,10 @@
+import type { TGeminiGenerationConfig } from '../model'
+
 type TGenerateReceiptParams = {
   modelName: string
   base64: string
   mimeType: string
+  generationConfig?: TGeminiGenerationConfig
   signal?: AbortSignal
 }
 
@@ -35,6 +38,7 @@ export const generateReceiptContent = async ({
   modelName,
   base64,
   mimeType,
+  generationConfig,
   signal,
 }: TGenerateReceiptParams): Promise<string> => {
   const response = await fetch(getReceiptScanFunctionUrl(), {
@@ -42,7 +46,7 @@ export const generateReceiptContent = async ({
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ modelName, base64, mimeType }),
+    body: JSON.stringify({ modelName, base64, mimeType, generationConfig }),
     signal,
   })
 

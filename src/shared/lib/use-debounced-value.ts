@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const useDebouncedValue = <T,>(value: T, delayMs: number): readonly [T, () => void] => {
+export const useDebouncedValue = <T>(value: T, delayMs: number): readonly [T, () => void] => {
   const [debounced, setDebounced] = useState(value)
   const valueRef = useRef(value)
   valueRef.current = value

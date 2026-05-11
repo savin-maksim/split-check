@@ -25,11 +25,7 @@ export const StatsContent = memo(({ check, transfers, personStats }: TStatsConte
       </AnimatedBlock>
 
       <div className="list-layout">
-        <AnimatedBlock
-          className="p-stats__reveal-grid-cell"
-          blockMotion={animatedBlockMotion}
-          initialDelay={0.05}
-        >
+        <AnimatedBlock className="p-stats__reveal-grid-cell" blockMotion={animatedBlockMotion} initialDelay={0.05}>
           <WStatisticsSummary items={check.items} />
         </AnimatedBlock>
 

@@ -25,9 +25,15 @@
   }
 
   &__title {
-    @include text-ellipsis;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space);
     padding-inline: var(--space);
+  }
+
+  &__title-text {
+    @include text-ellipsis;
     font-weight: 700;
   }
 

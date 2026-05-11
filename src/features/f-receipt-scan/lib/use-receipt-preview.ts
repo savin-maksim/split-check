@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import {
   bumpPreviewQuantity,
@@ -6,6 +6,7 @@ import {
   createInitialQuantities,
   createInitialSelection,
   toggleSelectedIndex,
+  updatePreviewQuantity,
 } from './preview-state'
 import type { TPreviewQuantities, TScannedItem } from '../model'
 
@@ -26,25 +27,33 @@ export const useReceiptPreview = () => {
     [scannedItems, selectedIndexes, quantities],
   )
 
-  const openPreview = (items: TScannedItem[]) => {
+  const openPreview = useCallback((items: TScannedItem[]) => {
     setScannedItems(items)
     setIsPreviewOpen(true)
-  }
+  }, [])
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setIsPreviewOpen(false)
     setScannedItems([])
     setSelectedIndexes(new Set())
     setQuantities({})
-  }
+  }, [])
 
-  const toggleItem = (index: number) => {
+  const toggleItem = useCallback((index: number) => {
     setSelectedIndexes((prev) => toggleSelectedIndex(prev, index))
-  }
+  }, [])
 
-  const bumpQuantity = (index: number, delta: number) => {
-    setQuantities((prev) => bumpPreviewQuantity(prev, scannedItems, index, delta))
-  }
+  const bumpQuantity = useCallback(
+    (index: number, delta: number) => {
+      setQuantities((prev) => bumpPreviewQuantity(prev, scannedItems, index, delta))
+    },
+    [scannedItems],
+  )
+
+  const updateItem = useCallback((index: number, item: TScannedItem) => {
+    setScannedItems((prev) => prev.map((current, currentIndex) => (currentIndex === index ? item : current)))
+    setQuantities((prev) => updatePreviewQuantity(prev, index, item.qty))
+  }, [])
 
   return {
     scannedItems,
@@ -57,5 +66,6 @@ export const useReceiptPreview = () => {
     reset,
     toggleItem,
     bumpQuantity,
+    updateItem,
   }
 }
