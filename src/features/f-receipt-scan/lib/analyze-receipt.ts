@@ -2,7 +2,7 @@ import { GEMINI_GENERATION_CONFIGS, type TGeminiModel, type TScannedItem } from 
 import { isAbortError } from './is-abort-error'
 import { fileToBase64 } from './file-to-base64'
 import { generateReceiptContent, ReceiptScanProxyError } from './receipt-scan-proxy-client'
-import { buildModelRotationOrder, getNextModel } from './model-rotation'
+import { advanceModel, buildModelRotationOrder, getCurrentModel } from './model-rotation'
 import { parseReceiptResponse } from './parse-receipt-response'
 
 export type TAnalyzeReceiptOptions = {
@@ -23,7 +23,7 @@ const isParseFailureMessage = (msg: string) => msg === 'PARSE_JSON_FAILED' || ms
 
 export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions = {}): Promise<TScannedItem[]> => {
   const { signal } = options
-  const modelsToTry = buildModelRotationOrder(getNextModel())
+  const modelsToTry = buildModelRotationOrder(getCurrentModel())
   const base64 = await fileToBase64(file)
   const mimeType = file.type.startsWith('image/') ? 'image/jpeg' : file.type || 'image/jpeg'
 
@@ -52,6 +52,7 @@ export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions
         const status = e.status ?? 0
         if (isRetryableHttpStatus(status) && hasNextModel) {
           const wait = status === 429 ? Math.min(1500 * (attempt + 1), 10_000) : backoff
+          advanceModel()
           await sleep(wait)
           continue
         }
@@ -69,6 +70,7 @@ export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions
       const msg = e instanceof Error ? e.message : ''
       if (isParseFailureMessage(msg)) {
         if (hasNextModel) {
+          advanceModel()
           await sleep(backoff)
           continue
         }
@@ -78,6 +80,7 @@ export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions
       }
 
       if (hasNextModel) {
+        advanceModel()
         await sleep(backoff)
         continue
       }

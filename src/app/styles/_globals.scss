@@ -6,6 +6,10 @@ body,
   height: 100%;
 }
 
+.scroll-locked {
+  overflow: hidden;
+}
+
 body {
   @include fluid-text(18, 16);
 
@@ -28,10 +32,6 @@ body {
     background: radial-gradient(ellipse at center, rgba(192, 192, 192, 0.15) 0%, rgba(192, 192, 192, 0) 70%);
     pointer-events: none;
     z-index: -1;
-  }
-
-  &.scroll-locked {
-    overflow: hidden;
   }
 }
 

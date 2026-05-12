@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 
 import { EPaymentMode, type TItem } from '@/entities/check'
-import { FManageItem } from '@/features/f-manage-item'
+import { ManageItemForm } from '@/features/f-manage-item'
 import { formatMoneyRaw } from '@/shared/lib'
 import { Modal, Button, EButtonVariant, AnimatedNumber } from '@/shared/ui'
 
@@ -67,45 +67,47 @@ const ReceiptPreviewModalComponent = ({
   )
 
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} mode="top-0">
-        <h3 className="modal__title">Распознанные позиции</h3>
-        <div className="receipt-preview-modal__list">
-          {items.map((item, index) => (
-            <ReceiptPreviewItem
-              key={`${item.title}-${index}`}
-              item={item}
-              index={index}
-              qty={quantities[index] ?? item.qty}
-              isSelected={selectedIndexes.has(index)}
-              onToggle={onToggleItem}
-              onBumpQuantity={onBumpQuantity}
-              onEdit={setEditingIndex}
-            />
-          ))}
-        </div>
-        <div className="receipt-preview-modal__summary">
-          Итого к добавлению:
-          <AnimatedNumber value={totalAmount} format={formatMoneyRaw} className="h4" initialEnter={true} />
-        </div>
-        <div className="modal__buttons">
-          <Button onClick={onClose}>Отмена</Button>
-          <Button variant={EButtonVariant.Active} onClick={onConfirm} disabled={selectedCount === 0}>
-            Добавить ({selectedCount})
-          </Button>
-        </div>
-      </Modal>
-
-      <FManageItem
-        isOpen={editingItem != null}
-        onClose={handleCloseEdit}
-        mode="edit"
-        initialData={editingInitialData}
-        initialFocus="price"
-        paymentMode={EPaymentMode.Manual}
-        onSubmit={handleSubmitEdit}
-      />
-    </>
+    <Modal isOpen={isOpen} onClose={editingItem ? handleCloseEdit : onClose} mode="top-0">
+      {editingItem ? (
+        <ManageItemForm
+          isOpen={editingItem != null}
+          onClose={handleCloseEdit}
+          mode="edit"
+          initialData={editingInitialData}
+          initialFocus="price"
+          paymentMode={EPaymentMode.Manual}
+          onSubmit={handleSubmitEdit}
+        />
+      ) : (
+        <>
+          <h3 className="modal__title">Распознанные позиции</h3>
+          <div className="receipt-preview-modal__list">
+            {items.map((item, index) => (
+              <ReceiptPreviewItem
+                key={`${item.title}-${index}`}
+                item={item}
+                index={index}
+                qty={quantities[index] ?? item.qty}
+                isSelected={selectedIndexes.has(index)}
+                onToggle={onToggleItem}
+                onBumpQuantity={onBumpQuantity}
+                onEdit={setEditingIndex}
+              />
+            ))}
+          </div>
+          <div className="receipt-preview-modal__summary">
+            Итого к добавлению:
+            <AnimatedNumber value={totalAmount} format={formatMoneyRaw} className="h4" initialEnter={true} />
+          </div>
+          <div className="modal__buttons">
+            <Button onClick={onClose}>Отмена</Button>
+            <Button variant={EButtonVariant.Active} onClick={onConfirm} disabled={selectedCount === 0}>
+              Добавить ({selectedCount})
+            </Button>
+          </div>
+        </>
+      )}
+    </Modal>
   )
 }
 

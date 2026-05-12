@@ -22,7 +22,7 @@ export const LoadingModal = ({ isOpen, onClose, onCancel }: TLoadingModalProps) 
       </GeminiText>
 
       <p className="f-receipt-scan-loading__text">
-        Вы можете закрыть это окно нажатием на пустое пространство, а мы продолжим анализ
+        Вы можете закрыть это окно нажатием на пустое пространство, а мы продолжим анализ. Не покидайте эту страницу.
       </p>
 
       <div className="f-receipt-scan-loading__actions">

@@ -47,6 +47,7 @@ const getModalSheetMotion = (mode: TModalProps['mode']) => {
 export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const isOpenRef = useRef(isOpen)
+  const hasScrollLockRef = useRef(false)
   isOpenRef.current = isOpen
 
   const classMode = cn(
@@ -66,7 +67,10 @@ export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalPro
       }
       focusFirstField(dialog)
       queueMicrotask(() => focusFirstField(dialog))
-      lockScroll()
+      if (!hasScrollLockRef.current) {
+        lockScroll()
+        hasScrollLockRef.current = true
+      }
     }
   }, [isOpen])
 
@@ -74,7 +78,10 @@ export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalPro
     const dialog = dialogRef.current
     return () => {
       dialog?.close()
-      unlockScroll()
+      if (hasScrollLockRef.current) {
+        unlockScroll()
+        hasScrollLockRef.current = false
+      }
     }
   }, [])
 
@@ -84,7 +91,10 @@ export const Modal = ({ isOpen, onClose, mode = 'top-100', children }: TModalPro
     if (dialog?.open) {
       dialog.close()
     }
-    unlockScroll()
+    if (hasScrollLockRef.current) {
+      unlockScroll()
+      hasScrollLockRef.current = false
+    }
   }
 
   const handleCancel = (e: SyntheticEvent<HTMLDialogElement>) => {
