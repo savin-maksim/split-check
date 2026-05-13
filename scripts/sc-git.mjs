@@ -20,9 +20,14 @@ const run = (command, args, options = {}) => {
   const result = spawnSync(command, args, {
     cwd: process.cwd(),
     stdio: 'inherit',
-    shell: false,
+    shell: isWindows && command.endsWith('.cmd'),
     ...options,
   })
+
+  if (result.error) {
+    console.error(result.error.message)
+    process.exit(1)
+  }
 
   if (result.status !== 0) {
     process.exit(result.status ?? 1)
@@ -33,8 +38,13 @@ const read = (command, args) => {
   const result = spawnSync(command, args, {
     cwd: process.cwd(),
     encoding: 'utf8',
-    shell: false,
+    shell: isWindows && command.endsWith('.cmd'),
   })
+
+  if (result.error) {
+    console.error(result.error.message)
+    process.exit(1)
+  }
 
   if (result.status !== 0) {
     process.stderr.write(result.stderr ?? '')
@@ -74,7 +84,7 @@ run(npmCmd, ['run', 'format'])
 run(npmCmd, ['run', 'typecheck'])
 run('git', ['status', '--short'])
 run('git', ['diff', '--stat'])
-run('git', ['add', '-A', '--', '.', ':(exclude).firebase/hosting.ZGlzdA.cache'])
+run('git', ['add', '-A'])
 
 const version = packageJson().version
 const commitMessage = commitMessageArg || process.env.SC_GIT_MESSAGE || `chore(release): v${version}`
