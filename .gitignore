@@ -10,8 +10,13 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+*.tsbuildinfo
 *.local
 .env
+
+# Tool caches and local generated state
+.firebase/
+supabase/.temp/
 
 # Editor directories and files
 .vscode/*
