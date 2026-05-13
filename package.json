@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sc:patch": "node scripts/sc-git.mjs patch",
+    "sc:minor": "node scripts/sc-git.mjs minor",
+    "sc:major": "node scripts/sc-git.mjs major"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",
