@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## Стек
 
-React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), mathjs, lucide-react.
+React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), lucide-react.
 Без SSR — чистый SPA. Пакетный менеджер: npm.
 
 ## Алиасы и глобальные стили
@@ -109,7 +109,7 @@ entities/<slice>/
 | Папка        | Содержимое                                                                                      |
 | ------------ | ----------------------------------------------------------------------------------------------- |
 | `constants/` | `routes.ts`, `labels.ts`, `limits.ts`, `storage-keys.ts`                                        |
-| `lib/`       | Утилиты: `cn`, `math`, `format-money`, `format-date`, `generate-id`, `pluralize`, `parse-names` |
+| `lib/`       | Утилиты: `cn`, `format-money`, `format-date`, `generate-id`, `pluralize`, `parse-names` |
 | `types/`     | Общие типы: `TPropsWithClassName`, `TPropsWithChildren`, `TPolymorphicProps`                    |
 | `ui/`        | UI-компоненты (barrel в `ui/index.ts`)                                                          |
 
@@ -249,7 +249,7 @@ CSS-классы: `block__element--modifier`. Корневой класс = им
 ### Порядок импортов
 
 1. React / react-dom
-2. Внешние библиотеки (react-router-dom, lucide-react, zustand, mathjs)
+2. Внешние библиотеки (react-router-dom, lucide-react, zustand)
 3. Внутренние по FSD сверху вниз: `@/pages/` → `@/widgets/` → `@/features/` → `@/entities/` → `@/shared/ui` → `@/shared/lib` → `@/shared/constants` → `@/shared/types`
 4. Relative imports (стили `./name.scss`)
 

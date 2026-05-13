@@ -1,7 +1,7 @@
 {
   "name": "splitcheck-v3",
   "private": true,
-  "version": "4.2.0",
+  "version": "4.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,6 @@
     "framer-motion": "^12.38.0",
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.454.0",
-    "mathjs": "^13.2.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-hot-toast": "^2.4.1",

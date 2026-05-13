@@ -38,7 +38,6 @@ export default defineConfig(({ command }) => ({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          utils: ['mathjs'],
         },
       },
     },

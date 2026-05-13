@@ -21,7 +21,7 @@ Senior Front-End Developer. Эксперт в React, TypeScript, Vite, Zustand, 
 
 ## Стек проекта
 
-React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), mathjs, lucide-react.
+React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), lucide-react.
 
 ## Код
 
@@ -40,3 +40,18 @@ React 19, TypeScript 6, Vite 8, Zustand 5, React Router 7, SCSS (BEM), mathjs, l
 `<type>[scope]: <description>` — императив, без точки в конце.
 Типы: `feat`, `fix`, `refactor`, `chore`, `docs`, `style`, `perf`, `test`.
 Scope опционален: `feat(check): add duplicate item action`.
+
+## SC Git / релизный workflow
+
+- Перед коммитом обязательно повысить версию в зависимости от типа изменений:
+  - `npm.cmd version patch --no-git-tag-version` — багфиксы, мелкие правки, внутренние улучшения без нового поведения
+  - `npm.cmd version minor --no-git-tag-version` — новая функциональность без несовместимых изменений
+  - `npm.cmd version major --no-git-tag-version` — глобальные/несовместимые изменения
+- Версия хранится в `package.json` и `package-lock.json`; оба файла должны попадать в тот же коммит, что и изменения релиза.
+- До коммита выполнить проверки минимум: `npm.cmd run typecheck`, `npm.cmd run lint`, `npm.cmd run build`.
+- Коммит делать после успешных проверок в формате Conventional Commits.
+- После коммита изменения должны попасть в `main`: переключиться на `main`, подтянуть актуальное состояние через `git pull --ff-only origin main`, влить релизную ветку и выполнить `git push origin main`.
+- Билд и деплой запускать только из ветки `main` после успешного push:
+  - `npm.cmd run build`
+  - `firebase deploy --only hosting`
+- Не запускать Firebase deploy из feature/test веток.

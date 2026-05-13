@@ -1,23 +1,6 @@
-import {
-  bignumber,
-  add,
-  subtract,
-  divide,
-  multiply,
-  compare,
-  larger,
-  smaller,
-  equal,
-  roundForDisplay,
-  mathMin,
-  mathAbs,
-  toNumber,
-  round,
-} from '@/shared/lib/math'
-import type { BigNumber } from '@/shared/lib/math'
-
 import type { TCheck, TItem, TTransfer } from '../model/types'
 import { EPaymentMode } from '../model/types'
+import { allocateKopecks } from './allocate-kopecks'
 import { getItemTotal } from './get-item-total'
 import { readSplitWeight, totalSplitWeight } from './read-split-weight'
 
@@ -79,49 +62,49 @@ const checkToProducts = (check: TCheck): TProduct[] => {
   })
 }
 
-const getActualSpent = (products: TProduct[], peopleMap: Map<string, number>): BigNumber[] => {
-  const result = Array.from({ length: peopleMap.size }, () => bignumber(0))
+const getActualSpent = (products: TProduct[], peopleMap: Map<string, number>): number[] => {
+  const result = Array.from({ length: peopleMap.size }, () => 0)
 
   for (const product of products) {
     const idx = peopleMap.get(product.payer)
     if (idx !== undefined) {
-      result[idx] = add(result[idx]!, bignumber(product.amount)) as BigNumber
+      result[idx] = (result[idx] ?? 0) + product.amount
     }
   }
 
   return result
 }
 
-const getExpectedSpent = (products: TProduct[], peopleMap: Map<string, number>): BigNumber[] => {
-  const result = Array.from({ length: peopleMap.size }, () => bignumber(0))
+const getExpectedSpent = (products: TProduct[], peopleMap: Map<string, number>): number[] => {
+  const result = Array.from({ length: peopleMap.size }, () => 0)
 
   for (const product of products) {
-    const total = bignumber(product.amount)
     const { distribution } = product
 
     if (distribution.type === 'equal') {
       const { participants } = distribution
       if (!participants.length) continue
-      const share = divide(total, participants.length) as BigNumber
 
-      for (const name of participants) {
+      for (const { target: name, amount } of allocateKopecks(
+        product.amount,
+        participants.map((name) => ({ target: name, weight: 1 })),
+      )) {
         const idx = peopleMap.get(name)
         if (idx !== undefined) {
-          result[idx] = add(result[idx]!, share) as BigNumber
+          result[idx] = (result[idx] ?? 0) + amount
         }
       }
     } else {
       const { items } = distribution
       if (!items.length) continue
-      let totalUnits = 0
-      for (const row of items) totalUnits += row.units
-      if (totalUnits === 0) continue
 
-      for (const row of items) {
-        const share = multiply(divide(bignumber(row.units), bignumber(totalUnits)) as BigNumber, total) as BigNumber
+      for (const { target: row, amount } of allocateKopecks(
+        product.amount,
+        items.map((row) => ({ target: row, weight: row.units })),
+      )) {
         const idx = peopleMap.get(row.name)
         if (idx !== undefined) {
-          result[idx] = add(result[idx]!, share) as BigNumber
+          result[idx] = (result[idx] ?? 0) + amount
         }
       }
     }
@@ -130,19 +113,19 @@ const getExpectedSpent = (products: TProduct[], peopleMap: Map<string, number>):
   return result
 }
 
-type TBalance = { person: string; balance: BigNumber }
+type TBalance = { person: string; balance: number }
 
-const getBalances = (actual: BigNumber[], expected: BigNumber[], peopleList: string[]): TBalance[] =>
+const getBalances = (actual: number[], expected: number[], peopleList: string[]): TBalance[] =>
   actual
     .map((value, i) => ({
       person: peopleList[i]!,
-      balance: subtract(value, expected[i]!) as BigNumber,
+      balance: value - expected[i]!,
     }))
-    .sort((a, b) => compare(b.balance, a.balance) as number)
+    .sort((a, b) => b.balance - a.balance)
 
 const settleDebts = (balances: TBalance[]): TTransfer[] => {
-  const creditors = balances.filter((b) => larger(b.balance, 0) as boolean)
-  const debtors = balances.filter((b) => smaller(b.balance, 0) as boolean)
+  const creditors = balances.filter((b) => b.balance > 0)
+  const debtors = balances.filter((b) => b.balance < 0)
 
   const result: TTransfer[] = []
   let i = 0
@@ -151,19 +134,19 @@ const settleDebts = (balances: TBalance[]): TTransfer[] => {
   while (i < creditors.length && j >= 0) {
     const credit = creditors[i]!
     const debt = debtors[j]!
-    const amount = mathMin(credit.balance, mathAbs(debt.balance) as BigNumber) as BigNumber
+    const amount = Math.min(credit.balance, Math.abs(debt.balance))
 
     result.push({
       from: debt.person,
       to: credit.person,
-      amount: toNumber(round(amount, 2)) as number,
+      amount,
     })
 
-    credit.balance = subtract(credit.balance, amount) as BigNumber
-    debt.balance = add(debt.balance, amount) as BigNumber
+    credit.balance -= amount
+    debt.balance += amount
 
-    if (equal(credit.balance, 0)) i++
-    if (equal(debt.balance, 0)) j--
+    if (credit.balance === 0) i++
+    if (debt.balance === 0) j--
   }
 
   return result
@@ -190,8 +173,7 @@ export const computeCheckSettlement = (check: TCheck): TCheckSettlement => {
 
   for (let i = 0; i < check.people.length; i++) {
     const person = check.people[i]!
-    const balance = subtract(actual[i]!, expected[i]!) as BigNumber
-    balanceMap.set(person.id, roundForDisplay(balance))
+    balanceMap.set(person.id, actual[i]! - expected[i]!)
   }
 
   if (!products.length) {
@@ -202,9 +184,8 @@ export const computeCheckSettlement = (check: TCheck): TCheckSettlement => {
   if (check.paymentMode === EPaymentMode.Single && check.singlePayer != null) {
     const payerPerson = check.people.find((p) => p.id === check.singlePayer)
     if (payerPerson) {
-      const expectedRounded = expected.map(roundForDisplay)
       transfers = peopleNames
-        .map((person, i) => ({ person, amount: expectedRounded[i]! }))
+        .map((person, i) => ({ person, amount: expected[i]! }))
         .filter((d) => d.amount > 0 && d.person !== payerPerson.name)
         .map((d) => ({ from: d.person, to: payerPerson.name, amount: d.amount }))
     } else {

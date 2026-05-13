@@ -1,4 +1,5 @@
 import type { TCheck } from '../model/types'
+import { allocateKopecks } from './allocate-kopecks'
 import { getItemTotal } from './get-item-total'
 import { readSplitWeight, totalSplitWeight } from './read-split-weight'
 
@@ -38,21 +39,29 @@ export const calculatePersonStats = (check: TCheck, balances: Map<number, number
     const lineTotal = getItemTotal(item)
     const totalWeight = totalSplitWeight(item.split)
     const canShare = totalWeight > 0
+    const weightsByPerson = new Map(people.map((person) => [person.id, readSplitWeight(item.split, person.id)]))
+    const amountsByPerson = new Map(
+      allocateKopecks(
+        lineTotal,
+        people
+          .map((person) => ({ target: person.id, weight: weightsByPerson.get(person.id) ?? 0 }))
+          .filter((row) => row.weight > 0),
+      ).map((row) => [row.target, row.amount]),
+    )
 
     for (const person of people) {
       if (item.paidBy === person.id) {
         paidTotals.set(person.id, (paidTotals.get(person.id) ?? 0) + lineTotal)
       }
 
-      const personWeight = readSplitWeight(item.split, person.id)
+      const personWeight = weightsByPerson.get(person.id) ?? 0
       if (!canShare || personWeight <= 0) continue
 
-      const share = (lineTotal * personWeight) / totalWeight
       expenseByPerson.get(person.id)!.push({
         title: item.title,
         qtyNumerator: item.qty * personWeight,
         qtyDenominator: totalWeight,
-        amount: Math.round(share),
+        amount: amountsByPerson.get(person.id) ?? 0,
       })
     }
   }
