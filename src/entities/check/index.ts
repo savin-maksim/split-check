@@ -1,6 +1,6 @@
 export { useCheckStore } from './model'
 export { EPaymentMode } from './model'
-export type { TCheck, TCheckStore, TItem, TPerson, TTransfer } from './model'
+export type { TAddPeopleResult, TCheck, TCheckStore, TItem, TPerson, TPersonActionResult, TTransfer } from './model'
 export {
   getItemTotal,
   isSplitDistributionWeightedView,

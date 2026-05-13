@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 
-import type { TItem } from '@/entities/check'
-import { getItemTotal } from '@/entities/check'
-import { useRegisterStatTarget } from '@/features/f-statistics-share'
+import type { TItem } from '@entities/check'
+import { getItemTotal } from '@entities/check'
+import { useRegisterStatTarget } from '@features/f-statistics-share'
 
-import { formatMoney } from '@/shared/lib'
-import { AnimatedNumber } from '@/shared/ui'
+import { formatMoney } from '@shared/lib'
+import { AnimatedNumber } from '@shared/ui'
 
 import './w-statistics-summary.scss'
 

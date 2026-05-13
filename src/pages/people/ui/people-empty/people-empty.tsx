@@ -1,6 +1,6 @@
 import { UserPlus, Users } from 'lucide-react'
 
-import { WPageEmpty } from '@/widgets/w-page-empty'
+import { WPageEmpty } from '@widgets/w-page-empty'
 
 export const PeopleEmpty = () => (
   <WPageEmpty

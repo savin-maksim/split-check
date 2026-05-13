@@ -1,6 +1,6 @@
-import type { EPaymentMode, TItem } from '@/entities/check'
-import { FManageItem } from '@/features/f-manage-item'
-import { FConfirmDelete } from '@/features/f-confirm-delete'
+import type { EPaymentMode, TItem } from '@entities/check'
+import { FManageItem } from '@features/f-manage-item'
+import { FConfirmDelete } from '@features/f-confirm-delete'
 
 type TItemsPageModalsProps = {
   isAddOpen: boolean

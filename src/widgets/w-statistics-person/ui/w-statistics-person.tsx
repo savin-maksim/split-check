@@ -1,7 +1,7 @@
-import type { TPersonStats } from '@/entities/check'
-import { useRegisterStatTarget } from '@/features/f-statistics-share'
-import { cn, formatMoney } from '@/shared/lib'
-import { AnimatedNumber } from '@/shared/ui'
+import type { TPersonStats } from '@entities/check'
+import { useRegisterStatTarget } from '@features/f-statistics-share'
+import { cn, formatMoney } from '@shared/lib'
+import { AnimatedNumber } from '@shared/ui'
 
 import './w-statistics-person.scss'
 

@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 
 import toast from 'react-hot-toast'
 
-import type { TItem, TPerson } from '@/entities/check'
-import { EPaymentMode, isSplitDistributionWeightedView, scrollToAddedItem, useCheckStore } from '@/entities/check'
+import type { TItem, TPerson } from '@entities/check'
+import { EPaymentMode, isSplitDistributionWeightedView, scrollToAddedItem, useCheckStore } from '@entities/check'
 
 type TUseItemCardHandlersParams = {
   checkId: string

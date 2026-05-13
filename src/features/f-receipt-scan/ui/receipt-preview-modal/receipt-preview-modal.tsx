@@ -1,9 +1,9 @@
 import { memo, useCallback, useMemo, useState } from 'react'
 
-import { EPaymentMode, type TItem } from '@/entities/check'
-import { ManageItemForm } from '@/features/f-manage-item'
-import { formatMoneyRaw } from '@/shared/lib'
-import { Modal, Button, EButtonVariant, AnimatedNumber } from '@/shared/ui'
+import { EPaymentMode, type TItem } from '@entities/check'
+import { ManageItemForm } from '@features/f-manage-item'
+import { formatMoneyRaw } from '@shared/lib'
+import { Modal, Button, EButtonVariant, AnimatedNumber } from '@shared/ui'
 
 import type { TPreviewQuantities, TScannedItem } from '../../model'
 import { ReceiptPreviewItem } from '../receipt-preview-item/receipt-preview-item'

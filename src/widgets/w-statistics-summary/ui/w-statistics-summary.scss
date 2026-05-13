@@ -5,7 +5,7 @@
   justify-content: space-between;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: var(--space-large);
+  padding: var(--space-xl);
   color: var(--color-light);
   width: 100%;
   max-width: calc(var(--cards-width) * 2);
@@ -18,11 +18,11 @@
 
   &__total {
     text-align: center;
-    margin-block: var(--space-large);
+    margin-block: var(--space-xl);
   }
 
   &__expenses {
-    padding-top: var(--space-large);
+    padding-top: var(--space-xl);
     border-top: 1px solid var(--color-glass);
   }
 
@@ -41,7 +41,7 @@
     display: flex;
     align-items: center;
     gap: var(--space);
-    margin-bottom: var(--space-small);
+    margin-bottom: var(--space-s);
     padding: var(--space) 0;
     border-bottom: 1px solid var(--color-glass);
 
@@ -55,7 +55,7 @@
   &__expense-title {
     display: flex;
     flex-direction: column;
-    gap: var(--space-small);
+    gap: var(--space-s);
     flex: 1;
   }
 

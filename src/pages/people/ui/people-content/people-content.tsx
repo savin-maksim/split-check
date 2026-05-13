@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import { Trash2, Users } from 'lucide-react'
 
-import type { TPerson } from '@/entities/check'
-import { WPersonCard } from '@/widgets/w-person-card'
-import { PageHeader, Button, EButtonVariant, AnimatedList } from '@/shared/ui'
-import { pluralize } from '@/shared/lib'
+import type { TPerson } from '@entities/check'
+import { WPersonCard } from '@widgets/w-person-card'
+import { PageHeader, Button, EButtonVariant, AnimatedList } from '@shared/ui'
+import { pluralize } from '@shared/lib'
 
 type TPeopleContentProps = {
   people: TPerson[]

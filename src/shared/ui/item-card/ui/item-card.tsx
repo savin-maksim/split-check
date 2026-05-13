@@ -1,6 +1,6 @@
 import type { ElementType, HTMLAttributes, ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 
 import './item-card.scss'
 

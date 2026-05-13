@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
-import { WBottomNav } from '@/widgets/w-bottom-nav'
-import { ScrollTopButton, Toast } from '@/shared/ui'
+import { WBottomNav } from '@widgets/w-bottom-nav'
+import { ScrollTopButton, Toast } from '@shared/ui'
 
 import './styles/index.scss'
 import './layout.scss'

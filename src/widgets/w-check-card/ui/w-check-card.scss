@@ -13,7 +13,7 @@
     &-inner {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: var(--space-small);
+      gap: var(--space-s);
       padding: var(--space);
     }
   }

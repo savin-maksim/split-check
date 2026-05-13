@@ -1,11 +1,12 @@
-import { SingleInputModal } from '@/shared/ui'
+import { SingleInputModal } from '@shared/ui'
+import type { TSingleInputModalSubmitResult } from '@shared/ui'
 
 type TFManagePersonProps = {
   isOpen: boolean
   onClose: () => void
   mode: 'add' | 'edit'
   initialName?: string
-  onSubmit: (name: string) => void
+  onSubmit: (name: string) => TSingleInputModalSubmitResult
   title?: string
 }
 
@@ -19,6 +20,7 @@ export const FManagePerson = ({ isOpen, onClose, mode, initialName = '', onSubmi
       title={modalTitle}
       label="Имя"
       initialValue={initialName}
+      emptyError="Введите имя участника"
       submitLabel={mode === 'add' ? 'Добавить' : 'Сохранить'}
       onSubmit={onSubmit}
     />

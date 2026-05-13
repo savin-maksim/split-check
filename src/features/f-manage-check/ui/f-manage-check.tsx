@@ -1,4 +1,4 @@
-import { SingleInputModal } from '@/shared/ui'
+import { SingleInputModal } from '@shared/ui'
 
 type TFManageCheckProps =
   | {
@@ -29,6 +29,7 @@ export const FManageCheck = (props: TFManageCheckProps) => {
       title={title}
       label="Название чека"
       initialValue={initialValue}
+      emptyError="Введите название чека"
       submitLabel={submitLabel}
       onSubmit={onSubmit}
     />

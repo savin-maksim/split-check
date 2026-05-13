@@ -3,9 +3,9 @@ import type { ReactNode } from 'react'
 import { NavLink, useLocation, useParams } from 'react-router-dom'
 import { Receipt, Users, Calculator, BarChart3, FilePlus, UserPlus, Plus, Share2 } from 'lucide-react'
 
-import { useCheckStore } from '@/entities/check'
-import { cn } from '@/shared/lib'
-import { buildRoute } from '@/shared/constants'
+import { useCheckStore } from '@entities/check'
+import { cn } from '@shared/lib'
+import { buildRoute } from '@shared/constants'
 
 import { useNavActionStore } from '../model'
 

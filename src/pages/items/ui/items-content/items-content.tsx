@@ -2,12 +2,12 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback, memo } from 'react'
 import { Calculator, Trash2 } from 'lucide-react'
 
-import { useCheckStore, EPaymentMode } from '@/entities/check'
-import type { TItem, TPerson } from '@/entities/check'
-import { FPaymentMode } from '@/features/f-payment-mode'
-import { FReceiptScan } from '@/features/f-receipt-scan'
-import { PageHeader, PersonGrid, Button, EButtonVariant, AnimatedBlock } from '@/shared/ui'
-import { animatedBlockMotion, animatedBlockMotionPop } from '@/shared/lib'
+import { useCheckStore, EPaymentMode } from '@entities/check'
+import type { TItem, TPerson } from '@entities/check'
+import { FPaymentMode } from '@features/f-payment-mode'
+import { FReceiptScan } from '@features/f-receipt-scan'
+import { PageHeader, PersonGrid, Button, EButtonVariant, AnimatedBlock } from '@shared/ui'
+import { animatedBlockMotion, animatedBlockMotionPop } from '@shared/lib'
 
 import { ItemsListWithSearch } from '../items-list-with-search'
 

@@ -1,6 +1,6 @@
 import { Camera, Image, TriangleAlert } from 'lucide-react'
 
-import { Modal, Button } from '@/shared/ui'
+import { Modal, Button } from '@shared/ui'
 
 import type { TReceiptSource } from '../../model'
 

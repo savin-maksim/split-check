@@ -2,9 +2,9 @@ import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 
-import { useCheckStore } from '@/entities/check'
-import type { TCheck } from '@/entities/check'
-import { buildRoute } from '@/shared/constants'
+import { useCheckStore } from '@entities/check'
+import type { TCheck } from '@entities/check'
+import { buildRoute } from '@shared/constants'
 
 type TUseChecksListPageHandlersParams = {
   editCheck: TCheck | null

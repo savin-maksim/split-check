@@ -1,7 +1,7 @@
 import { MoveRight } from 'lucide-react'
 
-import { cn, formatMoney } from '@/shared/lib'
-import { AnimatedNumber, Button, EButtonVariant } from '@/shared/ui'
+import { cn, formatMoney } from '@shared/lib'
+import { AnimatedNumber, Button, EButtonVariant } from '@shared/ui'
 
 type TMergedTransferRowProps = {
   fromLabel: string

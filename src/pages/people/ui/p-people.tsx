@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react'
 
-import type { TPerson } from '@/entities/check'
-import { FManagePerson } from '@/features/f-manage-person'
-import { FConfirmDelete } from '@/features/f-confirm-delete'
-import { useRegisterNavAction } from '@/widgets/w-bottom-nav'
-import { useCurrentCheckFromRoute } from '@/shared/lib'
+import type { TPerson } from '@entities/check'
+import { FManagePerson } from '@features/f-manage-person'
+import { FConfirmDelete } from '@features/f-confirm-delete'
+import { useRegisterNavAction } from '@widgets/w-bottom-nav'
+import { useCurrentCheckFromRoute } from '@shared/lib'
 
 import { usePeoplePageHandlers } from '../lib/use-people-page-handlers'
 import { PeopleContent } from './people-content'

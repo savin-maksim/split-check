@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { ListChecks, Type, Users, Wallet } from 'lucide-react'
 
-import { EIconButtonVariant, IconButton } from '@/shared/ui'
+import { EIconButtonVariant, IconButton } from '@shared/ui'
 
 import type { TSearchMode } from './items-search-types'
 

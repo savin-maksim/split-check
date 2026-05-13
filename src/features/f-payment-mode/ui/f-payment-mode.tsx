@@ -1,7 +1,7 @@
 import { memo } from 'react'
 
-import { ToggleGroup } from '@/shared/ui'
-import { EPaymentMode } from '@/entities/check'
+import { ToggleGroup } from '@shared/ui'
+import { EPaymentMode } from '@entities/check'
 import { Users, User } from 'lucide-react'
 
 import './f-payment-mode.scss'

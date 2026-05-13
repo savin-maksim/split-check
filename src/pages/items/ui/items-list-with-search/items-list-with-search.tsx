@@ -1,6 +1,6 @@
 import { useState, memo } from 'react'
 
-import type { EPaymentMode, TItem, TPerson } from '@/entities/check'
+import type { EPaymentMode, TItem, TPerson } from '@entities/check'
 
 import { ItemsFilteredList } from './items-filtered-list'
 import { ItemsSearchBar } from './items-search-bar'

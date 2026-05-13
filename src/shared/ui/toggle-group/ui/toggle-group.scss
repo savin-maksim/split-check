@@ -24,9 +24,9 @@
     @include flex-center($isInline: true);
     gap: var(--space);
     flex: 1;
-    padding: var(--space-medium) var(--space-large);
+    padding: var(--space-l) var(--space-xl);
     color: var(--color-light);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-s);
 
     @include hover {
       @include button--active-tokens;

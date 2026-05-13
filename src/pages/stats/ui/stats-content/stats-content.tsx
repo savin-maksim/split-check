@@ -1,12 +1,12 @@
 import { memo, useMemo } from 'react'
 import { BarChart3 } from 'lucide-react'
 
-import type { TCheck, TTransfer, TPersonStats } from '@/entities/check'
-import { WStatisticsPerson } from '@/widgets/w-statistics-person'
-import { WStatisticsSummary } from '@/widgets/w-statistics-summary'
-import { WTransfersCard } from '@/widgets/w-transfers-card'
-import { PageHeader, AnimatedListPresence, AnimatedBlock } from '@/shared/ui'
-import { animatedBlockMotion, getPersonStatsAnchorId } from '@/shared/lib'
+import type { TCheck, TTransfer, TPersonStats } from '@entities/check'
+import { WStatisticsPerson } from '@widgets/w-statistics-person'
+import { WStatisticsSummary } from '@widgets/w-statistics-summary'
+import { WTransfersCard } from '@widgets/w-transfers-card'
+import { PageHeader, AnimatedListPresence, AnimatedBlock } from '@shared/ui'
+import { animatedBlockMotion, getPersonStatsAnchorId } from '@shared/lib'
 
 type TStatsContentProps = {
   check: TCheck

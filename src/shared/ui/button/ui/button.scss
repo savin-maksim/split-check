@@ -11,7 +11,7 @@
   padding: 0.5rem 1rem;
   margin: 0;
   color: var(--color-light);
-  border-radius: var(--border-radius-small);
+  border-radius: var(--border-radius-s);
   min-width: 0;
   flex: 1;
 
@@ -69,7 +69,7 @@
   }
 
   &--danger {
-    --button-surface-rgb: var(--color-error);
+    --button-surface-rgb: var(--color-error-rgb);
     --button-background-alpha: var(--button-danger-background-alpha);
     --button-border-alpha: var(--button-danger-border-alpha);
     --button-box-shadow: none;
@@ -77,7 +77,7 @@
     @include hover {
       --button-background-alpha: var(--button-danger-hover-background-alpha);
       --button-border-alpha: var(--button-danger-hover-border-alpha);
-      --button-box-shadow: 0 0 15px rgba(var(--color-error), var(--button-danger-shadow-alpha));
+      --button-box-shadow: 0 0 15px rgba(var(--color-error-rgb), var(--button-danger-shadow-alpha));
     }
   }
 

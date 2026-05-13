@@ -10,7 +10,7 @@ import {
   modalSheetMotionFromTop,
   modalSheetMotionFromBottom,
   unlockScroll,
-} from '@/shared/lib'
+} from '@shared/lib'
 
 type TModalProps = {
   isOpen: boolean

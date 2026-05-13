@@ -1,4 +1,4 @@
-import { scrollToItemAnchor } from '@/shared/lib'
+import { scrollToItemAnchor } from '@shared/lib'
 
 import { useCheckStore } from '../model/store'
 

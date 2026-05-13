@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import { toast } from 'react-hot-toast'
 
-import { useCheckStore, scrollToAddedItem } from '@/entities/check'
-import type { TItem } from '@/entities/check'
+import { useCheckStore, scrollToAddedItem } from '@entities/check'
+import type { TItem } from '@entities/check'
 
 type TUseItemsPageHandlersParams = {
   checkId: string

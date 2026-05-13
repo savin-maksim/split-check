@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import type { HTMLAttributes, Key, ReactNode } from 'react'
 
-import { animatedListItemMotion, animatedListTransition } from '@/shared/lib'
+import { animatedListItemMotion, animatedListTransition } from '@shared/lib'
 
 import './animated-list.scss'
 

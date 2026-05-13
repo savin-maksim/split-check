@@ -1,8 +1,8 @@
 import { Calculator } from 'lucide-react'
 
-import type { TItem } from '@/entities/check'
-import { FReceiptScan, GeminiText } from '@/features/f-receipt-scan'
-import { WPageEmpty } from '@/widgets/w-page-empty'
+import type { TItem } from '@entities/check'
+import { FReceiptScan, GeminiText } from '@features/f-receipt-scan'
+import { WPageEmpty } from '@widgets/w-page-empty'
 
 type TItemsEmptyNoItemsProps = {
   onAddBulkItems: (items: Omit<TItem, 'id'>[]) => void

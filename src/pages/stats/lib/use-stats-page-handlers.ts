@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 
-import { useRegisterNavAction } from '@/widgets/w-bottom-nav'
+import { useRegisterNavAction } from '@widgets/w-bottom-nav'
 
 export const useStatsPageHandlers = () => {
   const [isShareOpen, setIsShareOpen] = useState(false)

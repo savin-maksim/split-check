@@ -1,7 +1,7 @@
 import { Users } from 'lucide-react'
 
-import { WPageEmpty } from '@/widgets/w-page-empty'
-import { Spinner } from '@/shared/ui'
+import { WPageEmpty } from '@widgets/w-page-empty'
+import { Spinner } from '@shared/ui'
 
 export const StatsEmptyNoTransfers = () => (
   <WPageEmpty

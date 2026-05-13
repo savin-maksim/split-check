@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-import { pluralize } from '@/shared/lib'
+import { pluralize } from '@shared/lib'
 
 import { useStatShareContext } from '../model'
 import type { TStatShareTarget } from '../model'

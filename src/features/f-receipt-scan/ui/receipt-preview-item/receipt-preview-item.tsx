@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react'
 
 import { Minus, Pencil, Plus } from 'lucide-react'
 
-import { IconButton, EIconButtonVariant, AnimatedNumber } from '@/shared/ui'
-import { cn, formatItemTitle, formatMoneyRaw, createKeyboardActivationHandler, formatMoney } from '@/shared/lib'
+import { IconButton, EIconButtonVariant, AnimatedNumber } from '@shared/ui'
+import { cn, formatItemTitle, formatMoneyRaw, createKeyboardActivationHandler, formatMoney } from '@shared/lib'
 
 import type { TScannedItem } from '../../model'
 

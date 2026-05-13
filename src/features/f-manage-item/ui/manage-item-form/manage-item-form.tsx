@@ -1,9 +1,9 @@
 import type { ChangeEvent, FormEvent } from 'react'
 
-import { createEnterKeyDownHandler, normalizeDecimalInput, formatItemTitle, selectInputOnFocus } from '@/shared/lib'
-import { Input, Button, EButtonVariant } from '@/shared/ui'
-import type { TItem } from '@/entities/check'
-import { EPaymentMode } from '@/entities/check'
+import { createEnterKeyDownHandler, normalizeDecimalInput, formatItemTitle, selectInputOnFocus } from '@shared/lib'
+import { Input, Button, EButtonVariant } from '@shared/ui'
+import type { TItem } from '@entities/check'
+import { EPaymentMode } from '@entities/check'
 
 import { syncPriceFieldValidity } from '../../lib/sync-price-field-validity'
 import { useItemForm } from '../../lib/use-item-form'

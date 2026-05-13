@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 
-import { MarqueeTitle } from '@/shared/ui/marquee-title'
+import { MarqueeTitle } from '@shared/ui/marquee-title'
 
 type TCardHeaderProps = {
   title: ReactNode

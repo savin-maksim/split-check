@@ -3,17 +3,16 @@ import type { ChangeEvent, InputHTMLAttributes, MouseEvent, MutableRefObject, Re
 
 import { Eye, EyeOff, X } from 'lucide-react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
+import { IconButton } from '@shared/ui/icon-button'
 
 import './input.scss'
-import { IconButton } from '@shared/ui'
 
 export type TInputProps = {
   label?: string
   isLabelHidden?: boolean
   error?: string
   icon?: ReactNode
-  /** Контент справа внутри поля (до кнопки очистки, если есть) */
   suffix?: ReactNode
   clearable?: boolean
   clearAriaLabel?: string
@@ -53,6 +52,7 @@ export const Input = memo(
       const isControlled = value !== undefined
       const hasValue = isControlled ? String(value ?? '').length > 0 : hasUncontrolledValue
       const showClear = clearable && hasValue && !rest.readOnly && !rest.disabled
+      const hasAddons = suffix != null || showClear || isPasswordType
 
       const setRefs = useCallback(
         (el: HTMLInputElement | null) => {
@@ -87,66 +87,72 @@ export const Input = memo(
       const inputType = isPasswordType ? (showPassword ? 'text' : 'password') : type
 
       return (
-        <div
-          className={cn(
-            'input-field',
-            icon ? 'input-field--with-icon' : null,
-            suffix != null ? 'input-field--with-suffix' : null,
-            showClear && 'input-field--with-clear',
-            isPasswordType && 'input-field--with-password',
-            className,
-          )}
-        >
-          {icon ? (
-            <span className="input-field__icon" aria-hidden="true">
-              {icon}
-            </span>
-          ) : null}
-
-          <input
-            ref={setRefs}
-            id={inputId}
-            className="input-field__input"
-            type={inputType}
-            placeholder={label}
-            name={name}
-            value={value}
-            defaultValue={defaultValue}
-            onChange={handleChange}
-            {...rest}
-          />
-
-          {!isLabelHidden && (
-            <label className="input-field__label" htmlFor={inputId} title={label}>
-              {label}
-            </label>
-          )}
-
-          {suffix != null ? <div className="input-field__suffix">{suffix}</div> : null}
-
-          {showClear ? (
-            <IconButton
-              type="button"
-              className="input-field__clear"
-              onClick={handleClear}
-              aria-label={clearAriaLabel}
-              icon={<X size={'var(--button-icon-size)'} strokeWidth={2} />}
-            />
-          ) : null}
-
-          {isPasswordType ? (
-            <button
-              type="button"
-              className="input-field__password-toggle"
-              onClick={handleTogglePassword}
-              aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-            >
-              {showPassword ? <EyeOff size={'var(--button-icon-size)'} /> : <Eye size={'var(--button-icon-size)'} />}
-            </button>
-          ) : null}
-
+        <>
           {error ? <div className="input-field__error">{error}</div> : null}
-        </div>
+
+          <div className={cn('input-field', className)}>
+            <div className="input-field__control">
+              {icon ? (
+                <span className="input-field__icon" aria-hidden="true">
+                  {icon}
+                </span>
+              ) : null}
+
+              <div className="input-field__body">
+                <input
+                  ref={setRefs}
+                  id={inputId}
+                  className="input-field__input"
+                  type={inputType}
+                  placeholder={label}
+                  name={name}
+                  value={value}
+                  defaultValue={defaultValue}
+                  onChange={handleChange}
+                  {...rest}
+                />
+
+                {!isLabelHidden && (
+                  <label className="input-field__label" htmlFor={inputId} title={label}>
+                    {label}
+                  </label>
+                )}
+              </div>
+
+              {hasAddons ? (
+                <div className="input-field__addons">
+                  {showClear ? (
+                    <IconButton
+                      type="button"
+                      className="input-field__clear"
+                      onClick={handleClear}
+                      aria-label={clearAriaLabel}
+                      icon={<X size={'var(--button-icon-size)'} strokeWidth={2} />}
+                    />
+                  ) : null}
+
+                  {isPasswordType ? (
+                    <IconButton
+                      type="button"
+                      className="input-field__password-toggle"
+                      onClick={handleTogglePassword}
+                      aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                      icon={
+                        showPassword ? (
+                          <EyeOff size={'var(--button-icon-size)'} />
+                        ) : (
+                          <Eye size={'var(--button-icon-size)'} />
+                        )
+                      }
+                    />
+                  ) : null}
+
+                  {suffix != null ? <div className="input-field__suffix">{suffix}</div> : null}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </>
       )
     },
   ),

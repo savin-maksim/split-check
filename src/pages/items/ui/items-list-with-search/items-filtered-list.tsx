@@ -1,9 +1,9 @@
 import { memo, useCallback, useMemo } from 'react'
 
-import type { EPaymentMode, TItem, TPerson } from '@/entities/check'
-import { WItemCard } from '@/widgets/w-item-card'
-import { AnimatedList } from '@/shared/ui'
-import { getItemAnchorId } from '@/shared/lib'
+import type { EPaymentMode, TItem, TPerson } from '@entities/check'
+import { WItemCard } from '@widgets/w-item-card'
+import { AnimatedList } from '@shared/ui'
+import { getItemAnchorId } from '@shared/lib'
 
 import type { TSearchMode } from './items-search-types'
 

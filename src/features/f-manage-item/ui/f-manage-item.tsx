@@ -1,5 +1,5 @@
-import { Modal } from '@/shared/ui'
-import type { EPaymentMode, TItem } from '@/entities/check'
+import { Modal } from '@shared/ui'
+import type { EPaymentMode, TItem } from '@entities/check'
 
 import { ManageItemForm } from './manage-item-form'
 

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Search } from 'lucide-react'
 
-import { Input, AnimatedBlock } from '@/shared/ui'
-import { animatedBlockMotion, createEnterKeyDownHandler, useDebouncedValue } from '@/shared/lib'
+import { Input, AnimatedBlock } from '@shared/ui'
+import { animatedBlockMotion, createEnterKeyDownHandler, useDebouncedValue } from '@shared/lib'
 
 import { ItemsSearchModeToggle } from './items-search-mode-toggle'
 import type { TSearchMode } from './items-search-types'

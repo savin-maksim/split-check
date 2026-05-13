@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { Combine } from 'lucide-react'
 
-import type { TPerson, TTransfer } from '@/entities/check'
-import { isEligibleForMerge } from '@/entities/check'
-import { useRegisterStatTarget } from '@/features/f-statistics-share'
+import type { TPerson, TTransfer } from '@entities/check'
+import { isEligibleForMerge } from '@entities/check'
+import { useRegisterStatTarget } from '@features/f-statistics-share'
 
-import { cn, scrollToPersonStatsAnchor } from '@/shared/lib'
-import { Button, EButtonVariant, IconButton, Spinner } from '@/shared/ui'
+import { cn, scrollToPersonStatsAnchor } from '@shared/lib'
+import { Button, EButtonVariant, IconButton, Spinner } from '@shared/ui'
 
 import { useTransfersCard } from '../lib/use-transfers-card'
 import { TransferRow } from './transfer-row'

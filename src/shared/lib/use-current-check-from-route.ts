@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { useCheckStore } from '@/entities/check/model/store'
-import { buildRoute } from '@/shared/constants'
+import { useCheckStore } from '@entities/check/model/store'
+import { buildRoute } from '@shared/constants'
 
 export const useCurrentCheckFromRoute = () => {
   const { checkId } = useParams<{ checkId: string }>()

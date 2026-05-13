@@ -1,15 +1,15 @@
 .w-bottom-nav {
   position: fixed;
   bottom: var(--space);
-  left: var(--space-large);
-  right: var(--space-large);
+  left: var(--space-xl);
+  right: var(--space-xl);
   display: flex;
   justify-content: space-around;
   align-items: center;
   height: var(--navigation-height);
   border: var(--border);
-  border-radius: var(--border-radius-large);
-  background-color: rgba(var(--color-bg), 0.5);
+  border-radius: var(--border-radius-l);
+  background-color: var(--color-bottom-nav);
   max-width: var(--cards-width);
   margin: 0 auto;
 
@@ -26,7 +26,7 @@
     @include flex-center;
     color: var(--color-text-active);
     padding: var(--space);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-s);
 
     &--active {
       color: var(--color-orange);

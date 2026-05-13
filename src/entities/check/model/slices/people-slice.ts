@@ -1,23 +1,33 @@
 import type { StateCreator } from 'zustand'
 
-import { formatPersonName } from '@/shared/lib/parse-names'
+import { formatPersonName } from '@shared/lib/parse-names'
 
-import type { TCheckStore } from '../types'
+import { validatePersonName } from '@entities/check'
+import type { TAddPeopleResult, TCheckStore, TPersonActionResult } from '../types'
 import { updateCheck } from './update-check'
+
+const CHECK_NOT_FOUND_ERROR = 'Чек не найден'
+const DUPLICATE_PERSON_ERROR = 'Участник с таким именем уже есть'
+const ADD_PEOPLE_ERROR = 'Не удалось добавить участников'
 
 export type TPeopleSlice = Pick<
   TCheckStore,
   'addPerson' | 'addPeople' | 'removePerson' | 'removeAllPeople' | 'updatePerson'
 >
 
+const failPersonAction = (error: string): TPersonActionResult => ({ ok: false, error })
+
 export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> = (set, get) => ({
   addPerson: (checkId: string, name: string) => {
     const check = get().checks.find((c) => c.id === checkId)
-    if (!check) return false
+    if (!check) return failPersonAction(CHECK_NOT_FOUND_ERROR)
 
     const formatted = formatPersonName(name)
+    const validationError = validatePersonName(formatted)
+    if (validationError) return failPersonAction(validationError)
+
     const duplicate = check.people.some((p) => p.name.toLowerCase() === formatted.toLowerCase())
-    if (duplicate) return false
+    if (duplicate) return failPersonAction(DUPLICATE_PERSON_ERROR)
 
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => {
@@ -28,25 +38,64 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
         }
       }),
     }))
-    return true
+    return { ok: true }
   },
 
   addPeople: (checkId: string, names: string[]) => {
-    let addedCount = 0
+    const check = get().checks.find((c) => c.id === checkId)
+    if (!check) {
+      return {
+        ok: false,
+        addedCount: 0,
+        skippedCount: names.length,
+        error: CHECK_NOT_FOUND_ERROR,
+      }
+    }
+
+    let result: TAddPeopleResult = {
+      ok: false,
+      addedCount: 0,
+      skippedCount: 0,
+      error: ADD_PEOPLE_ERROR,
+    }
 
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => {
         let nextId = c.nextPersonId
         const existingNames = new Set(c.people.map((p) => p.name.toLowerCase()))
-        const newPeople = names
-          .map((n) => formatPersonName(n))
-          .filter((n) => n.length >= 2 && !existingNames.has(n.toLowerCase()))
-          .map((name) => {
-            const person = { id: nextId, name }
-            nextId++
-            return person
-          })
-        addedCount = newPeople.length
+        const newPeople = []
+        let skippedCount = 0
+        let firstError: string | undefined
+
+        for (const rawName of names) {
+          const name = formatPersonName(rawName)
+          const validationError = validatePersonName(name)
+
+          if (validationError) {
+            skippedCount++
+            firstError ??= validationError
+            continue
+          }
+
+          const normalizedName = name.toLowerCase()
+          if (existingNames.has(normalizedName)) {
+            skippedCount++
+            firstError ??= DUPLICATE_PERSON_ERROR
+            continue
+          }
+
+          existingNames.add(normalizedName)
+          newPeople.push({ id: nextId, name })
+          nextId++
+        }
+
+        result = {
+          ok: newPeople.length > 0,
+          addedCount: newPeople.length,
+          skippedCount,
+          error: newPeople.length > 0 ? undefined : (firstError ?? ADD_PEOPLE_ERROR),
+        }
+
         return {
           ...c,
           people: [...c.people, ...newPeople],
@@ -54,7 +103,7 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
         }
       }),
     }))
-    return addedCount
+    return result
   },
 
   removePerson: (checkId: string, personId: number) => {
@@ -92,16 +141,21 @@ export const createPeopleSlice: StateCreator<TCheckStore, [], [], TPeopleSlice> 
 
   updatePerson: (checkId: string, personId: number, name: string) => {
     const check = get().checks.find((c) => c.id === checkId)
-    if (!check) return false
+    if (!check) return failPersonAction(CHECK_NOT_FOUND_ERROR)
+
     const formatted = formatPersonName(name)
+    const validationError = validatePersonName(formatted)
+    if (validationError) return failPersonAction(validationError)
+
     const duplicate = check.people.some((p) => p.id !== personId && p.name.toLowerCase() === formatted.toLowerCase())
-    if (duplicate) return false
+    if (duplicate) return failPersonAction(DUPLICATE_PERSON_ERROR)
+
     set((s) => ({
       checks: updateCheck(s.checks, checkId, (c) => ({
         ...c,
         people: c.people.map((p) => (p.id === personId ? { ...p, name: formatted } : p)),
       })),
     }))
-    return true
+    return { ok: true }
   },
 })

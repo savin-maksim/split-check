@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { CSSProperties, ElementType, ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 
 import './marquee-title.scss'
 

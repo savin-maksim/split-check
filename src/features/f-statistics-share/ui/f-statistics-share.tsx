@@ -1,7 +1,7 @@
 import { Share2, Download } from 'lucide-react'
 
-import { cn } from '@/shared/lib'
-import { Modal, Button, EButtonVariant } from '@/shared/ui'
+import { cn } from '@shared/lib'
+import { Modal, Button, EButtonVariant } from '@shared/ui'
 
 import { useStatisticsShare } from '../lib'
 

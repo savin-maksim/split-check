@@ -1,6 +1,6 @@
 import { memo, useLayoutEffect, useRef } from 'react'
 
-import { Modal, Button, EButtonVariant } from '@/shared/ui'
+import { Modal, Button, EButtonVariant } from '@shared/ui'
 
 type TFConfirmDeleteProps = {
   isOpen: boolean

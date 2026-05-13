@@ -2,7 +2,7 @@
   &__host {
     position: fixed;
     bottom: calc(var(--navigation-height) + var(--space) * 2);
-    right: var(--space-large);
+    right: var(--space-xl);
     z-index: var(--z-index-overlay);
 
     @media (max-width: 768px) {

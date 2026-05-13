@@ -49,7 +49,7 @@ export default defineConfig(({ command }) => ({
     preprocessorOptions: {
       scss: {
         api: 'modern-compiler',
-        additionalData: `@use "@/app/styles/shared" as *;\n`,
+        additionalData: `@use "@app/styles/shared" as *;\n`,
       },
     },
   },

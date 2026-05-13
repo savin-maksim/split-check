@@ -37,6 +37,15 @@ export type TTransfer = {
   amount: number
 }
 
+export type TPersonActionResult = { ok: true } | { ok: false; error: string }
+
+export type TAddPeopleResult = {
+  ok: boolean
+  addedCount: number
+  skippedCount: number
+  error?: string
+}
+
 export type TCheckStore = {
   checks: TCheck[]
   currentCheckId: string | null
@@ -46,11 +55,11 @@ export type TCheckStore = {
   updateCheckTitle: (checkId: string, title: string) => void
   loadCheck: (checkId: string) => void
 
-  addPerson: (checkId: string, name: string) => boolean
-  addPeople: (checkId: string, names: string[]) => number
+  addPerson: (checkId: string, name: string) => TPersonActionResult
+  addPeople: (checkId: string, names: string[]) => TAddPeopleResult
   removePerson: (checkId: string, personId: number) => void
   removeAllPeople: (checkId: string) => void
-  updatePerson: (checkId: string, personId: number, name: string) => boolean
+  updatePerson: (checkId: string, personId: number, name: string) => TPersonActionResult
 
   addItem: (checkId: string, item: Omit<TItem, 'id'>) => number | null
   removeItem: (checkId: string, itemId: number) => void

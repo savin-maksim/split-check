@@ -7,8 +7,8 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: var(--space-x-large);
-    padding: var(--space-large) var(--space);
+    gap: var(--space-xxl);
+    padding: var(--space-xl) var(--space);
     padding-bottom: calc((var(--navigation-height) + var(--space)) * 2);
   }
 }

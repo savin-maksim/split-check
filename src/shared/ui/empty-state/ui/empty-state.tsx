@@ -1,6 +1,6 @@
 import type { ElementType, ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 
 import './empty-state.scss'
 

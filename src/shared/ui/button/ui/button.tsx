@@ -1,7 +1,7 @@
 import { forwardRef, memo } from 'react'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 
 import './button.scss'
 

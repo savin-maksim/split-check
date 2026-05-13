@@ -1,6 +1,6 @@
-import { useCheckBalances, calculatePersonStats } from '@/entities/check'
-import { FStatisticsShare, StatShareProvider } from '@/features/f-statistics-share'
-import { useCurrentCheckFromRoute } from '@/shared/lib'
+import { useCheckBalances, calculatePersonStats } from '@entities/check'
+import { FStatisticsShare, StatShareProvider } from '@features/f-statistics-share'
+import { useCurrentCheckFromRoute } from '@shared/lib'
 
 import { useStatsPageHandlers } from '../lib/use-stats-page-handlers'
 import { StatsContent } from './stats-content'

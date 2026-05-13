@@ -1,10 +1,10 @@
 import { memo, useCallback } from 'react'
 import { ChartPie, ListChecks } from 'lucide-react'
 
-import type { TPerson } from '@/entities/check'
+import type { TPerson } from '@entities/check'
 
-import { cn } from '@/shared/lib'
-import { PersonGrid, PersonBadge } from '@/shared/ui'
+import { cn } from '@shared/lib'
+import { PersonGrid, PersonBadge } from '@shared/ui'
 
 import './split-between-section.scss'
 

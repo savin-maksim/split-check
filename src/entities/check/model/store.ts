@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { STORAGE_KEYS } from '@/shared/constants'
+import { STORAGE_KEYS } from '@shared/constants'
 
 import { parseSplit } from '../lib/parse-split'
 import type { TCheck, TCheckStore } from './types'

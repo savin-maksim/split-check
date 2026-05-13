@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react'
 import { Minus, Plus } from 'lucide-react'
 
-import { IconButton, EIconButtonVariant } from '@/shared/ui/icon-button'
+import { IconButton, EIconButtonVariant } from '@shared/ui/icon-button'
 
 import './qty-stepper.scss'
 

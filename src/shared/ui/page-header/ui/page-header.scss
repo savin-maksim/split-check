@@ -3,12 +3,12 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-large);
+  gap: var(--space-xl);
 
   &__title-block {
     display: flex;
     align-items: center;
-    gap: var(--space-medium);
+    gap: var(--space-l);
     min-width: 0;
   }
 

@@ -47,5 +47,3 @@ export const RECEIPT_ANALYZE_PROMPT =
   '- Remove non-item rows such as totals, discounts, VAT/tax, payment info, and service lines.\n' +
   '- Make sure the same product gets the same cleaned name across the receipt.\n' +
   '- Make sure each name is clean, meaningful, and contains no extra garbage.'
-
-console.log(RECEIPT_ANALYZE_PROMPT)

@@ -1,4 +1,4 @@
-import { normalizeDecimalInput } from '@/shared/lib'
+import { normalizeDecimalInput } from '@shared/lib'
 
 export const syncPriceFieldValidity = (el: HTMLInputElement): void => {
   const trimmed = el.value.trim()

@@ -5,7 +5,7 @@
     width: 100%;
     max-width: var(--cards-width);
     margin-inline: auto;
-    margin-block: var(--space-large);
+    margin-block: var(--space-xl);
     display: flex;
     flex-direction: column;
     gap: var(--space);
@@ -30,7 +30,7 @@
     width: 100%;
     max-width: var(--cards-width);
     margin-inline: auto;
-    margin-block: var(--space-large);
+    margin-block: var(--space-xl);
     text-align: center;
   }
 }

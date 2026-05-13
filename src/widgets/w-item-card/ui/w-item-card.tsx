@@ -1,11 +1,11 @@
 import { memo } from 'react'
 import { Copy, Pencil, Trash2 } from 'lucide-react'
 
-import type { TItem, TPerson } from '@/entities/check'
-import { EPaymentMode, getItemTotal, isSplitDistributionWeightedView } from '@/entities/check'
+import type { TItem, TPerson } from '@entities/check'
+import { EPaymentMode, getItemTotal, isSplitDistributionWeightedView } from '@entities/check'
 
-import { formatMoney } from '@/shared/lib'
-import { AnimatedNumber, IconButton, EIconButtonVariant, ItemCard, CardHeader, QtyStepper } from '@/shared/ui'
+import { formatMoney } from '@shared/lib'
+import { AnimatedNumber, IconButton, EIconButtonVariant, ItemCard, CardHeader, QtyStepper } from '@shared/ui'
 
 import { useItemCardHandlers } from '../lib/use-item-card-handlers'
 import { WhoPaidSection } from './who-paid'

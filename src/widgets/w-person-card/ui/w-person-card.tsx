@@ -1,9 +1,9 @@
 import { memo } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
 
-import type { TPerson } from '@/entities/check'
+import type { TPerson } from '@entities/check'
 
-import { IconButton, EIconButtonVariant, ItemCard, CardHeader } from '@/shared/ui'
+import { IconButton, EIconButtonVariant, ItemCard, CardHeader } from '@shared/ui'
 
 type TWPersonCardProps = {
   person: TPerson

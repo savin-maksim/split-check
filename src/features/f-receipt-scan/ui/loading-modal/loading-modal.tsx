@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 
-import { Button, EButtonVariant, Modal } from '@/shared/ui'
+import { Button, EButtonVariant, Modal } from '@shared/ui'
 
 import { GeminiText } from '../gemini-text/gemini-text'
 

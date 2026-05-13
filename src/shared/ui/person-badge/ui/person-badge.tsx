@@ -1,7 +1,7 @@
 import { Minus, Plus } from 'lucide-react'
 
-import { cn } from '@/shared/lib'
-import { IconButton, EIconButtonVariant } from '@/shared/ui/icon-button'
+import { cn } from '@shared/lib'
+import { IconButton, EIconButtonVariant } from '@shared/ui/icon-button'
 
 import './person-badge.scss'
 

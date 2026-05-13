@@ -10,7 +10,7 @@
   &__summary {
     display: flex;
     justify-content: space-between;
-    margin: var(--space-large) var(--space) 0;
+    margin: var(--space-xl) var(--space) 0;
     color: var(--color-light);
     font-weight: 600;
 
@@ -20,8 +20,8 @@
   }
 
   &__summary-total {
-    @include text-accent-bold;
-
+    color: var(--color-orange);
+    font-weight: 700;
     margin-left: var(--space);
     white-space: nowrap;
   }

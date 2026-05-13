@@ -1,7 +1,7 @@
 import type { StateCreator } from 'zustand'
 
-import { generateId } from '@/shared/lib/generate-id'
-import { formatItemTitle } from '@/shared/lib/parse-names'
+import { generateId } from '@shared/lib/generate-id'
+import { formatItemTitle } from '@shared/lib/parse-names'
 
 import type { TCheck, TCheckStore } from '../types'
 import { EPaymentMode } from '../types'

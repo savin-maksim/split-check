@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { toast } from 'react-hot-toast'
 
-import { useCheckStore } from '@/entities/check'
-import type { TPerson } from '@/entities/check'
-import { parseBulkPersonNames, pluralize } from '@/shared/lib'
+import { useCheckStore, validatePersonName } from '@entities/check'
+import type { TPerson } from '@entities/check'
+import { parseBulkPersonNames, pluralize } from '@shared/lib'
 
 type TUsePeoplePageHandlersParams = {
   checkId: string
@@ -26,13 +26,17 @@ export const usePeoplePageHandlers = ({
   const handleAddPerson = useCallback(
     (name: string) => {
       const names = parseBulkPersonNames(name)
-      if (names.length === 0) return
-      const addedCount = addPeople(checkId, names)
-      if (addedCount === 0) {
-        toast.error('Такой человек уже есть, добавление невозможно')
-        return
+      if (names.length === 0) return validatePersonName(name) ?? 'Введите имя участника'
+
+      const result = addPeople(checkId, names)
+      if (!result.ok) return result.error
+
+      const addedMessage = `Добавлено: ${result.addedCount} ${pluralize(result.addedCount, ['человек', 'человека', 'человек'])}`
+      if (result.skippedCount > 0) {
+        toast.success(`${addedMessage}. Пропущено: ${result.skippedCount}`)
+      } else {
+        toast.success(addedMessage)
       }
-      toast.success(`Добавлено: ${addedCount} ${pluralize(addedCount, ['человек', 'человека', 'человек'])}`)
     },
     [addPeople, checkId],
   )
@@ -40,12 +44,11 @@ export const usePeoplePageHandlers = ({
   const handleEditPerson = useCallback(
     (name: string) => {
       if (!editingPerson) return
-      const ok = updatePerson(checkId, editingPerson.id, name)
-      if (ok) {
-        toast.success('Имя обновлено')
-      } else {
-        toast.error('Такое имя уже есть')
-      }
+
+      const result = updatePerson(checkId, editingPerson.id, name)
+      if (!result.ok) return result.error
+
+      toast.success('Имя обновлено')
     },
     [editingPerson, updatePerson, checkId],
   )

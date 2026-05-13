@@ -55,11 +55,6 @@
   white-space: nowrap;
 }
 
-@mixin text-accent-bold {
-  color: var(--color-orange);
-  font-weight: 700;
-}
-
 @mixin visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -81,7 +76,6 @@
 
 @mixin button--active-tokens {
   --button-surface-rgb: var(--button-active-surface-rgb);
-  // --button-background-alpha: var(--button-active-background-alpha);
   --button-border-alpha: var(--button-active-border-alpha);
   --button-box-shadow: 0 0 15px rgba(var(--button-active-surface-rgb), var(--button-active-shadow-alpha));
 }
@@ -106,5 +100,5 @@
 @mixin tag-grid-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 0.5rem;
+  gap: var(--space);
 }

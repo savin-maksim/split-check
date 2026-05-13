@@ -1,6 +1,6 @@
 .qty-stepper {
   @include flex-center($isInline: true);
-  gap: var(--space-small);
+  gap: var(--space-s);
   @include fluid-text(15, 11);
 
   &__icon {

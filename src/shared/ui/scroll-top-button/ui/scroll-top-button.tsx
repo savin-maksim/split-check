@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react'
 
 import { ArrowUp } from 'lucide-react'
 
-import { animatedBlockMotionPop } from '@/shared/lib'
+import { animatedBlockMotionPop } from '@shared/lib'
 
-import { AnimatedBlock } from '@/shared/ui/animated-block'
+import { AnimatedBlock } from '@shared/ui/animated-block'
 
 import './scroll-top-button.scss'
 

@@ -1,6 +1,6 @@
 export const PERSON_LIMITS = {
-  NAME_MIN_LENGTH: 2,
-  NAME_MAX_LENGTH: 50,
+  NAME_MIN_LENGTH: 1,
+  NAME_MAX_LENGTH: 25,
 } as const
 
 export const ITEM_LIMITS = {

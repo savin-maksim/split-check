@@ -1,32 +1,29 @@
 :root {
-  --font-family-base: 'Montserrat', sans-serif;
-
-  --font-p-max: 15;
-  --font-p-min: 10;
+  --font-family-base: 'Montserrat';
 
   --color-light: #ffffff;
+  --color-text-active: #ffffff;
   --color-text-secondary: #b1b1b1;
   --color-dark: #000000;
-  --color-active: rgba(255, 94, 0, 0.5);
-  --color-orange: rgb(255, 115, 0);
-  --color-glass: rgba(255, 255, 255, 0.2);
-  --color-text-active: #ffffff;
-  --color-bg: 31, 31, 31;
-  --color-error: 239, 68, 68;
+  --color-orange: #ff7300;
   --color-success: #22c55e;
+  --color-error-rgb: 239, 68, 68;
+  --color-active: rgb(255 94 0 / 0.5);
+  --color-glass: rgb(255 255 255 / 0.2);
+  --color-bottom-nav: rgb(31 31 31 / 0.5);
+  --color-bg: rgb(31 31 31 / 0.95);
 
-  --space-small: 0.25rem;
+  --space-s: 0.25rem;
   --space: 0.5rem;
-  --space-medium: 0.75rem;
-  --space-large: 1rem;
-  --space-x-large: 1.5rem;
+  --space-l: 0.75rem;
+  --space-xl: 1rem;
+  --space-xxl: 1.5rem;
 
   --border-width: 2px;
   --border: var(--border-width) solid var(--color-glass);
-  --border-radius-person: 10rem;
+  --border-radius-s: 7px;
   --border-radius: 10px;
-  --border-radius-small: 7px;
-  --border-radius-large: 45px;
+  --border-radius-l: 45px;
 
   --button-neutral-surface-rgb: 255, 255, 255;
   --button-neutral-background-alpha: 0.2;
@@ -46,11 +43,6 @@
   --button-danger-hover-background-alpha: 0.5;
   --button-danger-hover-border-alpha: 0.58;
   --button-danger-shadow-alpha: 0.5;
-
-  --container-width: 800px;
-  --container-padding-x: 20px;
-
-  --section-padding-y: 70px;
 
   --cards-width: 500px;
 

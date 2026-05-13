@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { toast } from 'react-hot-toast'
 
-import type { TItem } from '@/entities/check'
+import type { TItem } from '@entities/check'
 
 import { analyzeReceipt } from './analyze-receipt'
 import { mergeDuplicateReceiptLines } from './merge-duplicate-receipt-lines'

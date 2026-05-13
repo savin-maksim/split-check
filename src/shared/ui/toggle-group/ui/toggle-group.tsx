@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib'
+import { cn } from '@shared/lib'
 import type { ReactNode } from 'react'
 
 import './toggle-group.scss'

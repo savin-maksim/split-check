@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import type { TItem } from '@/entities/check'
+import type { TItem } from '@entities/check'
 
 import { syncPriceFieldValidity } from './sync-price-field-validity'
 

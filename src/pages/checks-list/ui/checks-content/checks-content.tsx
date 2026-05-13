@@ -1,8 +1,8 @@
 import { memo } from 'react'
 
-import type { TCheck } from '@/entities/check'
-import { WCheckCard } from '@/widgets/w-check-card'
-import { AnimatedList } from '@/shared/ui'
+import type { TCheck } from '@entities/check'
+import { WCheckCard } from '@widgets/w-check-card'
+import { AnimatedList } from '@shared/ui'
 
 type TChecksContentProps = {
   checks: TCheck[]

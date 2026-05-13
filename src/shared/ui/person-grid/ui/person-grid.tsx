@@ -1,8 +1,8 @@
 import { memo } from 'react'
 import type { ReactNode } from 'react'
 
-import { cn } from '@/shared/lib'
-import { Button, EButtonVariant } from '@/shared/ui/button'
+import { cn } from '@shared/lib'
+import { Button, EButtonVariant } from '@shared/ui/button'
 
 import './person-grid.scss'
 

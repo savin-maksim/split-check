@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 
-import { EPaymentMode } from '@/entities/check'
-import type { TItem } from '@/entities/check'
-import { useRegisterNavAction } from '@/widgets/w-bottom-nav'
-import { useCurrentCheckFromRoute } from '@/shared/lib'
+import { EPaymentMode } from '@entities/check'
+import type { TItem } from '@entities/check'
+import { useRegisterNavAction } from '@widgets/w-bottom-nav'
+import { useCurrentCheckFromRoute } from '@shared/lib'
 
 import { useItemsPageHandlers } from '../lib/use-items-page-handlers'
 import { ItemsContent } from './items-content'

@@ -242,7 +242,7 @@ flowchart TB
 - **`expenses`**: по каждой позиции, где человек участвует (`personParticipatesInCost`: weighted — вес &gt; 0; equal — в `splitBetween`), строка с:
   - `description` = название позиции,
   - `amount` = доля (`getPersonShare` — аналогично весам/равным долям),
-  - `quantity` / `splitCount` / `pricePerUnit` — для отображения «шт» через `formatters.formatQuantity`.
+  - `quantity` / `splitCount` / `pricePerUnit` — для отображения «шт.» через `formatters.formatQuantity`.
 - **`totalAmount`**: сумма `getLineAmount` по позициям, где человек **в `paidBy`** (любой элемент массива с его `id`).
 - **`totalOwed`**: сумма долей из `expenses`.
 - **`balance`**: `totalSpent - totalOwed` (в карточке на странице статистики дополнительно пересчитывается итог по строкам `expenses` для блока «Итог»).

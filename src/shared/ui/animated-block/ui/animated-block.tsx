@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
-import { animatedBlockMotion, animatedBlockTransition, cn } from '@/shared/lib'
-import type { TAnimatedBlockMotionPreset } from '@/shared/types'
+import { animatedBlockMotion, animatedBlockTransition, cn } from '@shared/lib'
+import type { TAnimatedBlockMotionPreset } from '@shared/types'
 
 import './animated-block.scss'
 

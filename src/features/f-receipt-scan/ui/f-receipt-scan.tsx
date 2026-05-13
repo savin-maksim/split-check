@@ -1,8 +1,8 @@
 import { ScanLine } from 'lucide-react'
 
-import type { TItem } from '@/entities/check'
-import { cn } from '@/shared/lib'
-import { Button } from '@/shared/ui'
+import type { TItem } from '@entities/check'
+import { cn } from '@shared/lib'
+import { Button } from '@shared/ui'
 
 import { useReceiptScan } from '../lib'
 import { LoadingModal } from './loading-modal'

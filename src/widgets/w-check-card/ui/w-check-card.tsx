@@ -2,11 +2,11 @@ import { memo } from 'react'
 import type { MouseEvent } from 'react'
 import { Pencil, Trash2, Users, Calculator, Receipt } from 'lucide-react'
 
-import type { TCheck } from '@/entities/check'
-import { getItemTotal } from '@/entities/check'
+import type { TCheck } from '@entities/check'
+import { getItemTotal } from '@entities/check'
 
-import { cn, formatSavedDate, formatMoney, pluralize, createKeyboardActivationHandler } from '@/shared/lib'
-import { ItemCard, CardHeader, IconButton, EIconButtonVariant, CardStats } from '@/shared/ui'
+import { cn, formatSavedDate, formatMoney, pluralize, createKeyboardActivationHandler } from '@shared/lib'
+import { ItemCard, CardHeader, IconButton, EIconButtonVariant, CardStats } from '@shared/ui'
 
 import './w-check-card.scss'
 

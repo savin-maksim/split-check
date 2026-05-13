@@ -36,11 +36,11 @@
   }
 
   &--danger {
-    color: rgb(var(--color-error));
+    color: rgb(var(--color-error-rgb));
 
     @include hover {
-      color: rgb(var(--color-error));
-      filter: drop-shadow(0 0 8px rgba(var(--color-error), var(--button-danger-shadow-alpha)));
+      color: rgb(var(--color-error-rgb));
+      filter: drop-shadow(0 0 8px rgba(var(--color-error-rgb), var(--button-danger-shadow-alpha)));
     }
   }
 
@@ -48,7 +48,7 @@
     padding: 0.75rem 2rem;
     background-color: transparent;
     border: 2px solid var(--color-active);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-s);
     color: var(--color-orange);
 
     @include hover {
@@ -68,7 +68,7 @@
     height: 2rem;
     background-color: var(--color-glass);
     border: 2px solid rgba(255, 255, 255, 0.35);
-    border-radius: var(--border-radius-small);
+    border-radius: var(--border-radius-s);
 
     @include hover {
       color: var(--color-light);

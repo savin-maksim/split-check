@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useLayoutEffect, useRef } from 'react'
 
-import type { TTransfer } from '@/entities/check'
+import type { TTransfer } from '@entities/check'
 import {
   transferListSignature,
   getRecipientCounts,
@@ -9,7 +9,7 @@ import {
   canUnmergeSelection,
   applyUnmerge,
   buildDisplayTransfers,
-} from '@/entities/check'
+} from '@entities/check'
 
 type TUseTransfersCardParams = {
   transfers: TTransfer[]

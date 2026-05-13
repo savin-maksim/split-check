@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://split-checks.netlify.app/</loc>
+    <loc>https://splitcheck-adaa6.web.app//</loc>
     <lastmod>2024-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://split-checks.netlify.app/people</loc>
+    <loc>https://splitcheck-adaa6.web.app//people</loc>
     <lastmod>2024-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://split-checks.netlify.app/costs</loc>
+    <loc>https://splitcheck-adaa6.web.app//costs</loc>
     <lastmod>2024-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://split-checks.netlify.app/stats</loc>
+    <loc>https://splitcheck-adaa6.web.app//stats</loc>
     <lastmod>2024-03-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { PageHeader, EmptyState } from '@/shared/ui'
+import { PageHeader, EmptyState } from '@shared/ui'
 
 type TWPageEmptyProps = {
   pageTitle: string

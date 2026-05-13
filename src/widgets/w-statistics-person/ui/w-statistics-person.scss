@@ -5,12 +5,12 @@
   justify-content: space-between;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: var(--space-large);
+  padding: var(--space-xl);
   color: var(--color-light);
   height: 100%;
 
   &__title {
-    margin-bottom: var(--space-large);
+    margin-bottom: var(--space-xl);
     color: var(--color-orange);
   }
 
@@ -25,7 +25,7 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--space);
-    margin-bottom: var(--space-small);
+    margin-bottom: var(--space-s);
     padding-block: var(--space);
     border-bottom: 1px solid var(--color-glass);
 
@@ -47,7 +47,7 @@
       }
 
       &--negative {
-        color: rgb(var(--color-error));
+        color: rgb(var(--color-error-rgb));
       }
     }
 
@@ -62,8 +62,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space);
-    margin-top: var(--space-large);
-    padding-top: var(--space-large);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
     border-top: 1px solid var(--color-glass);
 
     &-item {

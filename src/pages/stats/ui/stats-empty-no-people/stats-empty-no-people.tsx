@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Users } from 'lucide-react'
 
-import { WPageEmpty } from '@/widgets/w-page-empty'
-import { buildRoute } from '@/shared/constants'
+import { WPageEmpty } from '@widgets/w-page-empty'
+import { buildRoute } from '@shared/constants'
 
 type TStatsEmptyNoPeopleProps = {
   checkId: string

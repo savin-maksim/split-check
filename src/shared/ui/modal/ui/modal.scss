@@ -84,7 +84,7 @@
 
   &__title {
     color: var(--color-light);
-    margin: var(--space) var(--space) var(--space-large) var(--space);
+    margin: var(--space) var(--space) var(--space-xl) var(--space);
   }
 
   &__subtitle {
@@ -94,7 +94,7 @@
     font-weight: 600;
     color: var(--color-text-secondary);
     margin-inline: var(--space);
-    margin-bottom: var(--space-large);
+    margin-bottom: var(--space-xl);
 
     &--icon {
       min-width: var(--warning-icon-size);
@@ -141,7 +141,7 @@
   }
 
   &__error {
-    color: rgb(var(--color-error));
+    color: rgb(var(--color-error-rgb));
     margin-top: 0.5rem;
     font-size: 0.875rem;
   }

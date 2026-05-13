@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
 
-import type { TPerson } from '@/entities/check'
+import type { TPerson } from '@entities/check'
 
-import { cn } from '@/shared/lib'
-import { PersonGrid } from '@/shared/ui'
+import { cn } from '@shared/lib'
+import { PersonGrid } from '@shared/ui'
 
 import './who-paid-section.scss'
 

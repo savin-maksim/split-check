@@ -216,7 +216,6 @@ CSS-классы: `block__element--modifier`. Корневой класс = им
 - `transition($properties...)` — transition с CSS-переменными
 - `hover` — `@media (hover: hover) { &:hover:not(:disabled) }`
 - `text-ellipsis` — overflow: hidden + ellipsis
-- `text-accent-bold` — accent color + bold
 
 ### Дизайн-токены
 

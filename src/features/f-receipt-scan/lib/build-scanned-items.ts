@@ -1,5 +1,5 @@
-import type { TItem } from '@/entities/check'
-import { formatItemTitle } from '@/shared/lib'
+import type { TItem } from '@entities/check'
+import { formatItemTitle } from '@shared/lib'
 
 import type { TPreviewQuantities, TScannedItem } from '../model'
 

@@ -1,4 +1,4 @@
-import { PERSON_LIMITS, ITEM_LIMITS } from '@/shared/constants'
+import { PERSON_LIMITS, ITEM_LIMITS } from '@shared/constants'
 
 export const validatePersonName = (name: string): string | null => {
   const trimmed = name.trim()
