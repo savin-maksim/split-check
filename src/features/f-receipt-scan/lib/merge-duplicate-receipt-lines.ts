@@ -29,6 +29,8 @@ export const mergeDuplicateReceiptLines = (items: TScannedItem[]): TScannedItem[
     const qty = normalizeQtyFromRaw(raw.qty)
     const priceRaw = raw.price
     const price = Number.isFinite(priceRaw) ? priceRaw : 0
+    const totalPriceRaw = raw.totalPrice
+    const totalPrice = Number.isFinite(totalPriceRaw) ? totalPriceRaw : price * qty
 
     const existing = map.get(key)
     if (!existing) {
@@ -36,6 +38,7 @@ export const mergeDuplicateReceiptLines = (items: TScannedItem[]): TScannedItem[
         title: titleStr.trim(),
         price,
         qty,
+        totalPrice,
       })
       continue
     }
@@ -43,6 +46,7 @@ export const mergeDuplicateReceiptLines = (items: TScannedItem[]): TScannedItem[
     map.set(key, {
       ...existing,
       qty: existing.qty + qty,
+      totalPrice: existing.totalPrice + totalPrice,
     })
   }
 

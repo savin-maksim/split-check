@@ -13,16 +13,47 @@ const receiptItemsResponseSchema = {
   items: {
     type: SchemaType.OBJECT,
     properties: {
-      title: { type: SchemaType.STRING },
-      price: { type: SchemaType.NUMBER },
-      qty: { type: SchemaType.NUMBER },
+      name: { type: SchemaType.STRING },
+      quantity: { type: SchemaType.NUMBER },
+      unitPrice: { type: SchemaType.NUMBER },
+      totalPrice: { type: SchemaType.NUMBER },
     },
-    required: ['title', 'price', 'qty'],
+    required: ['name', 'quantity', 'unitPrice', 'totalPrice'],
   },
 }
 
 const receiptAnalyzePrompt =
-  'Extract ALL the lines of items from the receipt as in the photo: name, unit price, quantity. Do not combine identical rows and do not add duplicates - each row of the receipt is a separate element of the array, also check the number of positions at non-zero price values to form the correct answer. Try to extract the full names from the receipt. Sometimes it happens that you split a position and give it the wrong price. Think logically that a position cant just be called by one adjective (this is an example) If liters or other units are specified for an item other than the number of pieces, specify 1 for qty.'
+  'Extract purchased receipt items.\n' +
+  '\n' +
+  'For each item return:\n' +
+  '- name\n' +
+  '- quantity\n' +
+  '- unitPrice\n' +
+  '- totalPrice\n' +
+  '\n' +
+  'Name:\n' +
+  '- Return a cleaned semantic product name, slightly shortened.\n' +
+  '- "name" must be a normalized product name, not the raw receipt line.\n' +
+  '- Prefer stable normalized names over literal OCR text.\n' +
+  '- Keep useful identifying words: product type, brand, flavor, variant, etc.\n' +
+  '- Remove garbage: codes, VAT/tax labels, percentages, article numbers, bracketed fragments, prices, quantities, barcodes, and OCR noise.\n' +
+  '- Do not over-shorten; keep enough detail to distinguish similar products.\n' +
+  '- If two rows are clearly the same product but OCR differs slightly, return the same cleaned name.\n' +
+  '\n' +
+  'Quantity:\n' +
+  '- Use piece count if clearly shown.\n' +
+  '- For weight, volume, package size, or other non-piece measurement units, use quantity = 1.\n' +
+  '- If unclear, use quantity = 1.\n' +
+  '\n' +
+  'Prices:\n' +
+  '- unitPrice and totalPrice must be numeric only.\n' +
+  '- totalPrice is the final price for this receipt row after quantity is applied.\n' +
+  '- If quantity = 1, unitPrice usually equals totalPrice.\n' +
+  '- If quantity > 1 and totalPrice is visible, calculate unitPrice = totalPrice / quantity.\n' +
+  '- If unitPrice and quantity are visible but totalPrice is not, calculate totalPrice = unitPrice * quantity.\n' +
+  '- Do not include currency symbols.\n' +
+  '\n' +
+  'Exclude zero-cost items, totals, discounts, VAT/tax rows, payment info, and service lines.'
 
 type TAnalyzeReceiptRequest = {
   modelName?: unknown

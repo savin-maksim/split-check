@@ -49,6 +49,7 @@ const ReceiptPreviewModalComponent = ({
         title: item.title,
         price: item.price / 100,
         qty: item.qty,
+        totalPrice: (item.price / 100) * item.qty,
       })
     },
     [editingIndex, onUpdateItem],
