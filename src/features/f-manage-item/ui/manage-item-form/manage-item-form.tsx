@@ -1,10 +1,11 @@
 import type { ChangeEvent, FormEvent } from 'react'
 
-import { createEnterKeyDownHandler, normalizeDecimalInput, formatItemTitle, selectInputOnFocus } from '@shared/lib'
+import { createEnterKeyDownHandler, formatItemTitle, selectInputOnFocus } from '@shared/lib'
 import { Input, Button, EButtonVariant } from '@shared/ui'
 import type { TItem } from '@entities/check'
 import { EPaymentMode } from '@entities/check'
 
+import { calculateExpressionInInput } from '../../lib/calculate-expression-in-input'
 import { syncPriceFieldValidity } from '../../lib/sync-price-field-validity'
 import { useItemForm } from '../../lib/use-item-form'
 
@@ -49,7 +50,7 @@ export const ManageItemForm = ({
     const priceRaw = String(fd.get('price') ?? '')
     const qtyStr = String(fd.get('qty') ?? '1')
 
-    const price = Math.round(parseFloat(normalizeDecimalInput(priceRaw)) * 100)
+    const price = Math.round(calculateExpressionInInput(priceRaw) * 100)
     const qty = parseInt(qtyStr, 10)
 
     const isInitialSinglePayer = mode === 'add' && paymentMode === EPaymentMode.Single && singlePayerId != null
@@ -108,10 +109,8 @@ export const ManageItemForm = ({
             ref={priceInputRef}
             name="price"
             label="Цена"
-            type="number"
+            type="text"
             inputMode="decimal"
-            min={0}
-            step={0.01}
             defaultValue={priceDefaultValue}
             onChange={handlePriceChange}
             onKeyDown={handleSubmitEnter}
