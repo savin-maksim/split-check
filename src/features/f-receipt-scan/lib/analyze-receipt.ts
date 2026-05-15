@@ -2,16 +2,12 @@ import { GEMINI_GENERATION_CONFIGS, type TGeminiModel, type TScannedItem } from 
 import { isAbortError } from './is-abort-error'
 import { fileToBase64 } from './file-to-base64'
 import { generateReceiptContent, ReceiptScanProxyError } from './receipt-scan-proxy-client'
-import { advanceModel, buildModelRotationOrder, getCurrentModel } from './model-rotation'
+import { buildModelRotationOrder } from './model-rotation'
 import { parseReceiptResponse } from './parse-receipt-response'
 
 export type TAnalyzeReceiptOptions = {
   signal?: AbortSignal
 }
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const isRetryableHttpStatus = (status: number) => status === 429 || status === 500 || status === 503 || status === 404
 
 const throwIfAborted = (signal?: AbortSignal) => {
   if (signal?.aborted) {
@@ -23,7 +19,7 @@ const isParseFailureMessage = (msg: string) => msg === 'PARSE_JSON_FAILED' || ms
 
 export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions = {}): Promise<TScannedItem[]> => {
   const { signal } = options
-  const modelsToTry = buildModelRotationOrder(getCurrentModel())
+  const modelsToTry = buildModelRotationOrder()
   const base64 = await fileToBase64(file)
   const mimeType = file.type.startsWith('image/') ? 'image/jpeg' : file.type || 'image/jpeg'
 
@@ -46,16 +42,10 @@ export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions
       if (isAbortError(e)) throw e
 
       const hasNextModel = attempt < modelsToTry.length - 1
-      const backoff = Math.min(800 * (attempt + 1), 5000)
+      if (hasNextModel) continue
 
       if (e instanceof ReceiptScanProxyError) {
         const status = e.status ?? 0
-        if (isRetryableHttpStatus(status) && hasNextModel) {
-          const wait = status === 429 ? Math.min(1500 * (attempt + 1), 10_000) : backoff
-          advanceModel()
-          await sleep(wait)
-          continue
-        }
         if (status === 429) {
           throw new Error(
             'Слишком много запросов к Google AI (лимит квоты). Подождите минуту и попробуйте снова или проверьте план в Google AI Studio.',
@@ -69,20 +59,9 @@ export const analyzeReceipt = async (file: File, options: TAnalyzeReceiptOptions
 
       const msg = e instanceof Error ? e.message : ''
       if (isParseFailureMessage(msg)) {
-        if (hasNextModel) {
-          advanceModel()
-          await sleep(backoff)
-          continue
-        }
         throw new Error(
           msg === 'INVALID_JSON_SHAPE' ? 'Не удалось распознать позиции' : 'Не удалось разобрать ответ модели',
         )
-      }
-
-      if (hasNextModel) {
-        advanceModel()
-        await sleep(backoff)
-        continue
       }
 
       throw e instanceof Error ? e : new Error('Ошибка распознавания чека')
