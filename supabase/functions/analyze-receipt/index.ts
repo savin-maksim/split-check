@@ -18,7 +18,7 @@ const receiptItemsResponseSchema = {
       unitPrice: { type: SchemaType.NUMBER },
       totalPrice: { type: SchemaType.NUMBER },
     },
-    required: ['name', 'quantity', 'unitPrice', 'totalPrice'],
+    required: ['name', 'quantity', 'totalPrice'],
   },
 }
 
@@ -28,7 +28,7 @@ const receiptAnalyzePrompt =
   'For each item return:\n' +
   '- name\n' +
   '- quantity\n' +
-  '- unitPrice\n' +
+  '- unitPrice if it is visible or unambiguous\n' +
   '- totalPrice\n' +
   '\n' +
   'Name:\n' +
@@ -48,9 +48,9 @@ const receiptAnalyzePrompt =
   'Prices:\n' +
   '- unitPrice and totalPrice must be numeric only.\n' +
   '- totalPrice is the final price for this receipt row after quantity is applied.\n' +
-  '- If quantity = 1, unitPrice usually equals totalPrice.\n' +
-  '- If quantity > 1 and totalPrice is visible, calculate unitPrice = totalPrice / quantity.\n' +
-  '- If unitPrice and quantity are visible but totalPrice is not, calculate totalPrice = unitPrice * quantity.\n' +
+  '- Return unitPrice only when a separate unit price is visible on the receipt or explicitly stated in the row.\n' +
+  '- Do not calculate or infer unitPrice from totalPrice and quantity.\n' +
+  '- If unitPrice is not independently visible, omit unitPrice.\n' +
   '- Do not include currency symbols.\n' +
   '\n' +
   'Exclude zero-cost items, totals, discounts, VAT/tax rows, payment info, and service lines.'

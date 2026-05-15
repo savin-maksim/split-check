@@ -9,9 +9,7 @@ const normalizeTitleKey = (title: string): string => title.trim().replace(/\s+/g
  */
 const normalizeQtyFromRaw = (qtyRaw: unknown): number => {
   if (typeof qtyRaw !== 'number' || !Number.isFinite(qtyRaw)) return 1
-  if (!Number.isInteger(qtyRaw)) return 1
-  const n = Math.trunc(qtyRaw)
-  return n < 1 ? 1 : n
+  return qtyRaw > 1 ? qtyRaw : 1
 }
 
 /**
@@ -47,6 +45,7 @@ export const mergeDuplicateReceiptLines = (items: TScannedItem[]): TScannedItem[
       ...existing,
       qty: existing.qty + qty,
       totalPrice: existing.totalPrice + totalPrice,
+      price: (existing.totalPrice + totalPrice) / (existing.qty + qty),
     })
   }
 
