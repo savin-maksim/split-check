@@ -2,6 +2,8 @@ import type { TScannedItem } from '../model'
 
 const isFiniteNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value)
 
+const isScannedItem = (value: TScannedItem | null): value is TScannedItem => value !== null
+
 const normalizeScannedItem = (value: unknown): TScannedItem | null => {
   if (typeof value !== 'object' || value === null) return null
   const v = value as Record<string, unknown>
@@ -40,7 +42,7 @@ export const parseReceiptResponse = (text: string): TScannedItem[] => {
 
   const items = parsed.map(normalizeScannedItem)
 
-  if (items.some((item) => item === null)) {
+  if (!items.every(isScannedItem)) {
     throw new Error('INVALID_JSON_SHAPE')
   }
 
