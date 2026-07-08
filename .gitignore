@@ -15,8 +15,13 @@ dist-ssr
 .env
 
 # Tool caches and local generated state
+.agents/
+.codex/
+.claude/
 .firebase/
+.roo/
 supabase/.temp/
+.windsurf/
 
 # Editor directories and files
 .cursor
