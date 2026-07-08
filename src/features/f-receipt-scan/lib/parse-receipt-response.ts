@@ -31,7 +31,6 @@ export const parseReceiptResponse = (text: string): TScannedItem[] => {
   let parsed: unknown
   try {
     parsed = JSON.parse(text)
-    console.log('[receipt-scan] Gemini JSON:', parsed)
   } catch {
     throw new Error('PARSE_JSON_FAILED')
   }
@@ -45,8 +44,6 @@ export const parseReceiptResponse = (text: string): TScannedItem[] => {
   if (!items.every(isScannedItem)) {
     throw new Error('INVALID_JSON_SHAPE')
   }
-
-  console.log('[receipt-scan] Normalized items:', items)
 
   return items
 }
