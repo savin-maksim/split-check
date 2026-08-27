@@ -13,16 +13,10 @@
   }
 
   &__icon-wrap {
-    flex-shrink: 0;
+    @include fixed-icon-size(var(--header-icon-size));
+
     color: var(--color-orange);
     line-height: 0;
-
-    max-width: var(--header-icon-size);
-    aspect-ratio: 1/1;
-
-    svg {
-      display: block;
-    }
   }
 
   &__text {

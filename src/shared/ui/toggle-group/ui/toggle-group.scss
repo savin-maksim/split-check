@@ -40,6 +40,7 @@
 
     &-icon {
       @include flex-center($isInline: true);
+      @include fixed-icon-size(var(--button-icon-size));
     }
 
     &-label {

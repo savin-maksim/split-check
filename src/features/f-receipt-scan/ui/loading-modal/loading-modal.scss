@@ -9,7 +9,7 @@
   }
 
   &__icon {
-    max-width: var(--button-icon-size);
+    @include fixed-icon-size(var(--button-icon-size));
   }
 
   &__actions {

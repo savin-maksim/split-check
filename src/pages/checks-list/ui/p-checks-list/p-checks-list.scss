@@ -2,7 +2,6 @@
   height: 100%;
 
   &__icon {
-    max-width: var(--header-icon-size);
-    aspect-ratio: 1/1;
+    @include fixed-icon-size(var(--header-icon-size));
   }
 }

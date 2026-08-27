@@ -35,15 +35,11 @@
   }
 
   &__icon {
-    max-width: var(--button-icon-size);
+    @include fixed-icon-size(var(--button-icon-size));
+
     color: var(--color-light);
     opacity: 0.85;
     pointer-events: none;
-    aspect-ratio: 1 / 1;
-
-    svg {
-      flex-shrink: 0;
-    }
   }
 
   &__body {
@@ -107,10 +103,9 @@
 
   &__clear,
   &__password-toggle {
-    flex-shrink: 0;
-    max-width: var(--button-icon-size);
+    @include fixed-icon-size(var(--button-icon-size));
+
     color: var(--color-light);
-    aspect-ratio: 1 / 1;
   }
 
   &__error {

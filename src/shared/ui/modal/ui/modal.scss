@@ -97,9 +97,9 @@
     margin-bottom: var(--space-xl);
 
     &--icon {
-      min-width: var(--warning-icon-size);
+      @include fixed-icon-size(var(--warning-icon-size));
+
       color: var(--color-orange);
-      flex-shrink: 0;
     }
   }
 

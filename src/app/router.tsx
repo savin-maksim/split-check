@@ -1,5 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { PChecksList } from '@pages/checks-list'
+import { PItems } from '@pages/items'
+import { PPeople } from '@pages/people'
+import { PStats } from '@pages/stats'
+
 import { AppLayout } from './layout'
 
 export const router = createBrowserRouter([
@@ -8,19 +13,19 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        lazy: () => import('@pages/checks-list').then((m) => ({ Component: m.PChecksList })),
+        Component: PChecksList,
       },
       {
         path: 'check/:checkId/people',
-        lazy: () => import('@pages/people').then((m) => ({ Component: m.PPeople })),
+        Component: PPeople,
       },
       {
         path: 'check/:checkId/items',
-        lazy: () => import('@pages/items').then((m) => ({ Component: m.PItems })),
+        Component: PItems,
       },
       {
         path: 'check/:checkId/stats',
-        lazy: () => import('@pages/stats').then((m) => ({ Component: m.PStats })),
+        Component: PStats,
       },
     ],
   },

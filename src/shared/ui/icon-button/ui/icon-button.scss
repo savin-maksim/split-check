@@ -1,6 +1,13 @@
 .icon-button {
   @include flex-center;
+
+  --icon-size: var(--button-icon-size);
+
   position: relative;
+
+  > svg {
+    @include fixed-icon-size(var(--icon-size));
+  }
 
   &::before {
     content: '';

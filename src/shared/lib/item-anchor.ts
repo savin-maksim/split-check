@@ -5,13 +5,18 @@ const ITEMS_LIST_INITIAL_DELAY_S = 0.05
 const ITEMS_LIST_STAGGER_DELAY_S = 0.05
 
 type TScrollBehavior = 'auto' | 'smooth' | 'instant'
+type TScrollBlock = 'start' | 'center' | 'end' | 'nearest'
 
-const scheduleScrollToElementById = (id: string, options?: { settleMs?: number; behavior?: TScrollBehavior }) => {
+const scheduleScrollToElementById = (
+  id: string,
+  options?: { settleMs?: number; behavior?: TScrollBehavior; block?: TScrollBlock },
+) => {
   const settleMs = options?.settleMs ?? 0
   const behavior = options?.behavior ?? 'smooth'
+  const block = options?.block ?? 'start'
 
   const run = () => {
-    document.getElementById(id)?.scrollIntoView({ behavior, block: 'start' })
+    document.getElementById(id)?.scrollIntoView({ behavior, block })
   }
 
   if (settleMs > 0) {
@@ -54,6 +59,7 @@ export const scrollToItemAnchor = (checkId: string, itemId: number, options: TSc
   scheduleScrollToElementById(getItemAnchorId(checkId, itemId), {
     settleMs,
     behavior: 'auto',
+    block: 'center',
   })
 }
 

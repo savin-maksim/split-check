@@ -47,7 +47,7 @@ export const MergedTransferRow = ({
       >
         {fromLabel}
       </Button>
-      <MoveRight size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
+      <MoveRight className="w-transfers-card__icon" size={'var(--transfer-card-icon-size)'} aria-hidden="true" />
       <Button
         variant={EButtonVariant.Wide}
         type="button"
